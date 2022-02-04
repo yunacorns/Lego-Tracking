@@ -1,4 +1,6 @@
 # Lego Tracking
+ Tracks position of lego using colour tracking with opencv in python
+ 
  
 # Requirements
 

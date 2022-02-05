@@ -13,15 +13,21 @@ while True:
 
      lower_red = np.array([161,155,84])
      upper_red = np.array([179,255,255])
+     lower_blue = np.array([38,86,0])
+     upper_blue = np.array([121,255,255])
+  
+     mask_red = cv2.inRange(hsv,lower_red,upper_red)
+     mask_blue = cv2.inRange(hsv,lower_blue,upper_blue)
 
-     mask = cv2.inRange(hsv,lower_red,upper_red)
+     cnts_red = cv2.findContours(mask_red, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+     cnts_red = imutils.grab_contours(cnts_red)
+     cnts_blue = cv2.findContours(mask_blue, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+     cnts_blue= imutils.grab_contours(cnts_blue)
 
-     cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-     cnts = imutils.grab_contours(cnts)
 
-     for c in cnts:
+     for c in cnts_red:
          area = cv2.contourArea(c)
-         if area > 5000:
+         if area > 500:
 
 
              cv2.drawContours(frame,[c],-1,(0,255,0), 3)
@@ -32,7 +38,21 @@ while True:
              cy = int(M["m01"]/ M["m00"])
 
              cv2.circle(frame,(cx,cy),7,(255,255,255),-1)
-             cv2.putText(frame,'red',(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,2.5,(255,255,255),3)
+             cv2.putText(frame,'red x={}, y={}'.format(cx,cy),(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+     for c in cnts_blue:
+         area = cv2.contourArea(c)
+         if area > 500:
+
+
+             cv2.drawContours(frame,[c],-1,(0,255,0), 3)
+
+             M = cv2.moments(c)
+
+             cx = int(M["m10"]/ M["m00"])
+             cy = int(M["m01"]/ M["m00"])
+
+             cv2.circle(frame,(cx,cy),7,(255,255,255),-1)
+             cv2.putText(frame,'blue x={}, y={}'.format(cx,cy),(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
 
      cv2.imshow("result",frame)
 

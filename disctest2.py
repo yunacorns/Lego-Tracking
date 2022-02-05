@@ -45,9 +45,9 @@ while True:
          print(x_coord,y_coord)
          if len(x_coord)==2 and len(y_coord)==2:
              for y in range(7):
-                x_val = x_coord[0]
-                y_val = y_coord[1]+((y_coord[0]-y_coord[1])/7)*y
-                cv2.circle(frame,(x_val,y_val),7,(255,255,255),-1)
+                    x_val = x_coord[0]
+                    y_val = y_coord[1]+((y_coord[0]-y_coord[1])/7)*y
+                    cv2.circle(frame,(x_val,y_val),7,(255,255,255),-1)
             
  
 

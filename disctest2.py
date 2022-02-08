@@ -8,6 +8,9 @@ cap.set(4,480)
 
 while True:
      _,frame= cap.read()
+     frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+     frame = cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+
      blurred_frame = cv2.GaussianBlur(frame,(5,5),0)
 
      hsv = cv2.cvtColor(blurred_frame, cv2.COLOR_BGR2HSV)
@@ -44,10 +47,11 @@ while True:
 
          print(x_coord,y_coord)
          if len(x_coord)==2 and len(y_coord)==2:
-             for y in range(7):
-                    x_val = x_coord[0]
-                    y_val = y_coord[1]+((y_coord[0]-y_coord[1])/7)*y
-                    cv2.circle(frame,(x_val,y_val),7,(255,255,255),-1)
+             for x in range(5):
+                for y in range(7):
+                        x_val = x_coord[0]
+                        y_val = y_coord[1]+((y_coord[0]-y_coord[1])/7)*y
+                        cv2.circle(frame,(x_val,y_val),7,(255,255,255),-1)
             
  
 

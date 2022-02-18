@@ -2,10 +2,10 @@ import cv2
 import numpy as np
 import imutils
 
-cap= cv2.VideoCapture(0)
+cap= cv2.VideoCapture(1)
 cap.set(3,640)
 cap.set(4,480)
-dist_lego_from_center = 15
+dist_lego_from_center = 13
 
 while True:
      _,frame= cap.read()
@@ -26,10 +26,10 @@ while True:
     
      x_coord = []
      y_coord = []
-     x_coord_topright = []
-     y_coord_topright = []
-     x_coord_bottomleft = []
-     y_coord_bottomleft = []
+    #  x_coord_topright = []
+    #  y_coord_topright = []
+    #  x_coord_bottomleft = []
+    #  y_coord_bottomleft = []
      for c in cnts_red:
          area = cv2.contourArea(c)
          if area > 500:
@@ -46,34 +46,43 @@ while True:
              cy = int(M["m01"]/ M["m00"])
 
              cv2.circle(frame,(cx,cy),7,(255,255,255),-1)
-             cv2.circle(frame,(cx+dist_lego_from_center,cy-dist_lego_from_center),7,(255,255,255),-1)
-             cv2.circle(frame,(cx-dist_lego_from_center,cy+dist_lego_from_center),7,(255,255,255),-1)
+            #  cv2.circle(frame,(cx+dist_lego_from_center,cy-dist_lego_from_center),7,(255,255,255),-1)
+            #  cv2.circle(frame,(cx-dist_lego_from_center,cy+dist_lego_from_center),7,(255,255,255),-1)
 
              cv2.putText(frame,'red x={}, y={}'.format(cx,cy),(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
-             x_coord_topright.append(cx+dist_lego_from_center)
-             y_coord_topright.append(cy-dist_lego_from_center)
-             x_coord_bottomleft.append
-             
+            #  x_coord_topright.append(cx+dist_lego_from_center)
+            #  y_coord_topright.append(cy-dist_lego_from_center)
+            #  x_coord_bottomleft.append(cx-dist_lego_from_center)
+            #  y_coord_bottomleft.append(cy+dist_lego_from_center)
              x_coord.append(cx)
              y_coord.append(cy)
              
 
-         print(x_coord_topright,y_coord_topright)
+        #  print(x_coord_topright,y_coord_topright)
          print(x_coord,y_coord)
 
          
          if len(x_coord)==2 and len(y_coord)==2:
+            x_val = []
+            for x in range(10):
+                x_value = x_coord[0]+((x_coord[1]-x_coord[0])/19)
+                x_val.append(x_value)
+
+
             #  x_val = []
-            #  for x in range(5):
-            #     x_value = x_coord[1]+((x_coord[0]-x_coord[1])/7)*x
+            #  for x in range(19):
+            #     x_value = x_coord_topright[0]+((x_coord_topright[1]-x_coord_bottomleft[0]+30)/19)*x
             #     x_val.append(x_value)
 
 
+            # #  for x in x_val:
+            # # make 15 a variable 
+            # #  discy = (y_coord_topright[0]-y_coord_topright[1]+4*dist_lego_from_center)/(2*dist_lego_from_center)
+            # #  print(discy)
             #  for x in x_val:
-                for y in range(15):
-                        x_val = x_coord_topright[1]
-                        y_val = y_coord_topright[1]+((y_coord_topright[0]-y_coord_topright[1]+4*dist_lego_from_center)/15)*y
-                        cv2.circle(frame,(x_val,y_val),7,(255,255,255),-1)
+                # for y in range(15):
+                #     y_val = y_coord_topright[1]+((y_coord_bottomleft[0]-y_coord_topright[1]+30)/15)*y
+                #     cv2.circle(frame,(x,y_val),7,(255,255,255),-1)
             
  
 

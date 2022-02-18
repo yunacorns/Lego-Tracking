@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import imutils
 
-cap= cv2.VideoCapture(0)
+cap= cv2.VideoCapture(1)
 cap.set(3,640)
 cap.set(4,480)
 
@@ -14,10 +14,10 @@ while True:
 
      lower_red = np.array([161,155,84])
      upper_red = np.array([179,255,255])
-     lower_blue = np.array([38,86,0])
-     upper_blue = np.array([140,255,255])
-     lower_yellow = np.array([13,70,70])
-     upper_yellow = np.array([17,255,255])
+     lower_blue = np.array([100,150,0],np.uint8)
+     upper_blue = np.array([140,255,255],np.uint8)
+     lower_yellow = np.array([20, 100, 100])
+     upper_yellow = np.array([30, 255, 255])
 
      mask_red = cv2.inRange(hsv,lower_red,upper_red)
      mask_blue = cv2.inRange(hsv,lower_blue,upper_blue)

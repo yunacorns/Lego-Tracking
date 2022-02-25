@@ -2,6 +2,11 @@ import cv2
 import numpy as np
 import imutils
 from pyzbar.pyzbar import decode
+import socket 
+
+host, port = "127.0.0.1", 25001
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.connect((host,port))
 
 cap= cv2.VideoCapture(1)
 cap.set(3,640)
@@ -77,6 +82,13 @@ while True:
 
                     cx = int(M["m10"]/ M["m00"])
                     cy = int(M["m01"]/ M["m00"])
+                    position = [cx,cy,0]
+                    posString = ','.join(map(str,position))
+                    print(posString)
+
+                    sock.sendall(posString.encode("UTF-8"))
+                    receivedData = sock.recv(1024).decode("UTF-8")
+
 
                     cv2.circle(new_frame,(cx,cy),7,(255,255,255),-1)
                     cv2.putText(new_frame,'red x={}, y={}'.format(cx,cy),(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2)

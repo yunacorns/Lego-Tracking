@@ -94,7 +94,6 @@ while True:
                     cv2.putText(new_frame,'red x={}, y={}'.format(cx,cy),(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,0.5,(255,255,255),2)
 
             cv2.imshow('calibrated',new_frame)
-            
 
         
 

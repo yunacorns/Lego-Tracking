@@ -8,6 +8,9 @@ import socket
 
 def main():
 
+    # host, port = "127.0.0.1", 25001
+    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # sock.connect((host,port))
     
 
     cap= cv2.VideoCapture(1)
@@ -56,6 +59,10 @@ def main():
                 position = [new_coord3_x,new_coord3_y,0]
                 posString = ','.join(map(str,position))
                 print(posString)
+
+                # sock.sendall(posString.encode("UTF-8"))
+                # receivedData = sock.recv(1024).decode("UTF-8")
+
         
 
             cv2.circle(frame,(coord1_x,coord1_y),7,(255,255,255),-1)

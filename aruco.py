@@ -3,6 +3,7 @@ import cv2.aruco as aruco
 import numpy as np
 import os
 import socket
+import math
  
 
 
@@ -26,6 +27,9 @@ def main():
         arucoDict = aruco.Dictionary_get(key)
         arucoParam = aruco.DetectorParameters_create()
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
+
+
+        # calibration using aruco marker 1 and 2 
         if ids is not None:
             length_ids = len(ids)
             aruco.drawDetectedMarkers(frame,bbox)
@@ -48,20 +52,39 @@ def main():
             coord1_y = int(coord1[1])
             coord2_y = int(coord2[1])
 
-
+            
+            # aruco markers 3 and 4 for the joint coordinates
             if [3] in ids:
                 pos_3 = ids_formatted.index(3)
                 coord3 = bbox[pos_3][0][0]
                 print(coord3)
                 new_coord3_x = int(coord3[0])-coord1_x
                 new_coord3_y = int(coord3[1])-coord1_y
-                print(new_coord3_x,new_coord3_y)
-                position = [new_coord3_x,new_coord3_y,0]
-                posString = ','.join(map(str,position))
-                print(posString)
+                position3 = [new_coord3_x,new_coord3_y,0]
+                posString3 = ','.join(map(str,position3))
+                print(posString3)
 
-                # sock.sendall(posString.encode("UTF-8"))
+                # sock.sendall(posString3.encode("UTF-8"))
                 # receivedData = sock.recv(1024).decode("UTF-8")
+
+            if [4] in ids:
+                pos_4 = ids_formatted.index(4)
+                coord4 = bbox[pos_4][0][0]
+                print(coord4)
+                new_coord4_x = int(coord4[0])-coord1_x 
+                new_coord4_y = int(coord4[1])-coord1_y
+                position4 = [new_coord4_x,new_coord4_y,0]
+                posString4 = ','.join(map(str,position4))
+                print(posString4)
+
+                # sock.sendall(posString4.encode("UTF-8"))
+                # receivedData = sock.recv(1024).decode("UTF-8")
+
+
+            # use 3 and 4 to find length
+            if [3] and [4] in ids:
+                length3_4 = math.sqrt(math.pow(new_coord4_x-new_coord3_x,2)+math.pow(new_coord4_y-new_coord3_y,2))
+                print(length3_4)
 
         
 

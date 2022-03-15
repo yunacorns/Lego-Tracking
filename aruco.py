@@ -4,14 +4,15 @@ import numpy as np
 import os
 import socket
 import math
+
  
 
 
 def main():
 
-    # host, port = "127.0.0.1", 25001
-    # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # sock.connect((host,port))
+    host, port = "127.0.0.1", 25001
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.connect((host,port))
     
 
     cap= cv2.VideoCapture(1)
@@ -51,6 +52,16 @@ def main():
             coord2_x = int(coord2[0])
             coord1_y = int(coord1[1])
             coord2_y = int(coord2[1])
+            position1 = [coord1_x,coord1_y,0]
+            position2 = [coord2_x,coord2_y,0]
+            posString1 = ','.join(map(str,position1))
+            posString2 = ','.join(map(str,position2))
+            posString12 = posString1 + ','+ posString2
+            print('pos1',posString1)
+            print('pos2',posString2)
+            print('pos',posString12)
+            sock.sendall(posString12.encode("UTF-8"))
+            # receivedData = sock.recv(1024).decode("UTF-8")
 
             
             # aruco markers 3 and 4 for the joint coordinates
@@ -63,9 +74,8 @@ def main():
                 position3 = [new_coord3_x,new_coord3_y,0]
                 posString3 = ','.join(map(str,position3))
                 print(posString3)
+                
 
-                # sock.sendall(posString3.encode("UTF-8"))
-                # receivedData = sock.recv(1024).decode("UTF-8")
 
             if [4] in ids:
                 pos_4 = ids_formatted.index(4)

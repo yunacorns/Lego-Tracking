@@ -52,15 +52,17 @@ def main():
             coord2_x = int(coord2[0])
             coord1_y = int(coord1[1])
             coord2_y = int(coord2[1])
-            position1 = [coord1_x,coord1_y,0]
-            position2 = [coord2_x,coord2_y,0]
+            position1 = [coord1_x-coord1_x,coord1_y-coord1_y,0]
+            position2 = [coord2_x-coord1_x,coord2_y-coord1_y,0]
             posString1 = ','.join(map(str,position1))
             posString2 = ','.join(map(str,position2))
             posString12 = posString1 + ','+ posString2
-            print('pos1',posString1)
-            print('pos2',posString2)
-            print('pos',posString12)
-            sock.sendall(posString12.encode("UTF-8"))
+            # print('pos1',posString1)
+            # print('pos2',posString2)
+            # print('pos',posString12)
+            # sock.sendall(posString12.encode("UTF-8"))
+
+
             # receivedData = sock.recv(1024).decode("UTF-8")
 
             
@@ -71,9 +73,10 @@ def main():
                 print(coord3)
                 new_coord3_x = int(coord3[0])-coord1_x
                 new_coord3_y = int(coord3[1])-coord1_y
-                position3 = [new_coord3_x,new_coord3_y,0]
+                newunity_coord3_y = abs(coord2_y-coord1_y)-new_coord3_y
+                position3 = [new_coord3_x,newunity_coord3_y,0]
                 posString3 = ','.join(map(str,position3))
-                print(posString3)
+                # print(posString3)
                 
 
 
@@ -83,9 +86,10 @@ def main():
                 print(coord4)
                 new_coord4_x = int(coord4[0])-coord1_x 
                 new_coord4_y = int(coord4[1])-coord1_y
-                position4 = [new_coord4_x,new_coord4_y,0]
+                newunity_coord4_y = abs(coord2_y-coord1_y)-new_coord4_y
+                position4 = [new_coord4_x,newunity_coord4_y,0]
                 posString4 = ','.join(map(str,position4))
-                print(posString4)
+                # print(posString4)
 
                 # sock.sendall(posString4.encode("UTF-8"))
                 # receivedData = sock.recv(1024).decode("UTF-8")
@@ -93,8 +97,16 @@ def main():
 
             # use 3 and 4 to find length
             if [3] and [4] in ids:
-                length3_4 = math.sqrt(math.pow(new_coord4_x-new_coord3_x,2)+math.pow(new_coord4_y-new_coord3_y,2))
+                length3_4 = math.sqrt(math.pow(new_coord4_x-new_coord3_x,2)+math.pow(newunity_coord4_y-newunity_coord3_y,2))
                 print(length3_4)
+                
+            
+            if [1] and [2] and [3] and [4] in ids:
+                posString1234 = posString1 +','+ posString2 + ','+ posString3 + ','+ posString4
+                sock.sendall(posString1234.encode("UTF-8"))
+                print(posString1234)
+
+
 
         
 

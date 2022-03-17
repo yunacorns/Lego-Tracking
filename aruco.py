@@ -73,8 +73,8 @@ def main():
                 print(coord3)
                 new_coord3_x = int(coord3[0])-coord1_x
                 new_coord3_y = int(coord3[1])-coord1_y
-                newunity_coord3_y = abs(coord2_y-coord1_y)-new_coord3_y
-                position3 = [new_coord3_x,newunity_coord3_y,0]
+                # newunity_coord3_y = abs(coord2_y-coord1_y)-new_coord3_y
+                position3 = [new_coord3_x,new_coord3_y,0]
                 posString3 = ','.join(map(str,position3))
                 # print(posString3)
                 
@@ -86,8 +86,8 @@ def main():
                 print(coord4)
                 new_coord4_x = int(coord4[0])-coord1_x 
                 new_coord4_y = int(coord4[1])-coord1_y
-                newunity_coord4_y = abs(coord2_y-coord1_y)-new_coord4_y
-                position4 = [new_coord4_x,newunity_coord4_y,0]
+                # newunity_coord4_y = abs(coord2_y-coord1_y)-new_coord4_y
+                position4 = [new_coord4_x,new_coord4_y,0]
                 posString4 = ','.join(map(str,position4))
                 # print(posString4)
 

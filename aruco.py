@@ -52,8 +52,9 @@ def main():
             coord2_x = int(coord2[0])
             coord1_y = int(coord1[1])
             coord2_y = int(coord2[1])
-            position1 = [coord1_x-coord1_x,coord1_y-coord1_y,0]
-            position2 = [coord2_x-coord1_x,coord2_y-coord1_y,0]
+            # minus in front of y coords bc webcam origin flipped in x axis compared to unity origin
+            position1 = [coord1_x-coord1_x,-(coord1_y-coord1_y),0]
+            position2 = [coord2_x-coord1_x,-(coord2_y-coord1_y),0]
             posString1 = ','.join(map(str,position1))
             posString2 = ','.join(map(str,position2))
             posString12 = posString1 + ','+ posString2
@@ -74,7 +75,7 @@ def main():
                 new_coord3_x = int(coord3[0])-coord1_x
                 new_coord3_y = int(coord3[1])-coord1_y
                 # newunity_coord3_y = abs(coord2_y-coord1_y)-new_coord3_y
-                position3 = [new_coord3_x,new_coord3_y,0]
+                position3 = [new_coord3_x,-new_coord3_y,0]
                 posString3 = ','.join(map(str,position3))
                 # print(posString3)
                 
@@ -87,7 +88,7 @@ def main():
                 new_coord4_x = int(coord4[0])-coord1_x 
                 new_coord4_y = int(coord4[1])-coord1_y
                 # newunity_coord4_y = abs(coord2_y-coord1_y)-new_coord4_y
-                position4 = [new_coord4_x,new_coord4_y,0]
+                position4 = [new_coord4_x,-new_coord4_y,0]
                 posString4 = ','.join(map(str,position4))
                 # print(posString4)
 
@@ -97,7 +98,7 @@ def main():
 
             # use 3 and 4 to find length
             if [3] and [4] in ids:
-                length3_4 = math.sqrt(math.pow(new_coord4_x-new_coord3_x,2)+math.pow(newunity_coord4_y-newunity_coord3_y,2))
+                length3_4 = math.sqrt(math.pow(new_coord4_x-new_coord3_x,2)+math.pow(new_coord4_y-new_coord3_y,2))
                 print(length3_4)
                 
             

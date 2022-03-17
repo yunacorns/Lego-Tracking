@@ -28,6 +28,8 @@ public class portlistener : MonoBehaviour
     {
         squareone.transform.position = receivedPos1; //assigning receivedPos in SendAndReceiveData()
         squaretwo.transform.position = receivedPos2;
+        squarethree.transform.position = receivedPos3;
+        squarefour.transform.position = receivedPos4;
        
     }
 
@@ -91,9 +93,9 @@ public class portlistener : MonoBehaviour
 
         // store as a Vector3
         Vector3 result = new Vector3(
-            float.Parse(sArray[9]),
-            float.Parse(sArray[10]),
-            float.Parse(sArray[11]));
+            float.Parse(sArray[0]),
+            float.Parse(sArray[1]),
+            float.Parse(sArray[2]));
 
         return result;
     }
@@ -114,6 +116,44 @@ public class portlistener : MonoBehaviour
             float.Parse(sArray[3]),
             float.Parse(sArray[4]),
             float.Parse(sArray[5]));
+
+        return result;
+    }
+    public static Vector3 StringToVector3_3(string sVector)
+    {
+        // Remove the parentheses
+        if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+        {
+            sVector = sVector.Substring(1, sVector.Length - 2);
+        }
+
+        // split the items
+        string[] sArray = sVector.Split(',');
+
+        // store as a Vector3
+        Vector3 result = new Vector3(
+            float.Parse(sArray[6]),
+            float.Parse(sArray[7]),
+            float.Parse(sArray[8]));
+
+        return result;
+    }
+    public static Vector3 StringToVector3_4(string sVector)
+    {
+        // Remove the parentheses
+        if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+        {
+            sVector = sVector.Substring(1, sVector.Length - 2);
+        }
+
+        // split the items
+        string[] sArray = sVector.Split(',');
+
+        // store as a Vector3
+        Vector3 result = new Vector3(
+            float.Parse(sArray[9]),
+            float.Parse(sArray[10]),
+            float.Parse(sArray[11]));
 
         return result;
     }

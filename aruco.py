@@ -81,7 +81,7 @@ def main():
                 BRcoord4 = bbox[pos_4][0][2]
                 # find midpoints
                 new_coord4_x = (int(TLcoord4[0])+(int(BRcoord4[0])-int(TLcoord4[0]))/2)-coord1_x 
-                new_coord4_y = (int(TLcoord2[1])+(int(BRcoord2[1])-int(TLcoord2[1]))/2)-coord1_y
+                new_coord4_y = (int(TLcoord4[1])+(int(BRcoord4[1])-int(TLcoord4[1]))/2)-coord1_y
                 position4 = [new_coord4_x,-new_coord4_y,0]
                 posString4 = ','.join(map(str,position4))
 

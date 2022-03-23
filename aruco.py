@@ -10,7 +10,7 @@ import math
 
 def main():
 
-    host, port = "127.0.0.1", 25001
+    host, port = "127.0.0.1", 25002
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host,port))
     
@@ -46,6 +46,7 @@ def main():
             # get coordinates of top left and bottom right of 1 and 2 
             TLcoord1 = bbox[pos_1][0][0]
             BRcoord1 = bbox[pos_1][0][2]
+            size1 = str(int(abs(TLcoord1[0]-BRcoord1[0])))+','+str(int(abs(TLcoord1[0]-BRcoord1[0])))+',0'
             TLcoord2 = bbox[pos_2][0][0]
             BRcoord2 = bbox[pos_2][0][2]
      
@@ -72,6 +73,9 @@ def main():
                 new_coord3_y = (int(TLcoord3[1])+(int(BRcoord3[1])-int(TLcoord3[1]))/2)-coord1_y
                 position3 = [new_coord3_x,-new_coord3_y,0]
                 posString3 = ','.join(map(str,position3))
+            else:
+                posString3 = '0,0,0'
+
                 
 
 
@@ -84,7 +88,20 @@ def main():
                 new_coord4_y = (int(TLcoord4[1])+(int(BRcoord4[1])-int(TLcoord4[1]))/2)-coord1_y
                 position4 = [new_coord4_x,-new_coord4_y,0]
                 posString4 = ','.join(map(str,position4))
+            else:
+                posString4 = '0,0,0'
 
+            if [5] in ids:
+                pos_5 = ids_formatted.index(5)
+                TLcoord5 = bbox[pos_5][0][0]
+                BRcoord5 = bbox[pos_5][0][2]
+                # find midpoints
+                new_coord5_x = (int(TLcoord5[0])+(int(BRcoord5[0])-int(TLcoord5[0]))/2)-coord1_x 
+                new_coord5_y = (int(TLcoord5[1])+(int(BRcoord5[1])-int(TLcoord5[1]))/2)-coord1_y
+                position5 = [new_coord5_x,-new_coord5_y,0]
+                posString5 = ','.join(map(str,position5))
+            else:
+                posString5 = '0,0,0'
 
             # use 3 and 4 to find length
             if [3] and [4] in ids:
@@ -92,10 +109,12 @@ def main():
                 print(length3_4)
                 
             # send data to unity
-            if [1] and [2] and [3] and [4] in ids:
-                posString1234 = posString1 +','+ posString2 + ','+ posString3 + ','+ posString4
-                sock.sendall(posString1234.encode("UTF-8"))
-                print(posString1234)
+
+
+            if [1] and [2] in ids:
+                posStringTotal = posString1 +','+ posString2 + ','+ posString3 + ','+ posString4+','+ posString5+','+size1
+                sock.sendall(posStringTotal.encode("UTF-8"))
+                print(posStringTotal)
 
 
 

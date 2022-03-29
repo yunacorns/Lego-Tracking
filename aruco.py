@@ -4,7 +4,9 @@ import numpy as np
 import os
 import socket
 import math
-
+import time
+from glob import glob
+import matplotlib.pyplot as plt
  
 
 
@@ -16,6 +18,7 @@ def main():
     
 
     cap= cv2.VideoCapture(0)
+    time.sleep(2)
     cap.set(3,640)
     cap.set(4,480)
 
@@ -30,7 +33,7 @@ def main():
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
 
 
-        # calibration using aruco marker 1 and 2 
+        # cropping using aruco marker 1 and 2 
         if ids is not None:
             length_ids = len(ids)
             aruco.drawDetectedMarkers(frame,bbox)
@@ -46,7 +49,6 @@ def main():
             # get coordinates of top left and bottom right of 1 and 2 
             TLcoord1 = bbox[pos_1][0][0]
             BRcoord1 = bbox[pos_1][0][2]
-            size1 = str(int(abs(TLcoord1[0]-BRcoord1[0])))+','+str(int(abs(TLcoord1[0]-BRcoord1[0])))+',0'
             TLcoord2 = bbox[pos_2][0][0]
             BRcoord2 = bbox[pos_2][0][2]
      
@@ -56,75 +58,110 @@ def main():
             coord2_x = int(TLcoord2[0])+(int(BRcoord2[0])-int(TLcoord2[0]))/2
             coord2_y = int(TLcoord2[1])+(int(BRcoord2[1])-int(TLcoord2[1]))/2
             # minus in front of y coords bc webcam origin flipped in x axis compared to unity origin
-            position1 = [coord1_x-coord1_x,-(coord1_y-coord1_y),0]
-            position2 = [coord2_x-coord1_x,-(coord2_y-coord1_y),0]
+            # change these to 950 and 590 stuff 
+
+            # show cropped image
+            new_frame = frame[int(coord1_y):int(coord2_y),int(coord1_x):int(coord2_x)]
+            cv2.imshow('calibrated',new_frame)
+
+            # calibration
+            width, height = 950,590
+            pts1 = np.float32([[coord1_x,coord1_y],[coord2_x,coord1_y],[coord2_x,coord2_y],[coord1_x,coord2_y]])
+            pts2 = np.float32([[0,0],[width,0],[width,height],[0,height]])
+            M = cv2.getPerspectiveTransform(pts1,pts2)
+            dst = cv2.warpPerspective(frame,M,(width,height))
+            cv2.imshow('warped',dst)
+            # positions 1 and 2 
+            position1 = [0,0,0]
+            position2 = [width,-height,0]
             posString1 = ','.join(map(str,position1))
             posString2 = ','.join(map(str,position2))
+            
+
+       
+            bbox_c, ids_c, rejected_c = aruco.detectMarkers(dst,arucoDict, parameters=arucoParam)
+            if ids_c is not None:
+                length_ids_c = len(ids_c)
+                ids_formatted_c = []
+                for i in range(length_ids_c):
+                    ids_formatted_c.append(ids_c[i][0])
 
 
             
             # aruco markers 3 and 4 for the joint coordinates
-            if [3] in ids:
-                pos_3 = ids_formatted.index(3)
-                TLcoord3 = bbox[pos_3][0][0]
-                BRcoord3 = bbox[pos_3][0][2]
-                # find midpoints
-                new_coord3_x = (int(TLcoord3[0])+(int(BRcoord3[0])-int(TLcoord3[0]))/2)-coord1_x
-                new_coord3_y = (int(TLcoord3[1])+(int(BRcoord3[1])-int(TLcoord3[1]))/2)-coord1_y
-                position3 = [new_coord3_x,-new_coord3_y,0]
-                posString3 = ','.join(map(str,position3))
-            else:
-                posString3 = '0,0,0'
+                if [3] in ids_c:
+                    pos_3 = ids_formatted_c.index(3)
+                    TLcoord3 = bbox_c[pos_3][0][0]
+                    BRcoord3 = bbox_c[pos_3][0][2]
+                    size3 = str(int(abs(TLcoord3[0]-BRcoord3[0])))+','+str(int(abs(TLcoord3[0]-BRcoord3[0])))+',0'
+                    # find midpoints
+                    new_coord3_x = (int(TLcoord3[0])+(int(BRcoord3[0])-int(TLcoord3[0]))/2)
+                    new_coord3_y = (int(TLcoord3[1])+(int(BRcoord3[1])-int(TLcoord3[1]))/2)
+                    position3 = [new_coord3_x,-new_coord3_y,0]
+                    posString3 = ','.join(map(str,position3))
+                else:
+                    posString3 = '0,0,0'
+                    size3 = 20
 
                 
 
 
-            if [4] in ids:
-                pos_4 = ids_formatted.index(4)
-                TLcoord4 = bbox[pos_4][0][0]
-                BRcoord4 = bbox[pos_4][0][2]
-                # find midpoints
-                new_coord4_x = (int(TLcoord4[0])+(int(BRcoord4[0])-int(TLcoord4[0]))/2)-coord1_x 
-                new_coord4_y = (int(TLcoord4[1])+(int(BRcoord4[1])-int(TLcoord4[1]))/2)-coord1_y
-                position4 = [new_coord4_x,-new_coord4_y,0]
-                posString4 = ','.join(map(str,position4))
-            else:
-                posString4 = '0,0,0'
+                if [4] in ids_c:
+                    pos_4 = ids_formatted_c.index(4)
+                    TLcoord4 = bbox_c[pos_4][0][0]
+                    BRcoord4 = bbox_c[pos_4][0][2]
+                    # find midpoints
+                    new_coord4_x = (int(TLcoord4[0])+(int(BRcoord4[0])-int(TLcoord4[0]))/2) 
+                    new_coord4_y = (int(TLcoord4[1])+(int(BRcoord4[1])-int(TLcoord4[1]))/2)
+                    position4 = [new_coord4_x,-new_coord4_y,0]
+                    posString4 = ','.join(map(str,position4))
+                else:
+                    posString4 = '0,0,0'
 
-            if [5] in ids:
-                pos_5 = ids_formatted.index(5)
-                TLcoord5 = bbox[pos_5][0][0]
-                BRcoord5 = bbox[pos_5][0][2]
-                # find midpoints
-                new_coord5_x = (int(TLcoord5[0])+(int(BRcoord5[0])-int(TLcoord5[0]))/2)-coord1_x 
-                new_coord5_y = (int(TLcoord5[1])+(int(BRcoord5[1])-int(TLcoord5[1]))/2)-coord1_y
-                position5 = [new_coord5_x,-new_coord5_y,0]
-                posString5 = ','.join(map(str,position5))
-            else:
-                posString5 = '0,0,0'
+                if [5] in ids_c:
+                    pos_5 = ids_formatted_c.index(5)
+                    TLcoord5 = bbox_c[pos_5][0][0]
+                    BRcoord5 = bbox_c[pos_5][0][2]
+                    # find midpoints
+                    new_coord5_x = (int(TLcoord5[0])+(int(BRcoord5[0])-int(TLcoord5[0]))/2) 
+                    new_coord5_y = (int(TLcoord5[1])+(int(BRcoord5[1])-int(TLcoord5[1]))/2)
+                    position5 = [new_coord5_x,-new_coord5_y,0]
+                    posString5 = ','.join(map(str,position5))
+                else:
+                    posString5 = '0,0,0'
 
             # use 3 and 4 to find length
-            if [3] and [4] in ids:
-                length3_4 = math.sqrt(math.pow(new_coord4_x-new_coord3_x,2)+math.pow(new_coord4_y-new_coord3_y,2))
-                print(length3_4)
+            # if [3] and [4] in ids:
+            #     length3_4 = math.sqrt(math.pow(new_coord4_x-new_coord3_x,2)+math.pow(new_coord4_y-new_coord3_y,2))
+            #     print(length3_4)
                 
             # send data to unity
 
 
-            if [1] and [2] in ids:
-                posStringTotal = posString1 +','+ posString2 + ','+ posString3 + ','+ posString4+','+ posString5+','+size1
-                sock.sendall(posStringTotal.encode("UTF-8"))
-                print(posStringTotal)
+                if [1] and [2] in ids:
+                    posStringTotal = posString1 +','+ posString2 + ','+ posString3 + ','+ posString4+','+ posString5+   ','+size3
+                    sock.sendall(posStringTotal.encode("UTF-8"))
+                    print(posStringTotal)
 
 
+            # homography test
+            # source_corners = np.array([(coord1_x,coord1_y),(coord2_x,coord1_y),(coord2_x,coord2_y),(coord2_x,coord2_y)])
+            # width, height = 95,59
+            # scale = 4
+            # target_corners = np.array([(0, 0), (width*scale, 0), (width*scale, height*scale), (0, height*scale)])
+            # # Get matrix H that maps source_corners to target_corners
+            # H, _ = cv2.findHomography(source_corners, target_corners, params=None)
 
+            # # Apply matrix H to source image.
+            # transformed_image = cv2.warpPerspective(
+            # frame, H, (frame.shape[1], frame.shape[0]))
+            # cv2.imshow('transformed image',transformed_image)
+            
         
 
             #cv2.circle(frame,(coord1_x,coord1_y),7,(255,255,255),-1)
 
 
-            new_frame = frame[int(coord1_y):int(coord2_y),int(coord1_x):int(coord2_x)]
-            cv2.imshow('calibrated',new_frame)
 
 
         

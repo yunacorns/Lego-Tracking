@@ -5,14 +5,14 @@ import os
 import socket
 import math
 import time
-from glob import glob
-import matplotlib.pyplot as plt
+
+
  
 
 
 def main():
 
-    host, port = "127.0.0.1", 25002
+    host, port = "127.0.0.1", 25001
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host,port))
     
@@ -49,7 +49,8 @@ def main():
             # get coordinates of top left and bottom right of 1 and 2 
             TLcoord1 = bbox[pos_1][0][0]
             BRcoord1 = bbox[pos_1][0][2]
-            size1 = str(int(abs(TLcoord1[0]-BRcoord1[0])))+','+str(int(abs(TLcoord1[0]-BRcoord1[0])))+',0'
+            size1 = '50,50,0'
+            # size1 = str(int(abs(TLcoord1[0]-BRcoord1[0])))+','+str(int(abs(TLcoord1[0]-BRcoord1[0])))+',0'
             TLcoord2 = bbox[pos_2][0][0]
             BRcoord2 = bbox[pos_2][0][2]
      
@@ -95,12 +96,19 @@ def main():
             # aruco markers 3 and 4 for the joint coordinates
                 if [3] in ids_c:
                     pos_3 = ids_formatted_c.index(3)
-                    TLcoord3 = bbox_c[pos_3][0][0]
-                    BRcoord3 = bbox_c[pos_3][0][2]
+                    TL3 = bbox_c[pos_3][0][0]
+                    TR3 = bbox_c[pos_3][0][1] 
+                    BR3 = bbox_c[pos_3][0][2]
+                    BL3 = bbox_c[pos_3][0][3]
+
                     # find midpoints
-                    new_coord3_x = (int(TLcoord3[0])+(int(BRcoord3[0])-int(TLcoord3[0]))/2)
-                    new_coord3_y = (int(TLcoord3[1])+(int(BRcoord3[1])-int(TLcoord3[1]))/2)
-                    position3 = [new_coord3_x,-new_coord3_y,0]
+                    c_3 = np.array([(TL3[0],TL3[1]),(TR3[0],TR3[1]),(BR3[0],BR3[1]),(BL3[0],BL3[1])])
+                    M = cv2.moments(c_3)
+                    cX_3 = int(M["m10"] / M["m00"])
+                    cY_3= int(M["m01"] / M["m00"])
+                    # new_coord3_x = (int(TLcoord3[0])+(int(BRcoord3[0])-int(TLcoord3[0]))/2)
+                    # new_coord3_y = (int(TLcoord3[1])+(int(BRcoord3[1])-int(TLcoord3[1]))/2)
+                    position3 = [cX_3,-cY_3,0]
                     posString3 = ','.join(map(str,position3))
                 else:
                     posString3 = '0,0,0'
@@ -111,24 +119,34 @@ def main():
 
                 if [4] in ids_c:
                     pos_4 = ids_formatted_c.index(4)
-                    TLcoord4 = bbox_c[pos_4][0][0]
-                    BRcoord4 = bbox_c[pos_4][0][2]
+                    TL4 = bbox_c[pos_4][0][0]
+                    TR4 = bbox_c[pos_4][0][1] 
+                    BR4 = bbox_c[pos_4][0][2]
+                    BL4 = bbox_c[pos_4][0][3]
+
                     # find midpoints
-                    new_coord4_x = (int(TLcoord4[0])+(int(BRcoord4[0])-int(TLcoord4[0]))/2) 
-                    new_coord4_y = (int(TLcoord4[1])+(int(BRcoord4[1])-int(TLcoord4[1]))/2)
-                    position4 = [new_coord4_x,-new_coord4_y,0]
+                    c_4 = np.array([(TL4[0],TL4[1]),(TR4[0],TR4[1]),(BR4[0],BR4[1]),(BL4[0],BL4[1])])
+                    M = cv2.moments(c_4)
+                    cX_4 = int(M["m10"] / M["m00"])
+                    cY_4= int(M["m01"] / M["m00"])
+                    position4 = [cX_4,-cY_4,0]
                     posString4 = ','.join(map(str,position4))
                 else:
                     posString4 = '0,0,0'
 
                 if [5] in ids_c:
                     pos_5 = ids_formatted_c.index(5)
-                    TLcoord5 = bbox_c[pos_5][0][0]
-                    BRcoord5 = bbox_c[pos_5][0][2]
+                    TL5 = bbox_c[pos_5][0][0]
+                    TR5 = bbox_c[pos_5][0][1] 
+                    BR5 = bbox_c[pos_5][0][2]
+                    BL5 = bbox_c[pos_5][0][3]
+
                     # find midpoints
-                    new_coord5_x = (int(TLcoord5[0])+(int(BRcoord5[0])-int(TLcoord5[0]))/2) 
-                    new_coord5_y = (int(TLcoord5[1])+(int(BRcoord5[1])-int(TLcoord5[1]))/2)
-                    position5 = [new_coord5_x,-new_coord5_y,0]
+                    c_5 = np.array([(TL5[0],TL5[1]),(TR5[0],TR5[1]),(BR5[0],BR5[1]),(BL5[0],BL5[1])])
+                    M = cv2.moments(c_5)
+                    cX_5 = int(M["m10"] / M["m00"])
+                    cY_5= int(M["m01"] / M["m00"])
+                    position5 = [cX_5,-cY_5,0]
                     posString5 = ','.join(map(str,position5))
                 else:
                     posString5 = '0,0,0'

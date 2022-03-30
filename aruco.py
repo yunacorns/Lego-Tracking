@@ -17,7 +17,7 @@ def main():
     sock.connect((host,port))
     
 
-    cap= cv2.VideoCapture(0)
+    cap= cv2.VideoCapture(1)
     time.sleep(2)
     cap.set(3,640)
     cap.set(4,480)
@@ -36,7 +36,7 @@ def main():
         # cropping using aruco marker 1 and 2 
         if ids is not None:
             length_ids = len(ids)
-            aruco.drawDetectedMarkers(frame,bbox)
+            # aruco.drawDetectedMarkers(frame,bbox)
         if ids is not None and [1] in ids and [2] in ids:
         
             ids_formatted = []
@@ -49,6 +49,7 @@ def main():
             # get coordinates of top left and bottom right of 1 and 2 
             TLcoord1 = bbox[pos_1][0][0]
             BRcoord1 = bbox[pos_1][0][2]
+            size1 = str(int(abs(TLcoord1[0]-BRcoord1[0])))+','+str(int(abs(TLcoord1[0]-BRcoord1[0])))+',0'
             TLcoord2 = bbox[pos_2][0][0]
             BRcoord2 = bbox[pos_2][0][2]
      
@@ -70,6 +71,8 @@ def main():
             pts2 = np.float32([[0,0],[width,0],[width,height],[0,height]])
             M = cv2.getPerspectiveTransform(pts1,pts2)
             dst = cv2.warpPerspective(frame,M,(width,height))
+            bbox_c, ids_c, rejected_c = aruco.detectMarkers(dst,arucoDict, parameters=arucoParam)
+            aruco.drawDetectedMarkers(dst,bbox_c)
             cv2.imshow('warped',dst)
             # positions 1 and 2 
             position1 = [0,0,0]
@@ -79,12 +82,13 @@ def main():
             
 
        
-            bbox_c, ids_c, rejected_c = aruco.detectMarkers(dst,arucoDict, parameters=arucoParam)
+            
             if ids_c is not None:
                 length_ids_c = len(ids_c)
                 ids_formatted_c = []
                 for i in range(length_ids_c):
                     ids_formatted_c.append(ids_c[i][0])
+                print(ids_formatted_c)
 
 
             
@@ -93,7 +97,6 @@ def main():
                     pos_3 = ids_formatted_c.index(3)
                     TLcoord3 = bbox_c[pos_3][0][0]
                     BRcoord3 = bbox_c[pos_3][0][2]
-                    size3 = str(int(abs(TLcoord3[0]-BRcoord3[0])))+','+str(int(abs(TLcoord3[0]-BRcoord3[0])))+',0'
                     # find midpoints
                     new_coord3_x = (int(TLcoord3[0])+(int(BRcoord3[0])-int(TLcoord3[0]))/2)
                     new_coord3_y = (int(TLcoord3[1])+(int(BRcoord3[1])-int(TLcoord3[1]))/2)
@@ -101,7 +104,7 @@ def main():
                     posString3 = ','.join(map(str,position3))
                 else:
                     posString3 = '0,0,0'
-                    size3 = 20
+                    
 
                 
 
@@ -139,7 +142,7 @@ def main():
 
 
                 if [1] and [2] in ids:
-                    posStringTotal = posString1 +','+ posString2 + ','+ posString3 + ','+ posString4+','+ posString5+   ','+size3
+                    posStringTotal = posString1 +','+ posString2 + ','+ posString3 + ','+ posString4+','+ posString5+','+ size1
                     sock.sendall(posStringTotal.encode("UTF-8"))
                     print(posStringTotal)
 

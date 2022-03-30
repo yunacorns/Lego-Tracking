@@ -47,28 +47,37 @@ def main():
             pos_1 = ids_formatted.index(1)
             pos_2 = ids_formatted.index(2)
             # get coordinates of top left and bottom right of 1 and 2 
-            TLcoord1 = bbox[pos_1][0][0]
-            BRcoord1 = bbox[pos_1][0][2]
+            TL1 = bbox[pos_1][0][0]
+            TR1 = bbox[pos_1][0][1]
+            BR1 = bbox[pos_1][0][2]
+            BL1 = bbox[pos_1][0][3]
             size1 = '50,50,0'
             # size1 = str(int(abs(TLcoord1[0]-BRcoord1[0])))+','+str(int(abs(TLcoord1[0]-BRcoord1[0])))+',0'
-            TLcoord2 = bbox[pos_2][0][0]
-            BRcoord2 = bbox[pos_2][0][2]
+            TL2 = bbox[pos_2][0][0]
+            TR2 = bbox[pos_2][0][1]
+            BR2 = bbox[pos_2][0][2]
+            BL2 = bbox[pos_2][0][3]
      
+            # find midpoint
+            c_1 = np.array([(TL1[0],TL1[1]),(TR1[0],TR1[1]),(BR1[0],BR1[1]),(BL1[0],BL1[1])])
+            M_1 = cv2.moments(c_1)
+            cX_1 = int(M_1["m10"] / M_1["m00"])
+            cY_1= int(M_1["m01"] / M_1["m00"])
+            c_2 = np.array([(TL2[0],TL2[1]),(TR2[0],TR2[1]),(BR2[0],BR2[1]),(BL2[0],BL2[1])])
+            M_2 = cv2.moments(c_2)
+            cX_2 = int(M_2["m10"] / M_2["m00"])
+            cY_2= int(M_2["m01"] / M_2["m00"])
 
-            coord1_x = int(TLcoord1[0])+(int(BRcoord1[0])-int(TLcoord1[0]))/2
-            coord1_y = int(TLcoord1[1])+(int(BRcoord1[1])-int(TLcoord1[1]))/2
-            coord2_x = int(TLcoord2[0])+(int(BRcoord2[0])-int(TLcoord2[0]))/2
-            coord2_y = int(TLcoord2[1])+(int(BRcoord2[1])-int(TLcoord2[1]))/2
             # minus in front of y coords bc webcam origin flipped in x axis compared to unity origin
             # change these to 950 and 590 stuff 
 
             # show cropped image
-            new_frame = frame[int(coord1_y):int(coord2_y),int(coord1_x):int(coord2_x)]
+            new_frame = frame[int(cY_1):int(cY_2),int(cX_1):int(cX_2)]
             cv2.imshow('calibrated',new_frame)
 
             # calibration
             width, height = 950,590
-            pts1 = np.float32([[coord1_x,coord1_y],[coord2_x,coord1_y],[coord2_x,coord2_y],[coord1_x,coord2_y]])
+            pts1 = np.float32([[cX_1,cY_1],[cX_2,cY_1],[cX_2,cY_2],[cX_1,cY_2]])
             pts2 = np.float32([[0,0],[width,0],[width,height],[0,height]])
             M = cv2.getPerspectiveTransform(pts1,pts2)
             dst = cv2.warpPerspective(frame,M,(width,height))
@@ -103,9 +112,9 @@ def main():
 
                     # find midpoints
                     c_3 = np.array([(TL3[0],TL3[1]),(TR3[0],TR3[1]),(BR3[0],BR3[1]),(BL3[0],BL3[1])])
-                    M = cv2.moments(c_3)
-                    cX_3 = int(M["m10"] / M["m00"])
-                    cY_3= int(M["m01"] / M["m00"])
+                    M_3 = cv2.moments(c_3)
+                    cX_3 = int(M_3["m10"] / M_3["m00"])
+                    cY_3= int(M_3["m01"] / M_3["m00"])
                     # new_coord3_x = (int(TLcoord3[0])+(int(BRcoord3[0])-int(TLcoord3[0]))/2)
                     # new_coord3_y = (int(TLcoord3[1])+(int(BRcoord3[1])-int(TLcoord3[1]))/2)
                     position3 = [cX_3,-cY_3,0]
@@ -126,9 +135,9 @@ def main():
 
                     # find midpoints
                     c_4 = np.array([(TL4[0],TL4[1]),(TR4[0],TR4[1]),(BR4[0],BR4[1]),(BL4[0],BL4[1])])
-                    M = cv2.moments(c_4)
-                    cX_4 = int(M["m10"] / M["m00"])
-                    cY_4= int(M["m01"] / M["m00"])
+                    M_4 = cv2.moments(c_4)
+                    cX_4 = int(M_4["m10"] / M_4["m00"])
+                    cY_4= int(M_4["m01"] / M_4["m00"])
                     position4 = [cX_4,-cY_4,0]
                     posString4 = ','.join(map(str,position4))
                 else:
@@ -143,9 +152,9 @@ def main():
 
                     # find midpoints
                     c_5 = np.array([(TL5[0],TL5[1]),(TR5[0],TR5[1]),(BR5[0],BR5[1]),(BL5[0],BL5[1])])
-                    M = cv2.moments(c_5)
-                    cX_5 = int(M["m10"] / M["m00"])
-                    cY_5= int(M["m01"] / M["m00"])
+                    M_5 = cv2.moments(c_5)
+                    cX_5 = int(M_5["m10"] / M_5["m00"])
+                    cY_5= int(M_5["m01"] / M_5["m00"])
                     position5 = [cX_5,-cY_5,0]
                     posString5 = ','.join(map(str,position5))
                 else:

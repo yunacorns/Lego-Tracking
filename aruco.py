@@ -96,7 +96,11 @@ def main():
                         cY= int(M["m01"] / M["m00"])
                         # send coordinates to unity
                         totalPosition.append(cX)
-                        totalPosition.append(cY)
+                        totalPosition.append(-cY)
+                        totalPosition.append(0)
+                    else:
+                        totalPosition.append(0)
+                        totalPosition.append(0)
                         totalPosition.append(0)
                 posString = ','.join(map(str,totalPosition))
                 print(posString)

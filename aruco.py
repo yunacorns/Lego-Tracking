@@ -98,6 +98,9 @@ def main():
                 for i in range(length_ids_c):
                     ids_formatted_c.append(ids_c[i][0])
 
+                
+
+
                 # central aruco markers
                 for i in range(5,7):
                     if [i] in ids_c:
@@ -107,9 +110,11 @@ def main():
                         BR = bbox_c[pos][0][2]
                         BL = bbox_c[pos][0][3]
                         c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
+                        # find centre of aruco marker
                         M = cv2.moments(c)
                         cX = int(M["m10"] / M["m00"])
                         cY= int(M["m01"] / M["m00"])
+                        # send coordinates to unity
                         position = [i,cX,-cY,0]
                         posString = ','.join(map(str,position))
                         print(posString)

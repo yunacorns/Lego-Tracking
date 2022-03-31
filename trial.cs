@@ -73,8 +73,8 @@ public class trial : MonoBehaviour
         {
             //---Using received data---
             
-            receivedPos5 = StringToVector3(dataReceived,"5");
-            receivedPos6 = StringToVector3(dataReceived,"6");
+            receivedPos5 = StringToVector3_5(dataReceived);
+            receivedPos6 = StringToVector3_6(dataReceived);
 
             print("received position one data, and moved the Cube!");
             

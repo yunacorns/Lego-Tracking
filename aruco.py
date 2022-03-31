@@ -31,6 +31,7 @@ def main():
         arucoDict = aruco.Dictionary_get(key)
         arucoParam = aruco.DetectorParameters_create()
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
+        aruco.drawDetectedMarkers(frame,bbox)
 
 
         # cropping using aruco marker 1 and 2 

@@ -42,28 +42,19 @@ def main():
             ids_formatted = []
             for i in range(length_ids):
                 ids_formatted.append(ids[i][0])
-           
 
-            calibCoordsX = []
-            calibCoordsY = []
-            # find midpoint
-            for i in range(1,5):
-                pos = ids_formatted.index(i) 
-                TL = bbox[pos][0][0]
-                TR = bbox[pos][0][1]
-                BR = bbox[pos][0][2]
-                BL = bbox[pos][0][3]
-                c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
-                M = cv2.moments(c)
-                cX = int(M["m10"] / M["m00"])
-                cY= int(M["m01"] / M["m00"])
-                calibCoordsX.append(cX)
-                calibCoordsY.append(cY)
-                
+            # find 1 is top left 2 is top right 3 is bottom left 4 is bottom right
+            pos1 = ids_formatted.index(1) 
+            pos2 = ids_formatted.index(2)
+            pos3 = ids_formatted.index(3)
+            pos4 = ids_formatted.index(4)
+            TL1 = bbox[pos1][0][0]
+            TR2 = bbox[pos2][0][1]
+            BL3 = bbox[pos3][0][3]
+            BR4 = bbox[pos4][0][2]
 
-
-             
-
+            calibCoordsX = [TL1[0],TR2[0],BL3[0],BR4[0]]
+            calibCoordsY = [TL1[1],TR2[1],BL3[1],BR4[1]]
             # minus in front of y coords bc webcam origin flipped in x axis compared to unity origin
             # change these to 950 and 590 stuff 
 
@@ -78,16 +69,6 @@ def main():
             bbox_c, ids_c, rejected_c = aruco.detectMarkers(dst,arucoDict, parameters=arucoParam)
             aruco.drawDetectedMarkers(dst,bbox_c)
             cv2.imshow('warped',dst)
-            # positions 1 and 2 
-            position1 = [0,0,0]
-            position2 = [width,0,0]
-            position3 = [0,height,0]
-            position4 = [width,height,0]
-            # convert to string - change this to a loop later when sending
-            posString1 = ','.join(map(str,position1))
-            posString2 = ','.join(map(str,position2))
-            posString3 = ','.join(map(str,position3))
-            posString4 = ','.join(map(str,position4))
             
 
        

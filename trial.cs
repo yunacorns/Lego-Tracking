@@ -100,7 +100,7 @@ public class trial : MonoBehaviour
         Vector3 result = new Vector3(
             float.Parse(sArray[0]),
             float.Parse(sArray[1]),
-            float.Parse(sArray[12]));
+            float.Parse(sArray[2]));
 
         return result;
     }

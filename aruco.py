@@ -98,9 +98,7 @@ def main():
                 for i in range(length_ids_c):
                     ids_formatted_c.append(ids_c[i][0])
 
-                
-
-
+                totalPosition = []
                 # central aruco markers
                 for i in range(5,7):
                     if [i] in ids_c:
@@ -115,10 +113,12 @@ def main():
                         cX = int(M["m10"] / M["m00"])
                         cY= int(M["m01"] / M["m00"])
                         # send coordinates to unity
-                        position = [i,cX,-cY,0]
-                        posString = ','.join(map(str,position))
-                        print(posString)
-                        sock.sendall(posString.encode("UTF-8"))
+                        totalPosition.append(cX)
+                        totalPosition.append(cY)
+                        totalPosition.append(0)
+                posString = ','.join(map(str,totalPosition))
+                print(posString)
+                sock.sendall(posString.encode("UTF-8"))
                         
         cv2.imshow("result",frame)
         cv2.waitKey(1)

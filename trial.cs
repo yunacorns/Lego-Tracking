@@ -85,34 +85,71 @@ public class trial : MonoBehaviour
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
         }
     }
-
-    
-    public static Vector3 StringToVector3(string sVector, string whichSquare)
+    public static Vector3 StringToVector3_5(string sVector)
     {
         // Remove the parentheses
-
         if (sVector.StartsWith("(") && sVector.EndsWith(")"))
         {
-        sVector = sVector.Substring(1, sVector.Length - 2);
-        }
-        string[] sArray = sVector.Split(',');
-        // string string_i = i.ToString();
-    
-        if(sArray[0]==whichSquare)
-        {
-            Vector3 result = new Vector3(
-            float.Parse(sArray[1]),
-            float.Parse(sArray[2]),
-            float.Parse(sArray[3]));
-            // do append here and make a big array of all positions then call which square
-            return result;
-        }else{
-            Vector3 result = new Vector3(0,0,0);
-            return result;
+            sVector = sVector.Substring(1, sVector.Length - 2);
         }
 
-        
+        // split the items
+        string[] sArray = sVector.Split(',');
+
+        // store as a Vector3
+        Vector3 result = new Vector3(
+            float.Parse(sArray[0]),
+            float.Parse(sArray[1]),
+            float.Parse(sArray[12]));
+
+        return result;
     }
+    public static Vector3 StringToVector3_6(string sVector)
+    {
+        // Remove the parentheses
+        if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+        {
+            sVector = sVector.Substring(1, sVector.Length - 2);
+        }
+
+        // split the items
+        string[] sArray = sVector.Split(',');
+
+        // store as a Vector3
+        Vector3 result = new Vector3(
+            float.Parse(sArray[3]),
+            float.Parse(sArray[4]),
+            float.Parse(sArray[5]));
+
+        return result;
+    }
+
+
+    
+    // public static Vector3 StringToVector3(string sVector, string whichSquare)
+    // {
+    //     // Remove the parentheses
+    //     if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+    //     {
+    //     sVector = sVector.Substring(1, sVector.Length - 2);
+    //     }
+    //     string[] sArray = sVector.Split(',');
+    
+    //     if(sArray[0]==whichSquare)
+    //     {
+    //         Vector3 result = new Vector3(
+    //         float.Parse(sArray[1]),
+    //         float.Parse(sArray[2]),
+    //         float.Parse(sArray[3]));
+    //         // do append here and make a big array of all positions then call which square
+    //         return result;
+    //     }else{
+    //         Vector3 result = new Vector3(0,0,0);
+    //         return result;
+    //     }
+
+        
+    // }
     
 
 

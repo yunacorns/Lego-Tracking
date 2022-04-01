@@ -420,7 +420,7 @@ public class trial : MonoBehaviour
             Line.SetPositions(LinePosition1);
         }
 
-        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe))
+        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)||joint1.Equals(outofframe)||joint2.Equals(outofframe))
         {
             Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
             PistonLine.SetPositions(LinePosition2);

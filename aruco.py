@@ -101,13 +101,16 @@ def main():
                         totalPosition.append(0)
                     else:
                         totalPosition.append(i)
-                        totalPosition.append(0)
+                        totalPosition.append(-100)
                         totalPosition.append(0)
                         totalPosition.append(0)
                         # position = [i,cX,-cY,0]
                         # posString = ','.join(map(str,position))
                         # print(posString)
-                        # sock.sendall(posString.encode("UTF-8"))
+                        # sock.sendall(posString.encode("UTF-8")
+
+                # play button
+
                 totalPosString = ','.join(map(str,totalPosition))
                 print(totalPosString)
                 sock.sendall(totalPosString.encode("UTF-8"))

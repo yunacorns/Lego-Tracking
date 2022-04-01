@@ -25,9 +25,9 @@ public class trial : MonoBehaviour
     IPAddress localAdd;
     TcpListener listener;
     TcpClient client;
-    Vector3 receivedPos5 = Vector3.zero;
-    Vector3 receivedPos6 = Vector3.zero;
-    Vector3 receivedPos7 = Vector3.zero;
+    Vector3 receivedPos5 = new Vector3(-100,0,0);
+    Vector3 receivedPos6 = new Vector3(-100,0,0);
+    Vector3 receivedPos7 = new Vector3(-100,0,0);
     Vector3 size = Vector3.zero;
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
@@ -409,7 +409,7 @@ public class trial : MonoBehaviour
         Vector3 PistonOneEndPos = PistonEnd(joint1, joint2, PistonFractionOne);
         //Vector[] BoomOnePos = Calculations(receivedPos3, receivedPos4, receivedPos5, PistonFractionOne);
         float PistonMax =  Calculations(joint1, joint2, piston1, PistonFractionOne);
-        if(!joint1.Equals(zeros)&&!joint2.Equals(zeros))
+        if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
         {
             Vector3[] LinePosition1 = {joint1,joint2};
             Line.SetPositions(LinePosition1);
@@ -420,7 +420,7 @@ public class trial : MonoBehaviour
             Line.SetPositions(LinePosition1);
         }
 
-        if(!piston1.Equals(zeros)&&!PistonOneEndPos.Equals(zeros))
+        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe))
         {
             Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
             PistonLine.SetPositions(LinePosition2);

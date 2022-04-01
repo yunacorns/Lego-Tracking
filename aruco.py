@@ -31,7 +31,7 @@ def main():
         arucoDict = aruco.Dictionary_get(key)
         arucoParam = aruco.DetectorParameters_create()
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
-        aruco.drawDetectedMarkers(frame,bbox)
+        # aruco.drawDetectedMarkers(frame,bbox)
 
 
         # cropping using aruco marker 1 and 2 
@@ -82,7 +82,7 @@ def main():
 
                 totalPosition = []
                 # central aruco markers
-                for i in range(5,7):
+                for i in range(5,8):
                     if [i] in ids_c:
                         pos = ids_formatted_c.index(i)
                         TL = bbox_c[pos][0][0]
@@ -95,16 +95,24 @@ def main():
                         cX = int(M["m10"] / M["m00"])
                         cY= int(M["m01"] / M["m00"])
                         # send coordinates to unity
+                        totalPosition.append(i)
                         totalPosition.append(cX)
                         totalPosition.append(-cY)
                         totalPosition.append(0)
                     else:
+                        totalPosition.append(i)
                         totalPosition.append(0)
                         totalPosition.append(0)
                         totalPosition.append(0)
-                posString = ','.join(map(str,totalPosition))
-                print(posString)
-                sock.sendall(posString.encode("UTF-8"))
+                        # position = [i,cX,-cY,0]
+                        # posString = ','.join(map(str,position))
+                        # print(posString)
+                        # sock.sendall(posString.encode("UTF-8"))
+                totalPosString = ','.join(map(str,totalPosition))
+                print(totalPosString)
+                sock.sendall(totalPosString.encode("UTF-8"))
+
+
                         
         cv2.imshow("result",frame)
         cv2.waitKey(1)

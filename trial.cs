@@ -387,14 +387,18 @@ public class trial : MonoBehaviour
             return PistonEnd;
 
     }    
-    // a function to make the line renderer to the end of the circle
-    // public Vector3 SetCircleEnd(Vector3 CircleEnd)
+    //a function to make the line renderer to the end of the circle
+    // public Vector3 SetCircleEnd(Vector3 positionone, Vector3 positiontwo)
     // {
-    //         int radius = 40;
-    //         Vector3 result = new Vector3(
-    //         CircleEnd[0]-radius),
-    //         float.Parse(sArray[index+2]),
-    //         float.Parse(sArray[index+3]));
+    //         float radius = 40f;
+    //         float length = (float)(Math.Sqrt(Math.Pow(positionone[0]-positiontwo[0],2)+Math.Pow(positionone[1]-positiontwo[1],2)));
+    //         float gradient = (positiontwo[1]-positionone[1])/(positiontwo[0]-positionone[0]);
+    //         float frac = radius/length;
+    //         float xnew = positionone[0]+frac*gradient;
+    //         float ynew = positionone[1]+frac*gradient;
+
+
+    //         Vector3 result = new Vector3(xnew,ynew, 0);
             
     //         return result;
     // }    
@@ -404,6 +408,7 @@ public class trial : MonoBehaviour
         float PistonFractionOne = 0.5f;
 
         Vector3 joint1 = receivedPos5;
+        //Vector3 circlejoint1 = SetCircleEnd(receivedPos5,receivedPos6);
         Vector3 joint2 = receivedPos6;
         Vector3 piston1 = receivedPos7;
         Vector3 PistonOneEndPos = PistonEnd(joint1, joint2, PistonFractionOne);
@@ -420,7 +425,7 @@ public class trial : MonoBehaviour
             Line.SetPositions(LinePosition1);
         }
 
-        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)||joint1.Equals(outofframe)||joint2.Equals(outofframe))
+        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)&&!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
         {
             Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
             PistonLine.SetPositions(LinePosition2);

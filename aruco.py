@@ -33,7 +33,7 @@ def main():
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
         # aruco.drawDetectedMarkers(frame,bbox)
 
-
+        
         # cropping using aruco marker 1 and 2 
         if ids is not None:
             length_ids = len(ids)
@@ -70,7 +70,15 @@ def main():
             bbox_c, ids_c, rejected_c = aruco.detectMarkers(dst,arucoDict, parameters=arucoParam)
             aruco.drawDetectedMarkers(dst,bbox_c)
             cv2.imshow('warped',dst)
-            
+
+            # menu parameters
+            # find middle section
+            topOfMenu = int(height/4)
+            bottomOfMenu = int((3*height)/4)
+            numberOfSections = 3
+            widthOfEachSection = (bottomOfMenu-topOfMenu)/numberOfSections
+            firstSec = int(topOfMenu + widthOfEachSection)
+            secondSec = int(topOfMenu + 2*widthOfEachSection)
 
        
             
@@ -110,6 +118,39 @@ def main():
                         # sock.sendall(posString.encode("UTF-8")
 
                 # play button
+                if [24] in ids_c:
+                    pos = ids_formatted_c.index(24)
+                    TL = bbox_c[pos][0][0]
+                    TR = bbox_c[pos][0][1] 
+                    BR = bbox_c[pos][0][2]
+                    BL = bbox_c[pos][0][3]
+                    c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
+                    # find centre of aruco marker
+                    M = cv2.moments(c)
+                    cX = int(M["m10"] / M["m00"])
+                    cY= int(M["m01"] / M["m00"])
+                    # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
+                    totalPosition.append(24)
+                    if cX>=825 and topOfMenu<cY<firstSec:
+                        totalPosition.append(0)
+                        totalPosition.append("edit")
+                    elif cX>=835 and firstSec<cY<secondSec:
+                        totalPosition.append(1)
+                        totalPosition.append("animate")
+                    elif cX>=835 and secondSec<cY<bottomOfMenu:
+                        totalPosition.append(2)
+                        totalPosition.append("data")
+                    else:
+                        totalPosition.append(10)
+                        totalPosition.append("none")
+                else:
+                    totalPosition.append(24)
+                    totalPosition.append(10)
+                    totalPosition.append("none")
+                    # make sure to send -cY
+                    
+
+
 
                 totalPosString = ','.join(map(str,totalPosition))
                 print(totalPosString)

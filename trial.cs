@@ -484,8 +484,8 @@ public class trial : MonoBehaviour
         }
         else if (MenuData[0]==2){
         //data
-        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
-        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;   
         } 
         else{

@@ -147,14 +147,14 @@ def main():
                     totalPosition.append(24)
                     totalPosition.append(10)
                     totalPosition.append("none")
-                    # make sure to send -cY
                     
-
-
-
-                totalPosString = ','.join(map(str,totalPosition))
-                print(totalPosString)
-                sock.sendall(totalPosString.encode("UTF-8"))
+                # only send position when on the edit menu
+                pos24 = totalPosition.index(24)
+                if totalPosition[pos24+1]==0:
+                    totalPosString = ','.join(map(str,totalPosition))
+                    print(totalPosString)
+                    sock.sendall(totalPosString.encode("UTF-8"))
+                
 
 
                         

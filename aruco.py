@@ -151,15 +151,15 @@ def main():
                 # only send position when on the edit menu
                 menuandtotal = totalPosition+menuPosition
                 pos24 = menuandtotal.index(24)
-                if totalPosition[pos24+1]==0:
+                if menuandtotal[pos24+1]==0:
                     totalPosString = ','.join(map(str,menuandtotal))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
-                elif totalPosition[pos24+1]==1:
+                elif menuandtotal[pos24+1]==1:
                     totalPosString = ','.join(map(str,menuPosition))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
-                elif totalPosition[pos24+1]==2:
+                elif menuandtotal[pos24+1]==2:
                     totalPosString = ','.join(map(str,menuPosition))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))

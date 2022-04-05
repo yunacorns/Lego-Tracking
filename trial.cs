@@ -13,10 +13,12 @@ using System;
 public class trial : MonoBehaviour
 {
     public GameObject[] squareArray;
+    public GameObject[] menuArray;
     public GameObject PistonOneEnd;
     public LineRenderer Line;
     public LineRenderer PistonLine;
     public LineRenderer BoomOneCurve;
+   
 
     
     Thread mThread;
@@ -31,6 +33,8 @@ public class trial : MonoBehaviour
     Vector3 size = Vector3.zero;
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
+    Vector3 MenuData = new Vector3(10,0,0);
+    
 
 
     public bool running; //nothing
@@ -79,6 +83,7 @@ public class trial : MonoBehaviour
             receivedPos5 = StringToVector3(dataReceived,"5");
             receivedPos6 = StringToVector3(dataReceived,"6");
             receivedPos7 = StringToVector3(dataReceived,"7");
+            MenuData = StringMenu(dataReceived);
 
             print("received position one data, and moved the Cube!");
             
@@ -111,6 +116,23 @@ public class trial : MonoBehaviour
 
         return result;
     }
+    public static Vector3 StringMenu(string sVector)
+    {
+        // Remove the parentheses
+        if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+        {
+            sVector = sVector.Substring(1, sVector.Length - 2);
+        }
+
+        // split the items
+        string[] sArray = sVector.Split(',');
+        //get index of 24
+        int index = Array.IndexOf(sArray, "24"); 
+        Vector3 result = new Vector3(
+            float.Parse(sArray[index+1]),0,0);
+        return result;
+    }
+   
     // public static string[] GetCorrectData(string sVector){
     //     if (sVector.StartsWith("(") && sVector.EndsWith(")"))
     //     {
@@ -408,11 +430,9 @@ public class trial : MonoBehaviour
         float PistonFractionOne = 0.5f;
 
         Vector3 joint1 = receivedPos5;
-        //Vector3 circlejoint1 = SetCircleEnd(receivedPos5,receivedPos6);
         Vector3 joint2 = receivedPos6;
         Vector3 piston1 = receivedPos7;
         Vector3 PistonOneEndPos = PistonEnd(joint1, joint2, PistonFractionOne);
-        //Vector[] BoomOnePos = Calculations(receivedPos3, receivedPos4, receivedPos5, PistonFractionOne);
         float PistonMax =  Calculations(joint1, joint2, piston1, PistonFractionOne);
         if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
         {
@@ -436,6 +456,7 @@ public class trial : MonoBehaviour
             PistonLine.SetPositions(LinePosition2);
         }
 
+        
         // for(int i=0; i<BoomOnePos.Length; i++)
         // {
         //     BoomOneCurve.SetPosition(i, BoomOnePos[i]);
@@ -448,6 +469,29 @@ public class trial : MonoBehaviour
         squareArray[0].transform.position = receivedPos5;
         squareArray[1].transform.position = receivedPos6;
         squareArray[2].transform.position = receivedPos7;
+
+        if(MenuData[0]==0){
+        //edit
+        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        }
+        else if(MenuData[0]==1){
+        //animate
+        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        }
+        else if (MenuData[0]==2){
+        //data
+        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;   
+        } 
+        else{
+
+        }
+
         // PistonOneEnd.transform.position = PistonOneEndPos;
 
 

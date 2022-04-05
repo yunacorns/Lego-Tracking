@@ -116,7 +116,7 @@ def main():
                         # posString = ','.join(map(str,position))
                         # print(posString)
                         # sock.sendall(posString.encode("UTF-8")
-
+                menuPosition = []
                 # play button
                 if [24] in ids_c:
                     pos = ids_formatted_c.index(24)
@@ -132,28 +132,38 @@ def main():
                     # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
                     totalPosition.append(24)
                     if cX>=825 and topOfMenu<cY<firstSec:
-                        totalPosition.append(0)
-                        totalPosition.append("edit")
+                        menuPosition.append(0)
+                        menuPosition.append("edit")
                     elif cX>=835 and firstSec<cY<secondSec:
-                        totalPosition.append(1)
-                        totalPosition.append("animate")
+                        menuPosition.append(1)
+                        menuPosition.append("animate")
                     elif cX>=835 and secondSec<cY<bottomOfMenu:
-                        totalPosition.append(2)
-                        totalPosition.append("data")
+                        menuPosition.append(2)
+                        menuPosition.append("data")
                     else:
-                        totalPosition.append(10)
-                        totalPosition.append("none")
+                        menuPosition.append(10)
+                        menuPosition.append("none")
                 else:
-                    totalPosition.append(24)
-                    totalPosition.append(10)
-                    totalPosition.append("none")
+                    menuPosition.append(24)
+                    menuPosition.append(10)
+                    menuPosition.append("none")
                     
                 # only send position when on the edit menu
-                pos24 = totalPosition.index(24)
+                menuandtotal = totalPosition+menuPosition
+                pos24 = menuandtotal.index(24)
                 if totalPosition[pos24+1]==0:
-                    totalPosString = ','.join(map(str,totalPosition))
+                    totalPosString = ','.join(map(str,menuandtotal))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
+                elif totalPosition[pos24+1]==1:
+                    totalPosString = ','.join(map(str,menuPosition))
+                    print(totalPosString)
+                    sock.sendall(totalPosString.encode("UTF-8"))
+                elif totalPosition[pos24+1]==2:
+                    totalPosString = ','.join(map(str,menuPosition))
+                    print(totalPosString)
+                    sock.sendall(totalPosString.encode("UTF-8"))
+                
                 
 
 

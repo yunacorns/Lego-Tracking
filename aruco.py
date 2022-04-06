@@ -130,7 +130,7 @@ def main():
                     cX = int(M["m10"] / M["m00"])
                     cY= int(M["m01"] / M["m00"])
                     # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
-                    totalPosition.append(24)
+                    menuPosition.append(24)
                     if cX>=825 and topOfMenu<cY<firstSec:
                         menuPosition.append(0)
                         menuPosition.append("edit")
@@ -150,16 +150,16 @@ def main():
                     
                 # only send position when on the edit menu
                 menuandtotal = totalPosition+menuPosition
-                pos24 = menuandtotal.index(24)
-                if menuandtotal[pos24+1]==0:
+                pos24 = menuPosition.index(24)
+                if menuPosition[pos24+1]==0:
                     totalPosString = ','.join(map(str,menuandtotal))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
-                elif menuandtotal[pos24+1]==1:
+                elif menuPosition[pos24+1]==1:
                     totalPosString = ','.join(map(str,menuPosition))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
-                elif menuandtotal[pos24+1]==2:
+                elif menuPosition[pos24+1]==2:
                     totalPosString = ','.join(map(str,menuPosition))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))

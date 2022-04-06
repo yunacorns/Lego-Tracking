@@ -153,178 +153,7 @@ public class trial : MonoBehaviour
     //     }
     //     return PositionArray;
 
-    public Vector3[] BoomRotation(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
-    {
-        float BoomFixedX = BoomFixed[0];
-        float BoomFixedY = BoomFixed[1]; 
-        float BoomEndX = BoomEnd[0];
-        float BoomEndY = BoomEnd[1];
-                
-        Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
-        Vector3 BoomStart = BoomFixed + (BoomOverShootFraction*VectorBoomEndToBoomFixed);
-        float BoomStartX = BoomStart[0];
-        float BoomStartY = BoomStart[1];
-        float PistonEndX = (BoomEndX-BoomStartX)*PistonFraction +BoomStartX;
-        float PistonEndY = (BoomEndY-BoomStartY)*PistonFraction +BoomStartY; 
-
-        Vector3 PistonEnd = new Vector3(PistonEndX, PistonEndY, 0); 
-        //Data from inputs
-        float BoomLength = DistanceBetweenPoints(BoomStart, BoomEnd);
-        float BoomStartToPistonLink = BoomLength*PistonFraction;
-        float BoomFixedToPistonStart = DistanceBetweenPoints(BoomFixed, PistonStart);
-         
-        Vector3 BoomFinish = new Vector3(BoomEndX, BoomEndY, 0);
-        //  if (BoomStartToPistonLink > BoomLength*(BoomOverShootFraction/(BoomOverShootFraction+1)))
-        //  {
-        //     Vector3 BoomFinish = new Vector3(BoomEndX, BoomEndY, 0);
-        //  }
-        if (BoomStartToPistonLink < BoomLength*(BoomOverShootFraction/(BoomOverShootFraction+1)))
-        {
-           BoomFinish[0] = BoomStartX;
-           BoomFinish[1] = BoomStartY;
-        } 
-
-        float BoomFinishX = BoomFinish[0];
-        float BoomFinishY = BoomFinish[1];
-
-        //Requied for solve
-        float BoomFixedToFinished = DistanceBetweenPoints(BoomFixed, BoomFinish);
-        float BoomFixedToPistonLink = DistanceBetweenPoints(BoomFixed, PistonEnd);
-        float PistonFractionAlongBoomFixedToFinish = BoomFixedToPistonLink/BoomFixedToFinished;
-
-        //Piston Data
-        float PistonRatio = 1.8f;
-        float PistonRate = 0.5f;
-        //bool Max = false; //Assume piston placed in minimum position unless defined as maximum
-        float PistonMin = DistanceBetweenPoints(PistonStart, PistonEnd);
-        float PistonMax = 0f;
-        // if (Max = false)
-        //{
-        if ((PistonMin*PistonRatio)<(BoomFixedToPistonStart+BoomStartToPistonLink))
-        {
-        PistonMax = PistonMin*PistonRatio;
-        }   
-        else
-        {
-        PistonMax = BoomFixedToPistonStart+BoomStartToPistonLink; 
-        }              
-        //}
-        //else if (Max = true)
-        //{
-        // PistonOneMax = DistanceBetweenPoints(PistonStart, PistonEnd); //?? idk what these two line means, is it a new variable? define them first
-        // PistonOneMin = PistonOneMax/PistonRatio; //need to define these two cs idk what they are and they can't be called properly
-        //}
-        
-        //Time Data
-        float PistonStep = PistonRate*TimeStep;
-        int ArrayLength = (int)Math.Round((PistonMax-PistonMin)/PistonStep);
-         
-        //Piston Length Array 
-        List<float> PistonLengthList = new List<float>();   
-           for (int i = 0; i<ArrayLength; i++)
-           {
-               PistonLengthList.Add( PistonMin + i*PistonStep );
-           }
-        float[] PistonLength = PistonLengthList.ToArray();
-
-        //Time Array 
-        List<float> TimeList = new List<float>();   
-           for (int i = 0; i<ArrayLength; i++)
-           {
-               TimeList.Add( i*TimeStep );
-           }
-        float[] Time = TimeList.ToArray();
-
-        //Solve 
-        //z array
-        List<float> zList = new List<float>();
-        for (int i = 0; i<ArrayLength; i++)
-           {
-               zList.Add( (((float)Math.Pow(BoomFixedToPistonLink,2.0) + 
-               (float)Math.Pow(BoomFixedToPistonStart,2.0) - 
-               (float)Math.Pow(PistonLength[i],2.0))/(2*BoomFixedToPistonLink*BoomFixedToPistonStart))); 
-           }
-        float[] z = zList.ToArray();
-
-        //Theta - angle between Boom and vector BoomFixed to PistonStart - Alpha is the polar angle of 
-        float Alpha = (float)Math.Atan2( (PistonEndY-BoomFixedY), (PistonEndX-BoomFixedX));
-        float AlphaThetaOne = (float)Math.Atan2( (BoomFinishY-BoomFixedY), (BoomFinishX -BoomFixedX));
-        //Orientation of Alpha and Theta
-        int o1 = (int)Math.Round(AlphaThetaOne - Alpha - (float)Math.Acos(z[1]));
-        int o2 = (int)Math.Round(AlphaThetaOne - Alpha + (float)Math.Acos(z[1]));
-        int o3 = (int)Math.Round(AlphaThetaOne + Alpha - (float)Math.Acos(z[1]));
-        int o4 = (int)Math.Round(AlphaThetaOne + Alpha + (float)Math.Acos(z[1]));
-
-        List<float> ThetaList = new List<float>();
-        if (o1 == 0 || o1 == 360) 
-        {
-           for (int i = 0; i<ArrayLength; i++)
-           {
-               ThetaList.Add( (float)Math.Acos(z[i]) );
-           }
-        }
-        if (o2 == 0 || o2 == 360) 
-        {
-           for (int i = 0; i<ArrayLength; i++)
-           {
-               ThetaList.Add( -(float)Math.Acos(z[i]) );
-           }
-        }
-        if (o3 == 0 || o3 == 360) 
-        {
-           for (int i = 0; i<ArrayLength; i++)
-           {
-               ThetaList.Add( (float)Math.Acos(z[i]) );
-           }
-           Alpha = -Alpha;
-        }
-        if (o4 == 0 || o4 == 360) 
-        {
-           for (int i = 0; i<ArrayLength; i++)
-           {
-               ThetaList.Add( - (float)Math.Acos(z[i]) );
-           }
-           Alpha = -Alpha;
-        }
-        float[] Theta = ThetaList.ToArray();
-
-        //Using correct angles
-        //Calc Piston Vectors
-        List<Vector3> PistonArrayList = new List<Vector3>();
-		   for ( int i = 0; i < ArrayLength; i++)
-		   {
-               float x = BoomFixedToPistonLink*(float)Math.Cos(Theta[i]+Alpha);
-               float y = BoomFixedToPistonLink*(float)Math.Sin(Theta[i]+Alpha);
-		   	PistonArrayList.Add( new Vector3(x, y, 0f) );
-		   }
-		Vector3[] PistonArray = PistonArrayList.ToArray(); 
-        
-        List<Vector3> BoomArrayList = new List<Vector3>();
-		   for ( int i = 0; i < ArrayLength; i++)
-		   {
-               float x = (BoomFixedX - PistonArray[i].x)/PistonFractionAlongBoomFixedToFinish + BoomFixedX; //idt you can call using [] like that, i get what you mean but its showing error
-               float y = (BoomFixedY - PistonArray[i].y)/PistonFractionAlongBoomFixedToFinish + BoomFixedY;
-		  	BoomArrayList.Add( new Vector3(x, y, 0f) );
-		   }
-        Vector3[] BoomArray = BoomArrayList.ToArray(); 
-
-        if (BoomFinish == BoomStart)
-        {
-            List<Vector3> BoomArray2List = new List<Vector3>();
-		    for ( int i = 0; i < ArrayLength; i++)
-		    {
-                float x = BoomArray[i].x + (BoomFixedX - BoomArray[i].x)*((1+BoomOverShootFraction)/BoomOverShootFraction);
-                float y = BoomArray[i].y + (BoomFixedY - BoomArray[i].y)*((1+BoomOverShootFraction)/BoomOverShootFraction);
-		    	BoomArray2List.Add( new Vector3(x, y, 0f) );
-		    } 
-         Vector3[] BoomArray2 = BoomArray2List.ToArray();
-         return BoomArray2;
-        }
-        else
-        {
-         return BoomArray;
-        }
-    }
+    
     public Vector3 PistonEnd(Vector3 BoomStart, Vector3 BoomEnd, float PistonFraction)
     {
             float BoomStartX = BoomStart[0];
@@ -339,70 +168,10 @@ public class trial : MonoBehaviour
 
     }     
 
-    public int ArrayLength(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
-    {
-        float BoomFixedX = BoomFixed[0];
-        float BoomFixedY = BoomFixed[1]; 
-        float BoomEndX = BoomEnd[0];
-        float BoomEndY = BoomEnd[1];
-                
-        Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
-        Vector3 BoomStart = BoomFixed + (BoomOverShootFraction*VectorBoomEndToBoomFixed);
-        float BoomStartX = BoomStart[0];
-        float BoomStartY = BoomStart[1];
-        float PistonEndX = (BoomEndX-BoomStartX)*PistonFraction +BoomStartX;
-        float PistonEndY = (BoomEndY-BoomStartY)*PistonFraction +BoomStartY; 
-
-        Vector3 PistonEnd = new Vector3(PistonEndX, PistonEndY, 0); 
-        
-         //Data from inputs
-        float BoomLength = DistanceBetweenPoints(BoomStart, BoomEnd);
-        float BoomStartToPistonLink = BoomLength*PistonFraction;
-        float BoomFixedToPistonStart = DistanceBetweenPoints(BoomFixed, PistonStart);
-
-        Vector3 BoomFinish = new Vector3(BoomEndX, BoomEndY, 0);
-        //  if (BoomStartToPistonLink > BoomLength*(BoomOverShootFraction/(BoomOverShootFraction+1)))
-        //  {
-        //     Vector3 BoomFinish = new Vector3(BoomEndX, BoomEndY, 0);
-        //  }
-        if (BoomStartToPistonLink < BoomLength*(BoomOverShootFraction/(BoomOverShootFraction+1)))
-        {
-           BoomFinish[0] = BoomStartX;
-           BoomFinish[1] = BoomStartY;
-        } 
-        float BoomFinishX = BoomFinish[0];
-        float BoomFinishY = BoomFinish[1];
-
-         //Requied for solve
-        float BoomFixedToFinished = DistanceBetweenPoints(BoomFixed, BoomFinish);
-        float BoomFixedToPistonLink = DistanceBetweenPoints(BoomFixed, PistonEnd);
-        float PistonFractionAlongBoomFixedToFinish = BoomFixedToPistonLink/BoomFixedToFinished;
-
-        //Piston Data
-        float PistonRatio = 1.8f;
-        float PistonRate = 0.5f;
-        //bool Max = false; //Assume piston placed in minimum position unless defined as maximum
-        float PistonMin = DistanceBetweenPoints(PistonStart, PistonEnd);
-        float PistonMax = 0f;
-        // if (Max = false)
-        //{
-        if ((PistonMin*PistonRatio)<(BoomFixedToPistonStart+BoomStartToPistonLink))
-        {
-        PistonMax = PistonMin*PistonRatio;
-        }   
-        else
-        {
-        PistonMax = BoomFixedToPistonStart+BoomStartToPistonLink; 
-        }              
-         //Time Data
-        float PistonStep = PistonRate*TimeStep;
-        int ArrayLength = (int)Math.Round((PistonMax-PistonMin)/PistonStep);
-        return ArrayLength;
-
-    }
+    
 
    
-    public Vector3[] Test(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
+    public Vector3[] BoomRotation(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
     {
         float BoomFixedX = BoomFixed[0];
         float BoomFixedY = BoomFixed[1]; 
@@ -590,13 +359,10 @@ public class trial : MonoBehaviour
         Vector3 joint2 = receivedPos6;
         Vector3 piston1 = receivedPos7;
         Vector3 PistonOneEndPos = PistonEnd(joint1, joint2, PistonFraction);
-        //Vector3[] BoomArray = Test(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
-        
-        //float[] PistonArray = {1,2,3,4,5,6,7,8,9};
-	    Vector3[] BoomArray = Test(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
-        int lengtharray = ArrayLength(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
+	    Vector3[] BoomArray = BoomRotation(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
         print(BoomArray[0]);
-        print(lengtharray);
+        print(BoomArray.Length);
+
 
         for(int i=0; i<BoomArray.Length; i++){
             BoomOneCurve.SetPosition(i,BoomArray[i]);
@@ -653,23 +419,6 @@ public class trial : MonoBehaviour
 
         }
 
-        // PistonOneEnd.transform.position = PistonOneEndPos;
-
-
-        // squareone.transform.localScale = size; //assigning receivedPos in SendAndReceiveData()
-        // squaretwo.transform.localScale = size;
-        // squarethree.transform.localScale = size;
-        // squarefour.transform.localScale = size;
-        // squarefive.transform.localScale = size;
-
-        // Debug.Log("print" + PistonMax);
-        // Vector3 trial1 = BoomOnePos[0];
-        // Vector3 trial2 = BoomOnePos[1];
-        // Vector3 trial3 = BoomOnePos[2];
-        // BoomOneCurve.SetPosition(0, trial1);
-        // BoomOneCurve.SetPosition(1, trial2);
-        // BoomOneCurve.SetPosition(2, trial3);
-        
 
        
     }

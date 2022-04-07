@@ -80,6 +80,16 @@ def main():
             firstSec = int(topOfMenu + widthOfEachSection)
             secondSec = int(topOfMenu + 2*widthOfEachSection)
 
+            # link menu parameters 
+            topOfLinkMenu = 90
+            bottomOfLinkMenu = 225
+            numberOfLinkSections = 5
+            widthOfEachLinkSection = (bottomOfLinkMenu-topOfLinkMenu)/numberOfLinkSections
+            linkSections = []
+            for i in range(1,numberOfLinkSections):
+                linkSections.append(int(topOfLinkMenu+i*widthOfEachLinkSection))
+            print(linkSections)
+
        
             
             if ids_c is not None:
@@ -117,7 +127,7 @@ def main():
                         # print(posString)
                         # sock.sendall(posString.encode("UTF-8")
                 menuPosition = []
-                # play button
+                # edit animate data menu
                 if [24] in ids_c:
                     pos = ids_formatted_c.index(24)
                     TL = bbox_c[pos][0][0]
@@ -147,6 +157,30 @@ def main():
                     menuPosition.append(24)
                     menuPosition.append(10)
                     menuPosition.append("none")
+                
+                linkMenuPosition = []
+                if [25] in ids_c:
+                    pos = ids_formatted_c.index(24)
+                    TL = bbox_c[pos][0][0]
+                    TR = bbox_c[pos][0][1] 
+                    BR = bbox_c[pos][0][2]
+                    BL = bbox_c[pos][0][3]
+                    c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
+                    # find centre of aruco marker
+                    M = cv2.moments(c)
+                    cX = int(M["m10"] / M["m00"])
+                    cY= int(M["m01"] / M["m00"])
+                    # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
+                    linkMenuPosition.append(25)
+                if cX<=90 and topOfLinkMenu<cY<linkSections[0]:
+                        menuPosition.append(0)
+                        menuPosition.append("edit")
+                elif cX<=90 and linkSections[0]<cY<linkSections[1]:
+                        menuPosition.append(1)
+                        menuPosition.append("animate")
+                elif cX<=90 and linkSections[1]<cY<linkSections:
+                        menuPosition.append(2)
+                        menuPosition.append("data")
                     
                 # only send position when on the edit menu
                 menuandtotal = totalPosition+menuPosition

@@ -574,11 +574,25 @@ public class portlistener : MonoBehaviour
         squareArray[1].GetComponent<Renderer>().enabled = false;
         }
         if(piston1!=outofframe){
-        squareArray[1].GetComponent<Renderer>().enabled = true;
+        squareArray[2].GetComponent<Renderer>().enabled = true;
         squareArray[2].transform.position = piston1;
         }else{
         squareArray[2].GetComponent<Renderer>().enabled = false;
         }
+        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)&&!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
+        {
+            PistonLine.GetComponent<Renderer>().enabled = true;
+            Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
+            PistonLine.SetPositions(LinePosition2);
+        }
+        else
+        {
+            PistonLine.GetComponent<Renderer>().enabled = false;
+            //Vector3[] LinePosition2 = {outofframe, outofframe};
+            //PistonLine.SetPositions(LinePosition2);
+        }
+
+        
         }
         
 

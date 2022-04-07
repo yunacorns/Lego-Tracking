@@ -88,7 +88,7 @@ def main():
             linkSections = []
             for i in range(1,numberOfLinkSections):
                 linkSections.append(int(topOfLinkMenu+i*widthOfEachLinkSection))
-            print(linkSections)
+            
 
        
             

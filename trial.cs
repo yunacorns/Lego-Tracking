@@ -6,6 +6,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System;
+//using System.Numerics;
 
 [RequireComponent(typeof(LineRenderer))]
 
@@ -18,6 +19,7 @@ public class trial : MonoBehaviour
     public LineRenderer Line;
     public LineRenderer PistonLine;
     public LineRenderer BoomOneCurve;
+    //public GameObject[] LinkArray;
    
 
     
@@ -34,6 +36,7 @@ public class trial : MonoBehaviour
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
     Vector3 MenuData = new Vector3(10,0,0);
+    //Vector3 LinkData = new Vector3(10,0,0);
     
 
 
@@ -171,7 +174,7 @@ public class trial : MonoBehaviour
     
 
    
-    public Vector3[] BoomRotation(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
+    public Vector3[] BoomRotationTest(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
     {
         float BoomFixedX = BoomFixed[0];
         float BoomFixedY = BoomFixed[1]; 
@@ -328,6 +331,177 @@ public class trial : MonoBehaviour
 
     }
 
+    // public static float DistanceBetweenPoints(Vector3 v1, Vector3 v2)
+    //     {
+    //         float xDiff = (float)Math.Pow((v2.X - v1.X),2.0);
+    //         float yDiff = (float)Math.Pow((v2.Y - v1.Y),2.0);
+
+    //         return (float)Math.Sqrt(xDiff + yDiff);
+    //     }
+    public Vector3[] BoomRotation(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
+        {
+            float BoomFixedX = BoomFixed[0];
+            float BoomFixedY = BoomFixed[1]; 
+            float BoomEndX = BoomEnd[0];
+            float BoomEndY = BoomEnd[1];
+            float PistonStartX = PistonStart[0];
+            float PistonStartY = PistonStart[1];
+
+            Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
+            Vector3 BoomStart = BoomFixed + (BoomOverShootFraction*VectorBoomEndToBoomFixed);
+            float BoomStartX = BoomStart[0];
+            float BoomStartY = BoomStart[1];
+            float PistonEndX = (BoomEndX-BoomStartX)*PistonFraction +BoomStartX;
+            float PistonEndY = (BoomEndY-BoomStartY)*PistonFraction +BoomStartY; 
+            
+            Vector3 PistonEnd = new Vector3(PistonEndX, PistonEndY, 0f);
+        
+    //Data from inputs
+            float BoomLength = DistanceBetweenPoints(BoomStart, BoomEnd);
+            float BoomStartToPistonLink = BoomLength*PistonFraction;
+            float BoomFixedToPistonStart = DistanceBetweenPoints(BoomFixed, PistonStart);
+            
+
+            Vector3 BoomFinish = new Vector3(BoomEndX, BoomEndY, 0);
+            if (BoomStartToPistonLink < BoomLength*(BoomOverShootFraction/(BoomOverShootFraction+1)))
+            {
+            BoomFinish[0] = BoomStartX;
+            BoomFinish[1] = BoomStartY;
+            } 
+            float BoomFinishX = BoomFinish[0];
+            float BoomFinishY = BoomFinish[1];
+
+    //Requied for solve
+            float BoomFixedToFinished = DistanceBetweenPoints(BoomFixed, BoomFinish);
+            float BoomFixedToPistonLink = DistanceBetweenPoints(BoomFixed, PistonEnd);
+            float PistonFractionAlongBoomFixedToFinish = BoomFixedToPistonLink/BoomFixedToFinished;    
+
+    //Piston Data
+            float PistonRatio = 1.8f;
+            float PistonRate = 0.2f;
+            bool Max = false; //Assume piston placed in minimum position unless defined as maximum
+            float PistonMin = DistanceBetweenPoints(PistonStart, PistonEnd);
+            float PistonMax = 0f;
+
+            if (Max == false)
+            {
+            if ((PistonMin*PistonRatio)<(BoomFixedToPistonStart+BoomFixedToPistonLink))
+            {
+            PistonMax = PistonMin*PistonRatio;
+            }   
+            else
+            {
+            PistonMax = BoomFixedToPistonStart+BoomFixedToPistonLink;
+            }              
+            }
+            else if (Max == true)
+            {
+            PistonMax = DistanceBetweenPoints(PistonStart, PistonEnd);
+            PistonMin = PistonMax/PistonRatio;
+            }
+    //Time Data
+            float PistonStep = PistonRate*TimeStep;
+            int ArrayLength = (int)Math.Round((PistonMax-PistonMin)/PistonStep);
+            
+    //Piston Length Array 
+            float[] PistonLength = new float [ArrayLength];  
+            for (int i = 0; i<ArrayLength; i++)
+            {
+            PistonLength[i] = PistonMin + i*PistonStep;
+            }
+            // Array.ForEach(PistonLength, Console.WriteLine);
+
+    //Time Array 
+            float[] Time = new float [ArrayLength];   
+            for (int i = 0; i<ArrayLength; i++)
+            {
+                Time[i] = i*TimeStep;
+            }
+    //Solve 
+    //z array
+            float[] z = new float[ArrayLength];
+            for (int i = 0; i<ArrayLength; i++)
+            {
+                z[i] = (((float)Math.Pow(BoomFixedToPistonLink,2.0) + (float)Math.Pow(BoomFixedToPistonStart,2.0) - (float)Math.Pow(PistonLength[i],2.0))/(2*BoomFixedToPistonLink*BoomFixedToPistonStart)); 
+            }         
+    //Theta - angle between Boom and vector BoomFixed to PistonStart - Alpha is the polar angle of Piston Start from Boom Fixed
+            float Alpha = (float)Math.Atan2( (PistonStartY-BoomFixedY), (PistonStartX-BoomFixedX));
+            float AlphaThetaOne = (float)Math.Atan2( (BoomFinishY-BoomFixedY), (BoomFinishX -BoomFixedX));
+
+            int o1 = (int)Math.Round((AlphaThetaOne - Alpha - (float)Math.Acos(z[0]))*180/Math.PI);
+            int o2 = (int)Math.Round((AlphaThetaOne - Alpha + (float)Math.Acos(z[0]))*180/Math.PI);
+            int o3 = (int)Math.Round((AlphaThetaOne + Alpha - (float)Math.Acos(z[0]))*180/Math.PI);
+            int o4 = (int)Math.Round((AlphaThetaOne + Alpha + (float)Math.Acos(z[0]))*180/Math.PI);
+            // Console.WriteLine(o1);
+            // Console.WriteLine(o2);
+            // Console.WriteLine(o3);
+            // Console.WriteLine(o4);
+
+        float[] Theta = new float[ArrayLength];
+            if (o1 == 0 || o1 == 360) 
+         {
+            for (int i = 0; i<ArrayLength; i++)
+            {
+                Theta[i] = (float)Math.Acos(z[i]);
+            }
+         }
+            if (o2 == 0 || o2 == 360) 
+         {
+            for (int i = 0; i<ArrayLength; i++)
+            {
+                Theta[i] =  -(float)Math.Acos(z[i]);
+            }
+         }
+            if (o3 == 0 || o3 == 360) 
+         {
+            for (int i = 0; i<ArrayLength; i++)
+            {
+                Theta[i] =  (float)Math.Acos(z[i]) ;
+            }
+            Alpha = -Alpha;
+         }
+            if (o4 == 0 || o4 == 360) 
+         {
+            for (int i = 0; i<ArrayLength; i++)
+            {
+                Theta[i] =  - (float)Math.Acos(z[i]);
+            }
+            Alpha = -Alpha;
+         }
+
+    //Using correct angles
+    //Calc Piston Vectors
+            Vector3[] PistonArray = new Vector3[ArrayLength];
+		    for ( int i = 0; i < ArrayLength; i++)
+		    {
+                float x = BoomFixedToPistonLink*(float)Math.Cos(Theta[i]+Alpha) + BoomFixedX;
+                float y = BoomFixedToPistonLink*(float)Math.Sin(Theta[i]+Alpha) + BoomFixedY;
+		    	PistonArray[i] = new Vector3(x, y, 0f) ;
+		    }
+
+            Vector3[] BoomArray = new Vector3[ArrayLength];
+		    for ( int i = 0; i < ArrayLength; i++)
+		    {
+                float x = (PistonArray[i][0] - BoomFixedX)/PistonFractionAlongBoomFixedToFinish + BoomFixedX;
+                float y = (PistonArray[i][1] - BoomFixedY)/PistonFractionAlongBoomFixedToFinish + BoomFixedY;
+		    	BoomArray[i] = new Vector3(x, y, 0f) ;
+		    }
+            if (BoomFinish == BoomStart)
+            {
+        
+		    for ( int i = 0; i < ArrayLength; i++)
+		    {
+                float x = BoomArray[i][0] + (BoomFixedX - BoomArray[i][0])*((1+BoomOverShootFraction)/BoomOverShootFraction);
+                float y = BoomArray[i][1]+ (BoomFixedY - BoomArray[i][1])*((1+BoomOverShootFraction)/BoomOverShootFraction);
+		    	BoomArray[i] = new Vector3(x, y, 0f);
+		    } 
+            }
+            
+            return BoomArray;
+           
+        }
+
+
 
 
     public Vector3[] ConvertToVector3Array (float[] floats)
@@ -353,11 +527,11 @@ public class trial : MonoBehaviour
 	    Vector3[] BoomArray = BoomRotation(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
         print(BoomArray[0]);
         print(BoomArray.Length);
-        //BoomOneCurve.positionCount = BoomArray.Length;
+        BoomOneCurve.positionCount = BoomArray.Length;
 
-        // for(int i=0; i<BoomArray.Length; i++){
-        //     BoomOneCurve.SetPosition(i,BoomArray[i]);
-        // }
+        for(int i=0; i<BoomArray.Length; i++){
+            BoomOneCurve.SetPosition(i,BoomArray[i]);
+        }
         
         if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
         {

@@ -48,7 +48,7 @@ public class trial : MonoBehaviour
         // float PistonFractionOne = 0.5f;
         // Vector3[] BoomOnePos = Calculations(receivedPos3, receivedPos4, receivedPos5, PistonFractionOne);
         // BoomOneCurve.positionCount = BoomOnePos.Length;
-        BoomOneCurve.positionCount = 3;
+        
     }
     
     public void GetInfo() //nothing
@@ -328,16 +328,7 @@ public class trial : MonoBehaviour
 
     }
 
-        // List<float> PistonArrayList = new List<float>();
-        // for (int i = 0; i<ArrayLength; i++)
-        // {
-        //     float x = BoomFixedToPistonLink*(float)Math.Cos(Theta[i]+Alpha);
-        //     float y = BoomFixedToPistonLink*(float)Math.Sin(Theta[i]+Alpha);
-        //     PistonArrayList.Add(x);
-        //     PistonArrayList.Add(y);
-        //     PistonArrayList.Add(0f);
-        // }
-        // float[] PistonArray = PistonArrayList.ToArray();
+
 
     public Vector3[] ConvertToVector3Array (float[] floats)
 	{
@@ -353,7 +344,7 @@ public class trial : MonoBehaviour
     {
         float BoomOverShootFraction = 0f;
         float PistonFraction = 0.5f;
-        float TimeStep = 0.5f;
+        float TimeStep = 50f;
 
         Vector3 joint1 = receivedPos5;
         Vector3 joint2 = receivedPos6;
@@ -362,7 +353,7 @@ public class trial : MonoBehaviour
 	    Vector3[] BoomArray = BoomRotation(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
         print(BoomArray[0]);
         print(BoomArray.Length);
-
+        BoomOneCurve.positionCount = BoomArray.Length;
 
         for(int i=0; i<BoomArray.Length; i++){
             BoomOneCurve.SetPosition(i,BoomArray[i]);
@@ -418,7 +409,6 @@ public class trial : MonoBehaviour
         else{
 
         }
-
 
        
     }

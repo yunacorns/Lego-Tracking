@@ -353,11 +353,11 @@ public class trial : MonoBehaviour
 	    Vector3[] BoomArray = BoomRotation(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
         print(BoomArray[0]);
         print(BoomArray.Length);
-        BoomOneCurve.positionCount = BoomArray.Length;
+        //BoomOneCurve.positionCount = BoomArray.Length;
 
-        for(int i=0; i<BoomArray.Length; i++){
-            BoomOneCurve.SetPosition(i,BoomArray[i]);
-        }
+        // for(int i=0; i<BoomArray.Length; i++){
+        //     BoomOneCurve.SetPosition(i,BoomArray[i]);
+        // }
         
         if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
         {
@@ -381,18 +381,16 @@ public class trial : MonoBehaviour
             PistonLine.SetPositions(LinePosition2);
         }
 
-        
-
-
-        squareArray[0].transform.position = receivedPos5;
-        squareArray[1].transform.position = receivedPos6;
-        squareArray[2].transform.position = receivedPos7;
-
+    
         if(MenuData[0]==0){
         //edit
         menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        squareArray[0].transform.position = receivedPos5;
+        squareArray[1].transform.position = receivedPos6;
+        squareArray[2].transform.position = receivedPos7;
+
         }
         else if(MenuData[0]==1){
         //animate

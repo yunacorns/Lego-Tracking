@@ -696,7 +696,7 @@ public class portlistener : MonoBehaviour
         Vector3 piston1 = receivedPos7;
         Vector3 PistonOneEndPos = PistonEnd(joint1, joint2, PistonFraction);
 	    Vector3[] BoomArray = BoomRotation(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
-        
+        Debug.Log("print"+BoomArray[0]);
 
         for(int i=0; i<=BoomArray.Length; i++)
         {
@@ -708,8 +708,8 @@ public class portlistener : MonoBehaviour
     {
         while(squareArray[1].transform.position != posonlink){
             squareArray[1].transform.position = Vector3.MoveTowards (squareArray[1].transform.position, posonlink, speed* Time.deltaTime);
-            Vector3[] LinePosition1 = {squareArray[0].transform.position, posonlink};
-            Line.SetPositions(LinePosition1);
+            // Vector3[] LinePosition1 = {squareArray[0].transform.position, posonlink};
+            // Line.SetPositions(LinePosition1);
             yield return null;
         }
        

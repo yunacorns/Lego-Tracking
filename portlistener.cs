@@ -653,24 +653,24 @@ public class portlistener : MonoBehaviour
         }
         else if (LinkMenuData[0]==3){
         LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
         LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
         LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
         }
         else if (LinkMenuData[0]==4){
         LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
-        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.blue;
         LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
         }
         else if (LinkMenuData[0]==5){
         LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
         LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
-        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.blue;
         }
         else{
         LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;

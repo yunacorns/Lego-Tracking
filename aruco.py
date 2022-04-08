@@ -159,8 +159,8 @@ def main():
                     menuPosition.append("none")
                 
                 linkMenuPosition = []
-                if [25] in ids_c:
-                    pos = ids_formatted_c.index(24)
+                if [23] in ids_c:
+                    pos = ids_formatted_c.index(23)
                     TL = bbox_c[pos][0][0]
                     TR = bbox_c[pos][0][1] 
                     BR = bbox_c[pos][0][2]
@@ -171,19 +171,27 @@ def main():
                     cX = int(M["m10"] / M["m00"])
                     cY= int(M["m01"] / M["m00"])
                     # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
-                    linkMenuPosition.append(25)
+                    linkMenuPosition.append(23)
                 if cX<=90 and topOfLinkMenu<cY<linkSections[0]:
-                        menuPosition.append(0)
-                        menuPosition.append("edit")
+                    linkMenuPosition.append(1)
+                    linkMenuPosition.append("pistonone")
                 elif cX<=90 and linkSections[0]<cY<linkSections[1]:
-                        menuPosition.append(1)
-                        menuPosition.append("animate")
-                elif cX<=90 and linkSections[1]<cY<linkSections:
-                        menuPosition.append(2)
-                        menuPosition.append("data")
+                    linkMenuPosition.append(2)
+                    linkMenuPosition.append("pistontwo")
+                elif cX<=90 and linkSections[1]<cY<linkSections[2]:
+                    linkMenuPosition.append(3)
+                    linkMenuPosition.append("pistonthree")
+                elif cX<=90 and linkSections[2]<cY<linkSections[3]:
+                    linkMenuPosition.append(4)
+                    linkMenuPosition.append("pistonfour")
+                elif cX<=90 and linkSections[3]<cY<bottomOfLinkMenu:
+                    linkMenuPosition.append(5)
+                    linkMenuPosition.append("pistonfive")
+                else:
+                    linkMenuPosition.append(-10)
                     
                 # only send position when on the edit menu
-                menuandtotal = totalPosition+menuPosition
+                menuandtotal = totalPosition+menuPosition+linkMenuPosition
                 pos24 = menuPosition.index(24)
                 if menuPosition[pos24+1]==0:
                     totalPosString = ','.join(map(str,menuandtotal))

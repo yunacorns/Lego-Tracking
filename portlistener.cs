@@ -20,7 +20,7 @@ public class portlistener : MonoBehaviour
     public LineRenderer Line;
     public LineRenderer PistonLine;
     public LineRenderer BoomOneCurve;
-    //public GameObject[] LinkArray;
+    public GameObject[] LinkArray;
    
 
     
@@ -37,6 +37,7 @@ public class portlistener : MonoBehaviour
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
     public Vector3 MenuData = new Vector3(10,0,0);
+    public Vector3 LinkMenuData = new Vector3(-10,0,0);
     //Vector3 LinkData = new Vector3(10,0,0);
     
 
@@ -87,11 +88,13 @@ public class portlistener : MonoBehaviour
         {
             //---Using received data---
             MenuData = StringMenu(dataReceived);
+            LinkMenuData = StringLinkMenu(dataReceived);
             if(MenuData[0]==0){
             receivedPos5 = StringToVector3(dataReceived,"5");
             receivedPos6 = StringToVector3(dataReceived,"6");
             receivedPos7 = StringToVector3(dataReceived,"7");
             }
+
 
             
             
@@ -135,6 +138,22 @@ public class portlistener : MonoBehaviour
         string[] sArray = sVector.Split(',');
         //get index of 24
         int index = Array.IndexOf(sArray, "24"); 
+        Vector3 result = new Vector3(
+            float.Parse(sArray[index+1]),0,0);
+        return result;
+    }
+    public static Vector3 StringLinkMenu(string sVector)
+    {
+        // Remove the parentheses
+        if (sVector.StartsWith("(") && sVector.EndsWith(")"))
+        {
+            sVector = sVector.Substring(1, sVector.Length - 2);
+        }
+
+        // split the items
+        string[] sArray = sVector.Split(',');
+        //get index of 24
+        int index = Array.IndexOf(sArray, "23"); 
         Vector3 result = new Vector3(
             float.Parse(sArray[index+1]),0,0);
         return result;
@@ -615,6 +634,50 @@ public class portlistener : MonoBehaviour
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;   
         } 
         else{
+
+        }
+        //Link Menu
+        if(LinkMenuData[0]==1){
+        LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
+        }
+        else if (LinkMenuData[0]==2){
+        LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
+        }
+        else if (LinkMenuData[0]==3){
+        LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
+        }
+        else if (LinkMenuData[0]==4){
+        LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
+        }
+        else if (LinkMenuData[0]==5){
+        LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
+        }
+        else{
+        LinkArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[3].GetComponent<SpriteRenderer>().material.color = Color.white;
+        LinkArray[4].GetComponent<SpriteRenderer>().material.color = Color.white;
 
         }
         

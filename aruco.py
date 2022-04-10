@@ -35,6 +35,8 @@ def main():
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
         # aruco.drawDetectedMarkers(frame,bbox)
         img_counter = 0
+        cv2.imshow("result",frame)
+        cv2.waitKey(1)
 
 
         # cropping using aruco marker 1 and 2
@@ -89,18 +91,6 @@ def main():
             firstSec = int(topOfMenu + widthOfEachSection)
             secondSec = int(topOfMenu + 2*widthOfEachSection)
 
-            # link menu parameters
-            topOfLinkMenu = 90
-            bottomOfLinkMenu = 225
-            numberOfLinkSections = 5
-            widthOfEachLinkSection = (bottomOfLinkMenu-topOfLinkMenu)/numberOfLinkSections
-            linkSections = []
-            for i in range(1,numberOfLinkSections):
-                linkSections.append(int(topOfLinkMenu+i*widthOfEachLinkSection))
-
-
-
-
             if ids_c is not None:
                 length_ids_c = len(ids_c)
                 ids_formatted_c = []
@@ -108,6 +98,7 @@ def main():
                     ids_formatted_c.append(ids_c[i][0])
 
                 totalPosition = []
+                totalAnimatePos = []
                 # central aruco markers
                 for i in range(5,8):
                     if [i] in ids_c:
@@ -135,6 +126,7 @@ def main():
                         # posString = ','.join(map(str,position))
                         # print(posString)
                         # sock.sendall(posString.encode("UTF-8")
+
                 menuPosition = []
                 # edit animate data menu
                 if [24] in ids_c:
@@ -156,7 +148,6 @@ def main():
                         menuPosition.append("edit")
 
                     elif cX>=835 and firstSec<cY<secondSec:
-                        totalAnimatePos = []
                         status = False
                         if ids_p is not None:
                             length_ids_p = len(ids_p)
@@ -199,61 +190,25 @@ def main():
                     menuPosition.append(10)
                     menuPosition.append("none")
 
-                linkMenuPosition = []
-                if [23] in ids_c:
-                    pos = ids_formatted_c.index(23)
-                    TL = bbox_c[pos][0][0]
-                    TR = bbox_c[pos][0][1]
-                    BR = bbox_c[pos][0][2]
-                    BL = bbox_c[pos][0][3]
-                    c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
-                    # find centre of aruco marker
-                    M = cv2.moments(c)
-                    cX = int(M["m10"] / M["m00"])
-                    cY= int(M["m01"] / M["m00"])
-                    # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
-                    linkMenuPosition.append(23)
-                if cX<=90 and topOfLinkMenu<cY<linkSections[0]:
-                    linkMenuPosition.append(1)
-                    linkMenuPosition.append("pistonone")
-                elif cX<=90 and linkSections[0]<cY<linkSections[1]:
-                    linkMenuPosition.append(2)
-                    linkMenuPosition.append("pistontwo")
-                elif cX<=90 and linkSections[1]<cY<linkSections[2]:
-                    linkMenuPosition.append(3)
-                    linkMenuPosition.append("pistonthree")
-                elif cX<=90 and linkSections[2]<cY<linkSections[3]:
-                    linkMenuPosition.append(4)
-                    linkMenuPosition.append("pistonfour")
-                elif cX<=90 and linkSections[3]<cY<bottomOfLinkMenu:
-                    linkMenuPosition.append(5)
-                    linkMenuPosition.append("pistonfive")
-                else:
-                    linkMenuPosition.append(-10)
 
                 # only send position when on the edit menu
-                menuandtotal = totalPosition+menuPosition+linkMenuPosition
+                menuandtotal = totalPosition+menuPosition
                 menuandtotalanimate = totalAnimatePos+menuPosition
+                newtotalPosString = ','.join(map(str,menuandtotalanimate))
                 pos24 = menuPosition.index(24)
                 if menuPosition[pos24+1]==0:
                     totalPosString = ','.join(map(str,menuandtotal))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
-                elif menuPosition[pos24+1]==1:
+
+                elif menuPosition[pos24+1]==1 and newtotalPosString!=totalPosString:
                     totalPosString = ','.join(map(str,menuandtotalanimate))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
-                elif menuPosition[pos24+1]==2:
-                    totalPosString = ','.join(map(str,menuandtotalanimate))
-                    print(totalPosString)
-                    sock.sendall(totalPosString.encode("UTF-8"))
-
-
-
-
-
-        cv2.imshow("result",frame)
-        cv2.waitKey(1)
+                # elif menuPosition[pos24+1]==2:
+                #     totalPosString = ','.join(map(str,menuandtotalanimate))
+                #     print(totalPosString)
+                #     sock.sendall(totalPosString.encode("UTF-8"))
 
 
 if __name__ == "__main__":

@@ -16,11 +16,11 @@ using System;
 
 //using System.Numerics;
 
- 
+
 
 [RequireComponent(typeof(LineRenderer))]
 
- 
+
 
 public class portlistener : MonoBehaviour
 
@@ -42,11 +42,11 @@ public class portlistener : MonoBehaviour
 
     //public GameObject[] LinkArray;
 
-   
 
- 
 
-   
+
+
+
 
     Thread mThread;
 
@@ -76,19 +76,19 @@ public class portlistener : MonoBehaviour
 
     //Vector3 LinkData = new Vector3(10,0,0);
 
-   
 
- 
+
+
 
     public bool running; //nothing
 
- 
+
 
     public void Start() //private
 
     {
 
-       
+
 
         ThreadStart ts = new ThreadStart(GetInfo);
 
@@ -108,11 +108,11 @@ public class portlistener : MonoBehaviour
 
         // BoomOneCurve.positionCount = BoomOnePos.Length;
 
-       
+
 
     }
 
-   
+
 
     public void GetInfo() //nothing
 
@@ -124,11 +124,11 @@ public class portlistener : MonoBehaviour
 
         listener.Start();
 
- 
+
 
         client = listener.AcceptTcpClient();
 
- 
+
 
         running = true;
 
@@ -144,7 +144,7 @@ public class portlistener : MonoBehaviour
 
     }
 
- 
+
 
     public void SendAndReceiveData() //nothing
 
@@ -154,7 +154,7 @@ public class portlistener : MonoBehaviour
 
         byte[] buffer = new byte[client.ReceiveBufferSize];
 
- 
+
 
         //---receiving Data from the Host----
 
@@ -162,7 +162,7 @@ public class portlistener : MonoBehaviour
 
         string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead); //Converting byte data to string
 
- 
+
 
         if (dataReceived != null)
 
@@ -182,13 +182,13 @@ public class portlistener : MonoBehaviour
 
             }
 
- 
 
-           
 
-           
 
- 
+
+
+
+
 
             //---Sending Data to Host----
 
@@ -200,9 +200,9 @@ public class portlistener : MonoBehaviour
 
     }
 
- 
 
- 
+
+
 
     public static Vector3 StringToVector3(string sVector, string whichSquare)
 
@@ -218,7 +218,7 @@ public class portlistener : MonoBehaviour
 
         }
 
- 
+
 
         // split the items
 
@@ -238,7 +238,7 @@ public class portlistener : MonoBehaviour
 
             float.Parse(sArray[index+3]));
 
- 
+
 
         return result;
 
@@ -258,7 +258,7 @@ public class portlistener : MonoBehaviour
 
         }
 
- 
+
 
         // split the items
 
@@ -276,11 +276,11 @@ public class portlistener : MonoBehaviour
 
     }
 
-   
+
 
     // // George's Calculation here
 
- 
+
 
     public float DistanceBetweenPoints(Vector3 v1, Vector3 v2)
         {
@@ -289,14 +289,14 @@ public class portlistener : MonoBehaviour
 
             float yDiff = (float)Math.Pow((v2[1] - v1[1]),2.0);
 
- 
+
 
             return (float)Math.Sqrt(xDiff + yDiff);
 
         }
 
     public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOverShootFraction)
-        {            
+        {
 
             Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
 
@@ -312,10 +312,7 @@ public class portlistener : MonoBehaviour
             Vector3 PistonEnd = BoomStart + (BoomEnd - BoomStart)*PistonFraction;
 
             return PistonEnd;
-
- 
-
-    }    
+    }
 
     public Vector3[] BoomRotationCalculation(Vector3 BoomFixed, Vector3 BoomEnd, Vector3 PistonStart, float BoomOverShootFraction, float PistonFraction, float TimeStep)
 
@@ -333,7 +330,7 @@ public class portlistener : MonoBehaviour
 
             float PistonStartY = PistonStart[1];
 
- 
+
 
             Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
 
@@ -347,11 +344,11 @@ public class portlistener : MonoBehaviour
 
             float PistonEndY = (BoomEndY-BoomStartY)*PistonFraction +BoomStartY;
 
-           
+
 
             Vector3 PistonEnd = new Vector3(PistonEndX, PistonEndY, 0f);
 
-       
+
 
     //Data from inputs
 
@@ -361,9 +358,9 @@ public class portlistener : MonoBehaviour
 
             float BoomFixedToPistonStart = DistanceBetweenPoints(BoomFixed, PistonStart);
 
-           
 
- 
+
+
 
             Vector3 BoomFinish = new Vector3(BoomEndX, BoomEndY, 0);
 
@@ -381,7 +378,7 @@ public class portlistener : MonoBehaviour
 
             float BoomFinishY = BoomFinish[1];
 
- 
+
 
     //Requied for solve
 
@@ -389,9 +386,9 @@ public class portlistener : MonoBehaviour
 
             float BoomFixedToPistonLink = DistanceBetweenPoints(BoomFixed, PistonEnd);
 
-            float PistonFractionAlongBoomFixedToFinish = BoomFixedToPistonLink/BoomFixedToFinished;    
+            float PistonFractionAlongBoomFixedToFinish = BoomFixedToPistonLink/BoomFixedToFinished;
 
- 
+
 
     //Piston Data
 
@@ -405,7 +402,7 @@ public class portlistener : MonoBehaviour
 
             float PistonMax = 0f;
 
- 
+
 
             if (Max == false)
 
@@ -417,7 +414,7 @@ public class portlistener : MonoBehaviour
 
             PistonMax = PistonMin*PistonRatio;
 
-            }  
+            }
 
             else
 
@@ -425,7 +422,7 @@ public class portlistener : MonoBehaviour
 
             PistonMax = BoomFixedToPistonStart+BoomFixedToPistonLink;
 
-            }              
+            }
 
             }
 
@@ -445,11 +442,11 @@ public class portlistener : MonoBehaviour
 
             int ArrayLength = (int)Math.Round((PistonMax-PistonMin)/PistonStep);
 
-           
+
 
     //Piston Length Array
 
-            float[] PistonLength = new float [ArrayLength];  
+            float[] PistonLength = new float [ArrayLength];
 
             for (int i = 0; i<ArrayLength; i++)
 
@@ -461,11 +458,11 @@ public class portlistener : MonoBehaviour
 
             // Array.ForEach(PistonLength, Console.WriteLine);
 
- 
+
 
     //Time Array
 
-            float[] Time = new float [ArrayLength];  
+            float[] Time = new float [ArrayLength];
 
             for (int i = 0; i<ArrayLength; i++)
 
@@ -486,7 +483,7 @@ public class portlistener : MonoBehaviour
 
                 z[i] = (((float)Math.Pow(BoomFixedToPistonLink,2.0) + (float)Math.Pow(BoomFixedToPistonStart,2.0) - (float)Math.Pow(PistonLength[i],2.0))/(2*BoomFixedToPistonLink*BoomFixedToPistonStart));
 
-            }        
+            }
 
     //Theta - angle between Boom and vector BoomFixed to PistonStart - Alpha is the polar angle of Piston Start from Boom Fixed
 
@@ -494,7 +491,7 @@ public class portlistener : MonoBehaviour
 
             float AlphaThetaOne = (float)Math.Atan2( (BoomFinishY-BoomFixedY), (BoomFinishX -BoomFixedX));
 
- 
+
 
             int o1 = (int)Math.Round((AlphaThetaOne - Alpha - (float)Math.Acos(z[0]))*180/Math.PI);
 
@@ -512,7 +509,7 @@ public class portlistener : MonoBehaviour
 
             // Console.WriteLine(o4);
 
- 
+
 
         float[] Theta = new float[ArrayLength];
 
@@ -576,7 +573,7 @@ public class portlistener : MonoBehaviour
 
          }
 
- 
+
 
     //Using correct angles
     //Calc Piston Vectors
@@ -595,7 +592,7 @@ public class portlistener : MonoBehaviour
 
             }
 
- 
+
 
             Vector3[] BoomArray = new Vector3[ArrayLength];
 
@@ -615,7 +612,7 @@ public class portlistener : MonoBehaviour
 
             {
 
-       
+
 
             for ( int i = 0; i < ArrayLength; i++)
 
@@ -631,11 +628,11 @@ public class portlistener : MonoBehaviour
 
             }
 
-           
+
 
             return BoomArray;
 
-           
+
 
         }
 
@@ -655,7 +652,7 @@ public class portlistener : MonoBehaviour
 
             float PistonStartY = PistonStart[1];
 
- 
+
 
             Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
 
@@ -669,11 +666,11 @@ public class portlistener : MonoBehaviour
 
             float PistonEndY = (BoomEndY-BoomStartY)*PistonFraction +BoomStartY;
 
-           
+
 
             Vector3 PistonEnd = new Vector3(PistonEndX, PistonEndY, 0f);
 
-       
+
 
     //Data from inputs
 
@@ -683,9 +680,9 @@ public class portlistener : MonoBehaviour
 
             float BoomFixedToPistonStart = DistanceBetweenPoints(BoomFixed, PistonStart);
 
-           
 
- 
+
+
 
             Vector3 BoomFinish = new Vector3(BoomEndX, BoomEndY, 0);
 
@@ -703,7 +700,7 @@ public class portlistener : MonoBehaviour
 
             float BoomFinishY = BoomFinish[1];
 
- 
+
 
     //Requied for solve
 
@@ -711,9 +708,9 @@ public class portlistener : MonoBehaviour
 
             float BoomFixedToPistonLink = DistanceBetweenPoints(BoomFixed, PistonEnd);
 
-            float PistonFractionAlongBoomFixedToFinish = BoomFixedToPistonLink/BoomFixedToFinished;    
+            float PistonFractionAlongBoomFixedToFinish = BoomFixedToPistonLink/BoomFixedToFinished;
 
- 
+
 
     //Piston Data
 
@@ -727,7 +724,7 @@ public class portlistener : MonoBehaviour
 
             float PistonMax = 0f;
 
- 
+
 
             if (Max == false)
 
@@ -739,7 +736,7 @@ public class portlistener : MonoBehaviour
 
             PistonMax = PistonMin*PistonRatio;
 
-            }  
+            }
 
             else
 
@@ -747,7 +744,7 @@ public class portlistener : MonoBehaviour
 
             PistonMax = BoomFixedToPistonStart+BoomFixedToPistonLink;
 
-            }              
+            }
 
             }
 
@@ -767,11 +764,11 @@ public class portlistener : MonoBehaviour
 
             int ArrayLength = (int)Math.Round((PistonMax-PistonMin)/PistonStep);
 
-           
+
 
     //Piston Length Array
 
-            float[] PistonLength = new float [ArrayLength];  
+            float[] PistonLength = new float [ArrayLength];
 
             for (int i = 0; i<ArrayLength; i++)
 
@@ -783,11 +780,11 @@ public class portlistener : MonoBehaviour
 
             // Array.ForEach(PistonLength, Console.WriteLine);
 
- 
+
 
     //Time Array
 
-            float[] Time = new float [ArrayLength];  
+            float[] Time = new float [ArrayLength];
 
             for (int i = 0; i<ArrayLength; i++)
 
@@ -808,7 +805,7 @@ public class portlistener : MonoBehaviour
 
                 z[i] = (((float)Math.Pow(BoomFixedToPistonLink,2.0) + (float)Math.Pow(BoomFixedToPistonStart,2.0) - (float)Math.Pow(PistonLength[i],2.0))/(2*BoomFixedToPistonLink*BoomFixedToPistonStart));
 
-            }        
+            }
 
     //Theta - angle between Boom and vector BoomFixed to PistonStart - Alpha is the polar angle of Piston Start from Boom Fixed
 
@@ -816,7 +813,7 @@ public class portlistener : MonoBehaviour
 
             float AlphaThetaOne = (float)Math.Atan2( (BoomFinishY-BoomFixedY), (BoomFinishX -BoomFixedX));
 
- 
+
 
             int o1 = (int)Math.Round((AlphaThetaOne - Alpha - (float)Math.Acos(z[0]))*180/Math.PI);
 
@@ -834,7 +831,7 @@ public class portlistener : MonoBehaviour
 
             // Console.WriteLine(o4);
 
- 
+
 
         float[] Theta = new float[ArrayLength];
 
@@ -898,7 +895,7 @@ public class portlistener : MonoBehaviour
 
          }
 
- 
+
 
     //Using correct angles
     //Calc Piston Vectors
@@ -917,11 +914,11 @@ public class portlistener : MonoBehaviour
 
             }
 
-           
+
 
             return PistonArray;
 
-           
+
 
         }
 
@@ -1001,11 +998,11 @@ public class portlistener : MonoBehaviour
 
         AngularVelocity[ArrayLength-1][1] = 0;
 
-       
+
 
         return AngularVelocity;
 
-       
+
 
         }
 
@@ -1044,7 +1041,7 @@ public class portlistener : MonoBehaviour
 
         float TimeStep = 50f;
 
- 
+
 
         Vector3 joint1 = receivedPos5;
 
@@ -1068,7 +1065,7 @@ public class portlistener : MonoBehaviour
 
         Vector3[] V = VelocityCalculation(Omega, joint1, joint2);
 
- 
+
 
         //print(BoomArray[0]);
 
@@ -1076,9 +1073,9 @@ public class portlistener : MonoBehaviour
 
         BoomOneCurve.positionCount = BoomArray.Length;
 
- 
 
-       
+
+
 
          if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
 
@@ -1100,15 +1097,15 @@ public class portlistener : MonoBehaviour
 
         }
 
-       
 
- 
+
+
 
         if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)&&!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
 
         {
 
- 
+
 
             Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
 
@@ -1126,9 +1123,9 @@ public class portlistener : MonoBehaviour
 
         }
 
- 
 
-   
+
+
 
         if(MenuData[0]==0){
 
@@ -1208,17 +1205,17 @@ public class portlistener : MonoBehaviour
 
         }
 
- 
 
-       
+
+
 
         }
 
-       
 
- 
 
-       
+
+
+
 
         else if(MenuData[0]==1){
 
@@ -1250,26 +1247,26 @@ public class portlistener : MonoBehaviour
 
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
 
-        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;  
+        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
 
         }
 
         else{
 
- 
+
 
         }
 
-       
 
- 
 
-       
+
+
+
 
     }
 
     public IEnumerator FollowArrayPath()
-    {  
+    {
 
         float BoomOverShootFraction = 0f;
 
@@ -1277,9 +1274,9 @@ public class portlistener : MonoBehaviour
 
         float TimeStep = 50f;
 
-       
 
-       
+
+
 
         Vector3 joint1 = receivedPos5;
 
@@ -1303,11 +1300,11 @@ public class portlistener : MonoBehaviour
 
         // Vector3[] V = VelocityCalculation(Omega, joint1, joint2);
 
- 
 
-       
 
- 
+
+
+
 
         for(int i=0; i<=BoomArray.Length; i++)
 
@@ -1336,14 +1333,13 @@ public class portlistener : MonoBehaviour
 
         }
 
-       
+
 
     }
 
-   
 
-   
+
+
 
 }
 
- 

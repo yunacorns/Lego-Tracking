@@ -7,7 +7,7 @@ import math
 import time
 
 
- 
+
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     host, port = "127.0.0.1", 25001
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.connect((host,port))
-    
+
 
     cap= cv2.VideoCapture(0)
     time.sleep(2)
@@ -32,20 +32,21 @@ def main():
         arucoParam = aruco.DetectorParameters_create()
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
         # aruco.drawDetectedMarkers(frame,bbox)
+        img_counter = 0
 
-        
-        # cropping using aruco marker 1 and 2 
+
+        # cropping using aruco marker 1 and 2
         if ids is not None:
             length_ids = len(ids)
             # aruco.drawDetectedMarkers(frame,bbox)
         if ids is not None and [1] in ids and [2] in ids and [3] in ids and [4] in ids:
-        
+
             ids_formatted = []
             for i in range(length_ids):
                 ids_formatted.append(ids[i][0])
 
             # find 1 is top left 2 is top right 3 is bottom left 4 is bottom right
-            pos1 = ids_formatted.index(1) 
+            pos1 = ids_formatted.index(1)
             pos2 = ids_formatted.index(2)
             pos3 = ids_formatted.index(3)
             pos4 = ids_formatted.index(4)
@@ -57,19 +58,19 @@ def main():
             calibCoordsX = [TL1[0],TR2[0],BL3[0],BR4[0]]
             calibCoordsY = [TL1[1],TR2[1],BL3[1],BR4[1]]
             # minus in front of y coords bc webcam origin flipped in x axis compared to unity origin
-            # change these to 950 and 590 stuff 
+            # change these to 950 and 590 stuff
 
-            
+
 
             # calibration
             width, height = 950,590
             pts1 = np.float32([[calibCoordsX[0],calibCoordsY[0]],[calibCoordsX[1],calibCoordsY[1]],[calibCoordsX[2],calibCoordsY[2]],[calibCoordsX[3],calibCoordsY[3]]])
             pts2 = np.float32([[0,0],[width,0],[0,height],[width,height]])
             M = cv2.getPerspectiveTransform(pts1,pts2)
-            dst = cv2.warpPerspective(frame,M,(width,height))
-            bbox_c, ids_c, rejected_c = aruco.detectMarkers(dst,arucoDict, parameters=arucoParam)
-            aruco.drawDetectedMarkers(dst,bbox_c)
-            cv2.imshow('warped',dst)
+            calibframe = cv2.warpPerspective(frame,M,(width,height))
+            bbox_c, ids_c, rejected_c = aruco.detectMarkers(calibframe,arucoDict, parameters=arucoParam)
+            aruco.drawDetectedMarkers(calibframe,bbox_c)
+            cv2.imshow('warped',calibframe)
 
             # menu parameters
             # find middle section
@@ -80,7 +81,7 @@ def main():
             firstSec = int(topOfMenu + widthOfEachSection)
             secondSec = int(topOfMenu + 2*widthOfEachSection)
 
-            # link menu parameters 
+            # link menu parameters
             topOfLinkMenu = 90
             bottomOfLinkMenu = 225
             numberOfLinkSections = 5
@@ -88,10 +89,10 @@ def main():
             linkSections = []
             for i in range(1,numberOfLinkSections):
                 linkSections.append(int(topOfLinkMenu+i*widthOfEachLinkSection))
-            
 
-       
-            
+
+
+
             if ids_c is not None:
                 length_ids_c = len(ids_c)
                 ids_formatted_c = []
@@ -104,7 +105,7 @@ def main():
                     if [i] in ids_c:
                         pos = ids_formatted_c.index(i)
                         TL = bbox_c[pos][0][0]
-                        TR = bbox_c[pos][0][1] 
+                        TR = bbox_c[pos][0][1]
                         BR = bbox_c[pos][0][2]
                         BL = bbox_c[pos][0][3]
                         c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
@@ -131,7 +132,7 @@ def main():
                 if [24] in ids_c:
                     pos = ids_formatted_c.index(24)
                     TL = bbox_c[pos][0][0]
-                    TR = bbox_c[pos][0][1] 
+                    TR = bbox_c[pos][0][1]
                     BR = bbox_c[pos][0][2]
                     BL = bbox_c[pos][0][3]
                     c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
@@ -145,6 +146,14 @@ def main():
                         menuPosition.append(0)
                         menuPosition.append("edit")
                     elif cX>=835 and firstSec<cY<secondSec:
+                        img_name = "opencv_frame_{}.png".format(img_counter)
+                        cv2.imwrite(img_name, calibframe)
+                        stoppedframe = cv2.imread(img_name)
+                        print("{} written!".format(img_name))
+                        bbox_s, ids_s, rejected_s = aruco.detectMarkers(stoppedframe,arucoDict, parameters=arucoParam)
+                        # aruco.drawDetectedMarkers(stoppedframe,bbox_s)
+                        cv2.imshow(img_name, stoppedframe)
+                        img_counter += 1
                         menuPosition.append(1)
                         menuPosition.append("animate")
                     elif cX>=835 and secondSec<cY<bottomOfMenu:
@@ -157,12 +166,12 @@ def main():
                     menuPosition.append(24)
                     menuPosition.append(10)
                     menuPosition.append("none")
-                
+
                 linkMenuPosition = []
                 if [23] in ids_c:
                     pos = ids_formatted_c.index(23)
                     TL = bbox_c[pos][0][0]
-                    TR = bbox_c[pos][0][1] 
+                    TR = bbox_c[pos][0][1]
                     BR = bbox_c[pos][0][2]
                     BL = bbox_c[pos][0][3]
                     c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
@@ -189,7 +198,7 @@ def main():
                     linkMenuPosition.append("pistonfive")
                 else:
                     linkMenuPosition.append(-10)
-                    
+
                 # only send position when on the edit menu
                 menuandtotal = totalPosition+menuPosition+linkMenuPosition
                 pos24 = menuPosition.index(24)
@@ -205,14 +214,14 @@ def main():
                     totalPosString = ','.join(map(str,menuPosition))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
-                
-                
 
 
-                        
+
+
+
         cv2.imshow("result",frame)
         cv2.waitKey(1)
-        
+
 
 if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@ import os
 import socket
 import math
 import time
+import glob
 
 
 
@@ -21,6 +22,7 @@ def main():
     time.sleep(2)
     cap.set(3,640)
     cap.set(4,480)
+    status = True
 
     while True:
         _,frame = cap.read()
@@ -71,6 +73,12 @@ def main():
             bbox_c, ids_c, rejected_c = aruco.detectMarkers(calibframe,arucoDict, parameters=arucoParam)
             aruco.drawDetectedMarkers(calibframe,bbox_c)
             cv2.imshow('warped',calibframe)
+            if status:
+                pauseframe = calibframe
+                bbox_p, ids_p, rejected_p = aruco.detectMarkers(calibframe,arucoDict, parameters=arucoParam)
+                cv2.imshow('pause frame when in animate',pauseframe)
+
+
 
             # menu parameters
             # find middle section
@@ -143,17 +151,41 @@ def main():
                     # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
                     menuPosition.append(24)
                     if cX>=825 and topOfMenu<cY<firstSec:
+                        status = True
                         menuPosition.append(0)
                         menuPosition.append("edit")
+
                     elif cX>=835 and firstSec<cY<secondSec:
-                        img_name = "opencv_frame_{}.png".format(img_counter)
-                        cv2.imwrite(img_name, calibframe)
-                        stoppedframe = cv2.imread(img_name)
-                        print("{} written!".format(img_name))
-                        bbox_s, ids_s, rejected_s = aruco.detectMarkers(stoppedframe,arucoDict, parameters=arucoParam)
-                        # aruco.drawDetectedMarkers(stoppedframe,bbox_s)
-                        cv2.imshow(img_name, stoppedframe)
-                        img_counter += 1
+                        totalAnimatePos = []
+                        status = False
+                        if ids_p is not None:
+                            length_ids_p = len(ids_p)
+                        ids_formatted_p = []
+                        for i in range(length_ids_p):
+                            ids_formatted_p.append(ids_p[i][0])
+                        for i in range (5,8):
+                            if [i] in ids_p:
+                                pos = ids_formatted_p.index(i)
+                                TL = bbox_p[pos][0][0]
+                                TR = bbox_p[pos][0][1]
+                                BR = bbox_p[pos][0][2]
+                                BL = bbox_p[pos][0][3]
+                                c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
+                                # find centre of aruco marker
+                                M = cv2.moments(c)
+                                cX = int(M["m10"] / M["m00"])
+                                cY= int(M["m01"] / M["m00"])
+                                # send coordinates to unity
+                                totalAnimatePos.append(i)
+                                totalAnimatePos.append(cX)
+                                totalAnimatePos.append(-cY)
+                                totalAnimatePos.append(0)
+                            else:
+                                totalAnimatePos.append(i)
+                                totalAnimatePos.append(-100)
+                                totalAnimatePos.append(0)
+                                totalAnimatePos.append(0)
+
                         menuPosition.append(1)
                         menuPosition.append("animate")
                     elif cX>=835 and secondSec<cY<bottomOfMenu:
@@ -201,17 +233,18 @@ def main():
 
                 # only send position when on the edit menu
                 menuandtotal = totalPosition+menuPosition+linkMenuPosition
+                menuandtotalanimate = totalAnimatePos+menuPosition
                 pos24 = menuPosition.index(24)
                 if menuPosition[pos24+1]==0:
                     totalPosString = ','.join(map(str,menuandtotal))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
                 elif menuPosition[pos24+1]==1:
-                    totalPosString = ','.join(map(str,menuPosition))
+                    totalPosString = ','.join(map(str,menuandtotalanimate))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
                 elif menuPosition[pos24+1]==2:
-                    totalPosString = ','.join(map(str,menuPosition))
+                    totalPosString = ','.join(map(str,menuandtotalanimate))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
 

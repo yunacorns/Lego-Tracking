@@ -100,7 +100,7 @@ def main():
                 totalPosition = []
                 totalAnimatePos = []
                 # central aruco markers
-                for i in range(5,8):
+                for i in range(5,10):
                     if [i] in ids_c:
                         pos = ids_formatted_c.index(i)
                         TL = bbox_c[pos][0][0]

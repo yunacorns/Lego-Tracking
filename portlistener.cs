@@ -1,279 +1,122 @@
 using System.Collections;
-
 using System.Collections.Generic;
-
 using UnityEngine;
-
 using System.Net;
-
 using System.Net.Sockets;
-
 using System.Text;
-
 using System.Threading;
-
 using System;
-
 //using System.Numerics;
-
-
 
 [RequireComponent(typeof(LineRenderer))]
 
-
-
 public class portlistener : MonoBehaviour
-
 {
-
     public GameObject[] squareArray;
-
     public GameObject[] menuArray;
-
     public GameObject PistonOneEnd;
-
     public GameObject boomoneanimation;
-
     public LineRenderer Line;
-
     public LineRenderer PistonLine;
-
     public LineRenderer BoomOneCurve;
-
     //public GameObject[] LinkArray;
 
-
-
-
-
-
-
     Thread mThread;
-
     public string connectionIP = "127.0.0.1";
-
     public int connectionPort = 25001;
-
     IPAddress localAdd;
-
     TcpListener listener;
-
     TcpClient client;
-
     public Vector3 receivedPos5 = new Vector3(-100,0,0);
-
     public Vector3 receivedPos6 = new Vector3(-100,0,0);
-
     public Vector3 receivedPos7 = new Vector3(-100,0,0);
-
     Vector3 size = Vector3.zero;
-
     Vector3 zeros = Vector3.zero;
-
     Vector3 outofframe = new Vector3(-100,0,0);
-
     public Vector3 MenuData = new Vector3(10,0,0);
     public bool status = false;
     //Vector3 LinkData = new Vector3(10,0,0);
 
-
-
-
-
     public bool running; //nothing
 
-
-
     public void Start() //private
-
     {
-
-
-
         ThreadStart ts = new ThreadStart(GetInfo);
-
         mThread = new Thread(ts);
-
         mThread.Start();
-
-        //if(Status==true){
-
-        //StartCoroutine(FollowArrayPath());
-
-        //}
-
-        // float PistonFractionOne = 0.5f;
-
-        // Vector3[] BoomOnePos = Calculations(receivedPos3, receivedPos4, receivedPos5, PistonFractionOne);
-
-        // BoomOneCurve.positionCount = BoomOnePos.Length;
-
-
-
     }
-
-
 
     public void GetInfo() //nothing
-
     {
-
         localAdd = IPAddress.Parse(connectionIP);
-
         listener = new TcpListener(IPAddress.Any, connectionPort);
-
         listener.Start();
-
-
-
         client = listener.AcceptTcpClient();
 
-
-
         running = true;
-
         while (running)
-
         {
-
             SendAndReceiveData();
-
         }
-
         listener.Stop();
-
     }
-
-
 
     public void SendAndReceiveData() //nothing
-
     {
-
         NetworkStream nwStream = client.GetStream();
-
         byte[] buffer = new byte[client.ReceiveBufferSize];
 
-
-
         //---receiving Data from the Host----
-
         int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize); //Getting data in Bytes from Python
-
         string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead); //Converting byte data to string
 
-
-
         if (dataReceived != null)
-
         {
-
             //---Using received data---
-
             MenuData = StringMenu(dataReceived);
-
-            //if(MenuData[0]==0){
-
             receivedPos5 = StringToVector3(dataReceived,"5");
-
             receivedPos6 = StringToVector3(dataReceived,"6");
-
             receivedPos7 = StringToVector3(dataReceived,"7");
-
-            //}
-
-
-
-
-
-
-
-
-
             //---Sending Data to Host----
-
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
-
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
-
         }
-
     }
 
-
-
-
-
     public static Vector3 StringToVector3(string sVector, string whichSquare)
-
     {
-
         // Remove the parentheses
-
         if (sVector.StartsWith("(") && sVector.EndsWith(")"))
-
         {
-
             sVector = sVector.Substring(1, sVector.Length - 2);
-
         }
-
-
-
         // split the items
-
         string[] sArray = sVector.Split(',');
-
         //get index of whichSquare
-
         int index = Array.IndexOf(sArray, whichSquare);
-
         // store as a Vector3
-
         Vector3 result = new Vector3(
-
             float.Parse(sArray[index+1]),
-
             float.Parse(sArray[index+2]),
-
             float.Parse(sArray[index+3]));
-
-
-
         return result;
-
     }
 
     public static Vector3 StringMenu(string sVector)
-
     {
-
         // Remove the parentheses
-
         if (sVector.StartsWith("(") && sVector.EndsWith(")"))
-
         {
-
             sVector = sVector.Substring(1, sVector.Length - 2);
-
         }
-
-
-
         // split the items
-
         string[] sArray = sVector.Split(',');
-
         //get index of 24
-
         int index = Array.IndexOf(sArray, "24");
 
         Vector3 result = new Vector3(
-
             float.Parse(sArray[index+1]),0,0);
-
         return result;
-
     }
 
 
@@ -1034,57 +877,28 @@ public class portlistener : MonoBehaviour
 
     public async void Update()
     {
-
         float BoomOverShootFraction = 0f;
-
         float PistonFraction = 0.5f;
-
         float TimeStep = 50f;
 
-
-
         Vector3 joint1 = receivedPos5;
-
         Vector3 joint2 = receivedPos6;
-
         Vector3 piston1 = receivedPos7;
-
         Vector3 BoomStart = BoomStartFinder(joint1, joint2, BoomOverShootFraction);
-
         Vector3 PistonOneEndPos = PistonEnd(BoomStart, joint2, PistonFraction);
-
         Vector3[] BoomArray = BoomRotationCalculation(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
-
         Vector3[] PistonArray = PistonRotationCalculation(joint1, joint2, piston1, BoomOverShootFraction, PistonFraction,TimeStep);
-
         float[] BoomAngleChange = RotationFromStartCalculation(BoomArray);
-
         float TotalBoomRange = BoomRangeCalculation(BoomArray);
-
         Vector3[] Omega = AngularVelocityCalculation(BoomArray, TimeStep);
-
         Vector3[] V = VelocityCalculation(Omega, joint1, joint2);
-
-
-
-        //print(BoomArray[0]);
-
-        //print(BoomArray.Length);
 
         BoomOneCurve.positionCount = BoomArray.Length;
 
-
-
-
-
         if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
-
         {
-
             Vector3[] LinePosition1 = {BoomStart,joint2};
-
-            Line.SetPositions(LinePosition1);
-
+            Line.SetPositions(LinePosition1)
         }
           else
         {
@@ -1093,7 +907,6 @@ public class portlistener : MonoBehaviour
         }
 
         if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)&&!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
-
         {
             Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
             PistonLine.SetPositions(LinePosition2);

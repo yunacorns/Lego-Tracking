@@ -73,11 +73,11 @@ def main():
             M = cv2.getPerspectiveTransform(pts1,pts2)
             calibframe = cv2.warpPerspective(frame,M,(width,height))
             bbox_c, ids_c, rejected_c = aruco.detectMarkers(calibframe,arucoDict, parameters=arucoParam)
-            aruco.drawDetectedMarkers(calibframe,bbox_c)
             cv2.imshow('warped',calibframe)
             if status:
                 pauseframe = calibframe
                 bbox_p, ids_p, rejected_p = aruco.detectMarkers(calibframe,arucoDict, parameters=arucoParam)
+                aruco.drawDetectedMarkers(calibframe,bbox_p)
                 cv2.imshow('pause frame when in animate',pauseframe)
 
 

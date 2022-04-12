@@ -885,11 +885,56 @@ public class portlistener : MonoBehaviour
 
         }
 
+    //Ben slider
+
+    public float sliderAngle(Vector3 Handle_Position, Vector3 Slider_Position)
+    {
+        float dx = Slider_Position[1] - Handle_Position[1];
+        float dy = Slider_Position[0] - Handle_Position[0];
+        float thetaSlider = (float)Math.Atan2(dy, dx);
+
+        return thetaSlider;
+    }
+
+    public float sliderValue(Vector3 Handle_Position, Vector3 Slider_Position)
+    {
+        float sliderdistance = DistanceBetweenPoints(Slider_Position, Handle_Position);
+        float start_magnitude = 40f;
+        float end_magnitude = 120f;
+        float slider_current_value = (float)Math.Round(((sliderdistance - start_magnitude) / end_magnitude),1);
+        float slider_default_value = 0.7f;
+        if(Handle_Position==outofframe||Slider_Position==outofframe)
+        {
+            return default_slider_value;
+        }
+        else if(0<=slider_current_value&&slider_current_value<=1)
+        {
+            return slider_current_value;
+        }
+        else if (slider_current_value<=0)
+        {
+            return 0;
+        }
+        else
+        {
+            return 1;
+        }
+        return slider_current_value;
+    }
+
     public async void Update()
     {
         float BoomOverShootFraction = 0f;
-        float PistonFraction = 0.5f;
-        PistonOneFraction.text = PistonFraction.ToString();
+        float PistonFraction = sliderValue(receivedPos9,receivedPos8);
+        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        {
+            PistonOneFraction.text = PistonFraction.ToString();
+        }
+        else
+        {
+            PistonOneFraction.text = "slider not detected"
+        }
+
         float TimeStep = 5f;
 
         Vector3 joint1 = receivedPos5;
@@ -903,30 +948,8 @@ public class portlistener : MonoBehaviour
         float TotalBoomRange = BoomRangeCalculation(BoomArray);
         Vector3[] Omega = AngularVelocityCalculation(BoomArray, TimeStep);
         Vector3[] V = VelocityCalculation(Omega, joint1, joint2);
-
+        float PistonFractionTest = sliderValue(receivedPos9,receivedPos8);
         BoomOneCurve.positionCount = BoomArray.Length;
-
-        if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
-        {
-            Vector3[] LinePosition1 = {BoomStart,joint2};
-            Line.SetPositions(LinePosition1);
-        }
-          else
-        {
-            Vector3[] LinePosition1 = {outofframe, outofframe};
-            Line.SetPositions(LinePosition1);
-        }
-
-        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)&&!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
-        {
-            Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
-            PistonLine.SetPositions(LinePosition2);
-        }
-        else
-        {
-            Vector3[] LinePosition2 = {outofframe, outofframe};
-            PistonLine.SetPositions(LinePosition2);
-        }
 
         if(MenuData[0]==0){
         //edit
@@ -955,8 +978,20 @@ public class portlistener : MonoBehaviour
         }else{
         squareArray[2].GetComponent<Renderer>().enabled = false;
         }
+         if(!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
+        {
+            Line.GetComponent<Renderer>().enabled = true;
+            Vector3[] LinePosition1 = {BoomStart,joint2};
+            Line.SetPositions(LinePosition1);
+        }
+          else
+        {
+            Line.GetComponent<Renderer>().enabled = false;
+            Vector3[] LinePosition1 = {outofframe, outofframe};
+            Line.SetPositions(LinePosition1);
+        }
 
-        if(!piston1.Equals(outofframe)&&!PistonOneEndPos.Equals(outofframe)&&!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
+        if(!piston1.Equals(outofframe)&&!joint1.Equals(outofframe)&&!joint2.Equals(outofframe))
         {
             PistonLine.GetComponent<Renderer>().enabled = true;
             Vector3[] LinePosition2 = {piston1,PistonOneEndPos};
@@ -985,18 +1020,6 @@ public class portlistener : MonoBehaviour
         {
             BoomOneCurve.GetComponent<Renderer>().enabled = false;
         }
-        // if(!piston1.Equals(outofframe)){
-        // for(int i=0; i<PistonArray.Length; i++){
-        //     PistonOneCurve.GetComponent<Renderer>().enabled = true;
-        //     PistonOneCurve.SetPosition(i,PistonArray[i]);
-
-        // }
-        // } else
-        // {
-        //     PistonOneCurve.GetComponent<Renderer>().enabled = false;
-        // }
-
-
 
         StartCoroutine(FollowPistonPath());
 
@@ -1014,7 +1037,16 @@ public class portlistener : MonoBehaviour
     public void RenderComponents()
     {
         float BoomOverShootFraction = 0f;
-        float PistonFraction = 0.5f;
+        float PistonFraction = sliderValue(receivedPos9,receivedPos8);
+        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        {
+            PistonOneFraction.text = PistonFraction.ToString();
+        }
+        else
+        {
+            PistonOneFraction.text = "slider not detected"
+        }
+
         float TimeStep = 5f;
         Vector3 joint1 = receivedPos5;
         Vector3 joint2 = receivedPos6;
@@ -1060,7 +1092,16 @@ public class portlistener : MonoBehaviour
     public IEnumerator FollowPath()
     {
         float BoomOverShootFraction = 0f;
-        float PistonFraction = 0.5f;
+        float PistonFraction = sliderValue(receivedPos9,receivedPos8);
+        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        {
+            PistonOneFraction.text = PistonFraction.ToString();
+        }
+        else
+        {
+            PistonOneFraction.text = "slider not detected"
+        }
+
         float TimeStep = 5f;
         Vector3 joint1 = receivedPos5;
         Vector3 joint2 = receivedPos6;
@@ -1085,7 +1126,16 @@ public class portlistener : MonoBehaviour
      public IEnumerator FollowPistonPath()
     {
         float BoomOverShootFraction = 0f;
-        float PistonFraction = 0.5f;
+        float PistonFraction = sliderValue(receivedPos9,receivedPos8);
+        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        {
+            PistonOneFraction.text = PistonFraction.ToString();
+        }
+        else
+        {
+            PistonOneFraction.text = "slider not detected"
+        }
+
         float TimeStep = 5f;
         Vector3 joint1 = receivedPos5;
         Vector3 joint2 = receivedPos6;

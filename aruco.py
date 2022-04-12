@@ -154,7 +154,7 @@ def main():
                         ids_formatted_p = []
                         for i in range(length_ids_p):
                             ids_formatted_p.append(ids_p[i][0])
-                        for i in range (5,8):
+                        for i in range (5,10):
                             if [i] in ids_p:
                                 pos = ids_formatted_p.index(i)
                                 TL = bbox_p[pos][0][0]

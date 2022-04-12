@@ -907,7 +907,7 @@ public class portlistener : MonoBehaviour
         float slider_default_value = 0.7f;
         if(Handle_Position==outofframe||Slider_Position==outofframe)
         {
-            return default_slider_value;
+            return slider_default_value;
         }
         else if(0<=slider_current_value&&slider_current_value<=1)
         {
@@ -921,7 +921,7 @@ public class portlistener : MonoBehaviour
         {
             return 1;
         }
-        return slider_current_value;
+
     }
 
     public async void Update()
@@ -1040,13 +1040,13 @@ public class portlistener : MonoBehaviour
     {
         float BoomOverShootFraction = 0f;
         float PistonFraction = sliderValue(receivedPos9,receivedPos8);
-        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        if(receivedPos8!=outofframe && receivedPos9!=outofframe)
         {
             PistonOneFraction.text = PistonFraction.ToString();
         }
         else
         {
-            PistonOneFraction.text = "slider not detected"
+            PistonOneFraction.text = "slider not detected";
         }
 
         float TimeStep = 5f;
@@ -1095,13 +1095,13 @@ public class portlistener : MonoBehaviour
     {
         float BoomOverShootFraction = 0f;
         float PistonFraction = sliderValue(receivedPos9,receivedPos8);
-        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        if(receivedPos8!=outofframe && receivedPos9!=outofframe)
         {
             PistonOneFraction.text = PistonFraction.ToString();
         }
         else
         {
-            PistonOneFraction.text = "slider not detected"
+            PistonOneFraction.text = "slider not detected";
         }
 
         float TimeStep = 5f;
@@ -1129,13 +1129,13 @@ public class portlistener : MonoBehaviour
     {
         float BoomOverShootFraction = 0f;
         float PistonFraction = sliderValue(receivedPos9,receivedPos8);
-        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        if(receivedPos8!=outofframe && receivedPos9!=outofframe)
         {
             PistonOneFraction.text = PistonFraction.ToString();
         }
         else
         {
-            PistonOneFraction.text = "slider not detected"
+            PistonOneFraction.text = "slider not detected";
         }
 
         float TimeStep = 5f;

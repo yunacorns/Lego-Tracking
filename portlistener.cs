@@ -36,6 +36,8 @@ public class portlistener : MonoBehaviour
     public Vector3 receivedPos5 = new Vector3(-100,0,0);
     public Vector3 receivedPos6 = new Vector3(-100,0,0);
     public Vector3 receivedPos7 = new Vector3(-100,0,0);
+    public Vector3 receivedPos8 = new Vector3(-100,0,0);
+    public Vector3 receivedPos9 = new Vector3(-100,0,0);
     Vector3 size = Vector3.zero;
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
@@ -85,8 +87,8 @@ public class portlistener : MonoBehaviour
             receivedPos5 = StringToVector3(dataReceived,"5");
             receivedPos6 = StringToVector3(dataReceived,"6");
             receivedPos7 = StringToVector3(dataReceived,"7");
-            //receivedPos8 = StringToVector3(dataReceived,"8");
-            //receivedPos9 = StringToVector3(dataReceived,"9");
+            receivedPos8 = StringToVector3(dataReceived,"8");
+            receivedPos9 = StringToVector3(dataReceived,"9");
             //---Sending Data to Host----
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
@@ -926,13 +928,13 @@ public class portlistener : MonoBehaviour
     {
         float BoomOverShootFraction = 0f;
         float PistonFraction = sliderValue(receivedPos9,receivedPos8);
-        if(receivedPos8!=outofframe && receivedPos9!==outofframe)
+        if(receivedPos8!=outofframe && receivedPos9!=outofframe)
         {
             PistonOneFraction.text = PistonFraction.ToString();
         }
         else
         {
-            PistonOneFraction.text = "slider not detected"
+            PistonOneFraction.text = "slider not detected";
         }
 
         float TimeStep = 5f;

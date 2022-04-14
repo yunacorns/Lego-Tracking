@@ -17,11 +17,11 @@ public class portlistener : MonoBehaviour
 {
     public GameObject[] squareArray;
     public GameObject[] menuArray;
-    public GameObject PistonOneEnd;
-    public GameObject BoomOneEnd;
+    public GameObject[] PistonOneEnd;
+    public GameObject[] BoomOneEnd;
     public GameObject boomoneanimation;
-    public LineRenderer Line;
-    public LineRenderer PistonLine;
+    public LineRenderer[] BoomLine;
+    public LineRenderer[] PistonLine;
     public LineRenderer BoomOneCurve;
     public LineRenderer PistonOneCurve;
     public TextMeshProUGUI PistonOneFraction;
@@ -87,6 +87,8 @@ public class portlistener : MonoBehaviour
             receivedPos7 = StringToVector3(dataReceived,"7");
             receivedPos8 = StringToVector3(dataReceived,"8");
             receivedPos9 = StringToVector3(dataReceived,"9");
+            receivedPos10 = StringToVector3(dataReceived,"10");
+            receivedPos11 = StringToVector3(dataReceived,"11");
             //---Sending Data to Host----
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
@@ -721,40 +723,40 @@ public class portlistener : MonoBehaviour
 
         //Boom 2
         //BData
-        // float BoomOverShootFraction2 = 0.3f;
-        // float PistonFraction2 = 0f;
-        // float JointFraction2 = 1f;
+        float BoomOverShootFraction2 = 0.3f;
+        float PistonFraction2 = 0.7f;
+        float JointFraction2 = 0f;
 
         // //Positions
-        // Vector3 EndBoom2 = receivedPos8; //???
-        // Vector3 StartPiston2 = receivedPos9; //???
+        Vector3 EndBoom2 = receivedPos10; //???
+        Vector3 StartPiston2 = receivedPos11; //???
 
-        // Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
-        // Vector3 StartBoom2 = BoomStartFinder(FixedBoom2, EndBoom2, BoomOverShootFraction2);
-        // Vector3 EndPiston2 = PistonEnd(FixedBoom2, EndBoom2, PistonFraction2);
+        Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
+        Vector3 StartBoom2 = BoomStartFinder(FixedBoom2, EndBoom2, BoomOverShootFraction2);
+        Vector3 EndPiston2 = PistonEnd(EndBoom1, EndBoom2, PistonFraction2);
 
-        // //Arrays of Translated Positions relative to boom1 rotaions
-        // Vector3[] EndBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
-        // Vector3[] StartPiston2Array = RelativePosition(FixedBoom1, StartPiston2, AngleChangeBoom1);
-        // Vector3[] FixedBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
-        // Vector3[] StartBoom2Array = RelativePosition(FixedBoom1, StartBoom2, AngleChangeBoom1);
-        // Vector3[] EndPiston2Array = RelativePosition(FixedBoom1, EndPiston2, AngleChangeBoom1);
+        //Arrays of Translated Positions relative to boom1 rotaions
+        Vector3[] EndBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
+        Vector3[] StartPiston2Array = RelativePosition(FixedBoom1, StartPiston2, AngleChangeBoom1);
+        Vector3[] FixedBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
+        Vector3[] StartBoom2Array = RelativePosition(FixedBoom1, StartBoom2, AngleChangeBoom1);
+        Vector3[] EndPiston2Array = RelativePosition(FixedBoom1, EndPiston2, AngleChangeBoom1);
 
-        // //Boom2 Calcs
-        // Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
-        // Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
-        // Vector3[] PistonArray2 = PistonRotationCalculation(StartBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
-        // float[] AngleChangeBoom2 = RotationFromStartCalculation(BoomArray2);
-        // float TotalBoomRange2 = BoomRangeCalculation(BoomArray2);
-        // Vector3[] Omega2 = AngularVelocityCalculation(BoomArray2, TimeStep);
-        // Vector3[] Omega2Contract = VelocityContracting(Omega2);
-        // Vector3[] V2 = VelocityCalculation(Omega2, FixedBoom2, EndBoom2);
-        // Vector3[] V2Contract = VelocityContracting(V2);
+        //Boom2 Calcs
+        Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
+        Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
+        Vector3[] PistonArray2 = PistonRotationCalculation(StartBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
+        float[] AngleChangeBoom2 = RotationFromStartCalculation(BoomArray2);
+        float TotalBoomRange2 = BoomRangeCalculation(BoomArray2);
+        Vector3[] Omega2 = AngularVelocityCalculation(BoomArray2, TimeStep);
+        Vector3[] Omega2Contract = VelocityContracting(Omega2);
+        Vector3[] V2 = VelocityCalculation(Omega2, FixedBoom2, EndBoom2);
+        Vector3[] V2Contract = VelocityContracting(V2);
 
-        // //Boom2 Translated Arrays - Vector3[Position Through Boom 1 Movement, Position Through Boom 2 Movement]
-        // Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
-        // Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
-        // Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
+        //Boom2 Translated Arrays - Vector3[Position Through Boom 1 Movement, Position Through Boom 2 Movement]
+        Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
+        Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
+        Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
 
         // //Max Reach of Both Booms
         // Vector3[] MaxReachPositions = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
@@ -763,6 +765,8 @@ public class portlistener : MonoBehaviour
         // float[,] EndVelocityBoom1ExtendBoom2Contract = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Extend Boom2 Contract
         // float[,] EndVelocityBoom1ContractBoom2Extend = TwoMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, V2, BoomArray2Array); //Boom1 Contract Boom2 Extending
         // float[,] EndVelocityBoom1ContractBoom2Contract = TwoMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Contract Boom2 Contract
+
+
 
         if(MenuData[0]==0)
         {
@@ -773,57 +777,81 @@ public class portlistener : MonoBehaviour
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
         //render components only if they exist
+         void IfExistFixedBoom(Vector3 theAruco, int i){
+            if(theAruco != outofframe)
+            {
+                squareArray[i].SetActive(true);
+                squareArray[i].transform.position = theAruco;
+            }
+            else
+            {
+                squareArray[i].SetActive(false);
+            }
+        }
+        void IfExistFreeBoom(Vector3 theAruco, int i, int j){
+            if(theAruco != outofframe)
+            {
+                squareArray[i].SetActive(true);
+                squareArray[i].transform.position = theAruco;
+                BoomOneEnd[j].transform.position = EndBoom1;
+            }
+            else
+            {
+                squareArray[i].SetActive(false);
+            }
+        }
+        void IfExistPiston(Vector3 theAruco, int i,int j){
+            if(theAruco != outofframe)
+            {
+                squareArray[i].SetActive(true);
+                squareArray[i].transform.position = theAruco;
+                PistonOneEnd[j].transform.position = EndPiston1;
+            }
+            else
+            {
+                squareArray[i].SetActive(false);
+            }
+        }
 
-        if(FixedBoom1!=outofframe)
+        IfExistFixedBoom(FixedBoom1,0);
+        IfExistFreeBoom(EndBoom1,1,0);
+        IfExistPiston(StartPiston1,2,0);
+        IfExistFreeBoom(EndBoom2,3,1);
+        IfExistPiston(StartPiston2,4,1);
+
+        void IfExistBoomLine(Vector3 StartBoomPos, Vector3 EndBoomPos, int i )
         {
-        squareArray[0].GetComponent<Renderer>().enabled = true;
-        squareArray[0].transform.position = FixedBoom1;
+            if(StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+            {
+                BoomLine[i].GetComponent<Renderer>().enabled = true;
+                Vector3[] LinePosition1 = {StartBoomPos,EndBoomPos};
+                BoomLine[i].SetPositions(LinePosition1);
+            }
+            else
+            {
+                BoomLine[i].GetComponent<Renderer>().enabled = false;
+            }
         }
-        else
+
+        IfExistBoomLine(FixedBoom1,EndBoom1,0);
+        IfExistBoomLine(EndBoom1,EndBoom2,1);
+
+        void IfExistPistonLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
         {
-        squareArray[0].GetComponent<Renderer>().enabled = false;
+            if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+            {
+                PistonLine[i].GetComponent<Renderer>().enabled = true;
+                Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
+                PistonLine[i].SetPositions(LinePosition2);
+            }
+            else
+            {
+                PistonLine[i].GetComponent<Renderer>().enabled = false;
+            }
         }
-        if(EndBoom1!=outofframe)
-        {
-        squareArray[1].GetComponent<Renderer>().enabled = true;
-        squareArray[1].transform.position = EndBoom1;
-        BoomOneEnd.transform.position = EndBoom1;
-        }
-        else
-        {
-        squareArray[1].GetComponent<Renderer>().enabled = false;
-        }
-        if(StartPiston1!=outofframe)
-        {
-        squareArray[2].GetComponent<Renderer>().enabled = true;
-        squareArray[2].transform.position = StartPiston1;
-        }
-        else
-        {
-        squareArray[2].GetComponent<Renderer>().enabled = false;
-        }
-        if(!FixedBoom1.Equals(outofframe)&&!EndBoom1.Equals(outofframe))
-        {
-            Line.GetComponent<Renderer>().enabled = true;
-            Vector3[] LinePosition1 = {StartBoom1,EndBoom1};
-            Line.SetPositions(LinePosition1);
-        }
-        else
-        {
-            Line.GetComponent<Renderer>().enabled = false;
-            Vector3[] LinePosition1 = {outofframe, outofframe};
-            Line.SetPositions(LinePosition1);
-        }
-        if(!StartPiston1.Equals(outofframe)&&!FixedBoom1.Equals(outofframe)&&!EndBoom1.Equals(outofframe))
-        {
-            PistonLine.GetComponent<Renderer>().enabled = true;
-            Vector3[] LinePosition2 = {StartPiston1,EndPiston1};
-            PistonLine.SetPositions(LinePosition2);
-        }
-        else
-        {
-            PistonLine.GetComponent<Renderer>().enabled = false;
-        }
+        IfExistPistonLine(StartPiston1,EndPiston1,FixedBoom1,EndBoom1,0);
+        IfExistPistonLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
+
         }
         if(MenuData[0]==1 && status==false)
         {
@@ -833,6 +861,85 @@ public class portlistener : MonoBehaviour
         menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+         //render components only if they exist
+
+        void IfExistFixedBoom(Vector3 theAruco, int i){
+            if(theAruco != outofframe)
+            {
+                squareArray[i].SetActive(true);
+                squareArray[i].transform.position = theAruco;
+            }
+            else
+            {
+                squareArray[i].SetActive(false);
+            }
+        }
+        void IfExistFreeBoom(Vector3 theAruco, int i, int j){
+            if(theAruco != outofframe)
+            {
+                squareArray[i].SetActive(true);
+                squareArray[i].transform.position = theAruco;
+                BoomOneEnd[j].transform.position = EndBoom1;
+            }
+            else
+            {
+                squareArray[i].SetActive(false);
+            }
+        }
+        void IfExistPiston(Vector3 theAruco, int i,int j){
+            if(theAruco != outofframe)
+            {
+                squareArray[i].SetActive(true);
+                squareArray[i].transform.position = theAruco;
+                PistonOneEnd[j].transform.position = EndPiston1;
+            }
+            else
+            {
+                squareArray[i].SetActive(false);
+            }
+        }
+
+        IfExistFixedBoom(FixedBoom1,0);
+        IfExistFreeBoom(EndBoom1,1,0);
+        IfExistPiston(StartPiston1,2,0);
+        IfExistFreeBoom(EndBoom2,3,1);
+        IfExistPiston(StartPiston2,4,1);
+
+        void IfExistBoomLine(Vector3 StartBoomPos, Vector3 EndBoomPos, int i )
+        {
+            if(StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+            {
+                BoomLine[i].GetComponent<Renderer>().enabled = true;
+                Vector3[] LinePosition1 = {StartBoomPos,EndBoomPos};
+                BoomLine[i].SetPositions(LinePosition1);
+            }
+            else
+            {
+                BoomLine[i].GetComponent<Renderer>().enabled = false;
+            }
+        }
+
+        IfExistBoomLine(FixedBoom1,EndBoom1,0);
+        IfExistBoomLine(EndBoom1,EndBoom2,1);
+
+        void IfExistPistonLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
+        {
+            if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+            {
+                PistonLine[i].GetComponent<Renderer>().enabled = true;
+                Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
+                PistonLine[i].SetPositions(LinePosition2);
+            }
+            else
+            {
+                PistonLine[i].GetComponent<Renderer>().enabled = false;
+            }
+        }
+        IfExistPistonLine(StartPiston1,EndPiston1,FixedBoom1,EndBoom1,0);
+        IfExistPistonLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
+
+
+
         if(!StartPiston1.Equals(outofframe))
         {
         for(int i=0; i<ArrayLength1; i++)
@@ -867,68 +974,7 @@ public class portlistener : MonoBehaviour
        //       Boom2 Curve - BoomArray2Array[i, ]
 
     }
-    public void RenderComponents()
-    {
-        //Time Step Generic
-        float TimeStep = TheTimeStep();
-        //Boom 1 Data
-        float BoomOverShootFraction1 = 0f;
-        float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
-        if(receivedPos8!=outofframe && receivedPos9!=outofframe)
-        {
-            PistonOneFraction.text = PistonFraction1.ToString();
-        }
-        else
-        {
-            PistonOneFraction.text = "slider not detected";
-        }
-        //Boom 1 Positions
-        Vector3 FixedBoom1 = receivedPos5;
-        Vector3 EndBoom1 = receivedPos6;
-        Vector3 StartPiston1 = receivedPos7;
-        Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
-        Vector3 EndPiston1 = PistonEnd(FixedBoom1, EndBoom1, PistonFraction1);
 
-        //render components only when they exist
-        if(FixedBoom1!=outofframe)
-        {
-        squareArray[0].GetComponent<Renderer>().enabled = true;
-        squareArray[0].transform.position = FixedBoom1;
-        }
-        else{
-        squareArray[0].GetComponent<Renderer>().enabled = false;
-        }
-        if(EndBoom1!=outofframe)
-        {
-        squareArray[1].GetComponent<Renderer>().enabled = true;
-        squareArray[1].transform.position = EndBoom1;
-        }
-        else
-        {
-        squareArray[1].GetComponent<Renderer>().enabled = false;
-        }
-        if(StartPiston1!=outofframe)
-        {
-        squareArray[2].GetComponent<Renderer>().enabled = true;
-        squareArray[2].transform.position = StartPiston1;
-        PistonOneEnd.transform.position = EndPiston1;
-        }
-        else
-        {
-        squareArray[2].GetComponent<Renderer>().enabled = false;
-        }
-        if(!StartPiston1.Equals(outofframe)&&!FixedBoom1.Equals(outofframe)&&!EndBoom1.Equals(outofframe))
-        {
-            PistonLine.GetComponent<Renderer>().enabled = true;
-            Vector3[] LinePosition2 = {StartPiston1,EndPiston1};
-            PistonLine.SetPositions(LinePosition2);
-        }
-        else
-        {
-            PistonLine.GetComponent<Renderer>().enabled = false;
-        }
-
-    }
     public IEnumerator FollowPath()
     {
         //Time Step Generic
@@ -945,7 +991,7 @@ public class portlistener : MonoBehaviour
         //Boom 1 Calcs
 	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
 
-        RenderComponents();
+        //RenderComponents();
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
         for(int i=0; i<BoomArray1.Length;i++)
         {
@@ -960,10 +1006,10 @@ public class portlistener : MonoBehaviour
 
     public IEnumerator DrawLinkLine(Vector3 posonlink, float speed)
     {
-        while(BoomOneEnd.transform.position != posonlink){
-            BoomOneEnd.transform.position = Vector3.MoveTowards (BoomOneEnd.transform.position, posonlink, speed);
+        while(BoomOneEnd[0].transform.position != posonlink){
+            BoomOneEnd[0].transform.position = Vector3.MoveTowards (BoomOneEnd[0].transform.position, posonlink, speed);
             Vector3[] LinePosition1 = {squareArray[0].transform.position, posonlink};
-            Line.SetPositions(LinePosition1);
+            BoomLine[0].SetPositions(LinePosition1);
             yield return null;
         }
     }
@@ -983,7 +1029,7 @@ public class portlistener : MonoBehaviour
         Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
         Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
 
-        RenderComponents();
+        //RenderComponents();
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
         for(int i=0; i<PistonArray1.Length;i++)
         {
@@ -1000,10 +1046,10 @@ public class portlistener : MonoBehaviour
 
     public IEnumerator DrawPistonLine(Vector3 posonlink, float speed)
     {
-        while(PistonOneEnd.transform.position != posonlink){
-            PistonOneEnd.transform.position = Vector3.MoveTowards (PistonOneEnd.transform.position, posonlink, speed);
+        while(PistonOneEnd[0].transform.position != posonlink){
+            PistonOneEnd[0].transform.position = Vector3.MoveTowards (PistonOneEnd[0].transform.position, posonlink, speed);
             Vector3[] LinePosition1 = {squareArray[2].transform.position, posonlink};
-            PistonLine.SetPositions(LinePosition1);
+            PistonLine[0].SetPositions(LinePosition1);
             yield return null;
         }
     }

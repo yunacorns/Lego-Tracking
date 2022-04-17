@@ -815,6 +815,7 @@ public class portlistener : MonoBehaviour
 
         //Boom 2 Array Length
         int ArrayLength2 = BoomArray2Array.GetLength(0);
+        BoomCurve[1].positionCount = ArrayLength2;
         //print(ArrayLength2);
 
         if(MenuData[0]==0)
@@ -822,6 +823,7 @@ public class portlistener : MonoBehaviour
         //edit
         status = false;
         BoomCurve[0].GetComponent<Renderer>().enabled=false;
+        BoomCurve[1].GetComponent<Renderer>().enabled=false;
         menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;

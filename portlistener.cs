@@ -29,11 +29,13 @@ public class portlistener : MonoBehaviour
     public LineRenderer[] PistonMovingLine;
     public LineRenderer[] PistonFixedLine;
     public LineRenderer[] BoomCurve;
+    public LineRenderer[] OverShootCurve;
     //public GameObject[] StopAnimation;
     public LineRenderer PistonOneCurve;
     public TextMeshProUGUI PistonOneFraction;
     public TextMeshProUGUI GameModeErrorMessage;
     public TextMeshProUGUI GameModeObjectRetrieveMessage;
+    public TextMeshProUGUI[] Velocity;
     //public TextMeshProUGUI[] StopAnimationText;
     //public GameObject[] LinkArray;
     Thread mThread;
@@ -741,9 +743,9 @@ public class portlistener : MonoBehaviour
         float[] AngleChangeBoom1 = RotationFromStartCalculation(BoomArray1);
         float TotalBoomRange1 = BoomRangeCalculation(BoomArray1);
         Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep); //x=time, y=omega
-        //Vector3[] Omega1Contract = VelocityContracting(Omega1); //Array position still correspond to position in BoomArray - therefore time is going from total time to 0 from i=0 to end
-        //Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
-        //Vector3[] V1Contract = VelocityContracting(V1);
+        Vector3[] Omega1Contract = VelocityContracting(Omega1); //Array position still correspond to position in BoomArray - therefore time is going from total time to 0 from i=0 to end
+        Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
+        Vector3[] V1Contract = VelocityContracting(V1);
 
         int ArrayLength1 = BoomArray1.Length;
 
@@ -833,6 +835,7 @@ public class portlistener : MonoBehaviour
         {
         //edit
         status = false;
+        Velocity[0].enabled = false;
         //StopAnimation[0].GetComponent<Renderer>().enabled=false;
         //StopAnimationText[0].enabled = false;
         BoomCurve[0].GetComponent<Renderer>().enabled=false;
@@ -898,6 +901,7 @@ public class portlistener : MonoBehaviour
             {
                 BoomLine[i].GetComponent<Renderer>().enabled = false;
             }
+
         }
 
         IfExistBoomLine(StartBoom1,EndBoom1,0);
@@ -1087,13 +1091,16 @@ public class portlistener : MonoBehaviour
         {
             BoomCurve[0].GetComponent<Renderer>().enabled = true;
             BoomCurve[0].SetPosition(i,BoomArray1[i]);
-
+            OverShootCurve[0].GetComponent<Renderer>().enabled = true;
+            OverShootCurve[0].SetPosition(i,BoomArray1Start[i]);
         }
         }
         else
         {
             BoomCurve[0].GetComponent<Renderer>().enabled = false;
+            OverShootCurve[0].GetComponent<Renderer>().enabled = false;
         }
+
 
          if(!StartPiston1.Equals(outofframe)&&!StartPiston2.Equals(outofframe))
         {
@@ -1171,7 +1178,9 @@ public class portlistener : MonoBehaviour
         //Boom 1 Calcs
 	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
         Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
-        //RenderComponents();
+        Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep); //x=time, y=omega
+        Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
+
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
         for(int i=0; i<BoomArray1.Length;i++)
         {
@@ -1179,6 +1188,8 @@ public class portlistener : MonoBehaviour
             //Vector3 begpos = BoomArray1Start[i];
             float endspeed = 10f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
             //float begspeed = 10f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
+            Velocity[0].enabled = true;
+            Velocity[0].text = V1[i][1].ToString();
             yield return StartCoroutine(DrawLinkOneLine(endpos,endspeed));
         }
         }
@@ -1229,7 +1240,6 @@ public class portlistener : MonoBehaviour
         {
             Vector3 pos = PistonArray1[i];
             float speed = 10f*DistanceBetweenPoints(PistonArray1[i], PistonArray1[i+1])/TimeStep;
-
             yield return StartCoroutine(DrawPistonOneLine(pos, speed));
         }
         }
@@ -1253,7 +1263,7 @@ public class portlistener : MonoBehaviour
         float TimeStep = TheTimeStep();
 
         //Boom 1 Data
-        float BoomOverShootFraction1 = 0.2f;
+        float BoomOverShootFraction1 = 0f;
         float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
 
         //Boom 2 Data

@@ -142,12 +142,13 @@ def main():
                     cY= int(M["m01"] / M["m00"])
                     # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
                     menuPosition.append(24)
-                    if cX>=825 and topOfMenu<cY<firstSec:
+                    # print(cX,cY,0)
+                    if cX<=100 and 70<cY<120:
                         status = True
                         menuPosition.append(0)
                         menuPosition.append("edit")
 
-                    elif cX>=835 and firstSec<cY<secondSec:
+                    elif cX<=100 and 120<cY<170:
                         status = False
                         if ids_p is not None:
                             length_ids_p = len(ids_p)
@@ -179,7 +180,7 @@ def main():
 
                         menuPosition.append(1)
                         menuPosition.append("animate")
-                    elif cX>=835 and secondSec<cY<bottomOfMenu:
+                    elif cX<=835 and 170<cY<220:
                         menuPosition.append(2)
                         menuPosition.append("data")
                     else:

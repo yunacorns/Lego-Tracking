@@ -60,7 +60,9 @@ if (InMenuRegion(0, 100, -70, -120) == "in range") // edit
             }
 
 
-            if (InMenuRegion(0, 100, -350, -400) == "in range") //pistons selected
+            InSubMenuPiston = InMenuRegion(628,712,-500,-590,receivedPos26);
+
+            if (InSubMenuPiston == "in range") //pistons selected
             {
                 //need a .transform.position of piston selector menu
                 subMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;

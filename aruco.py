@@ -190,6 +190,31 @@ def main():
                     menuPosition.append(10)
                     menuPosition.append("none")
 
+                # stop animation
+                # stopAnimation = []
+                # if [25] in ids_c:
+                #     pos = ids_formatted_c.index(25)
+                #     TL = bbox_c[pos][0][0]
+                #     TR = bbox_c[pos][0][1]
+                #     BR = bbox_c[pos][0][2]
+                #     BL = bbox_c[pos][0][3]
+                #     c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
+                #     # find centre of aruco marker
+                #     M = cv2.moments(c)
+                #     cX = int(M["m10"] / M["m00"])
+                #     cY= int(M["m01"] / M["m00"])
+                #     stopAnimation.append(25)
+                #     stopAnimation.append(cX)
+                #     stopAnimation.append(-cY)
+                #     stopAnimation.append(0)
+                # else:
+                #     stopAnimation.append(25)
+                #     stopAnimation.append(-100)
+                #     stopAnimation.append(0)
+                #     stopAnimation.append(0)
+
+
+
 
                 # only send position when on the edit menu
                 menuandtotal = totalPosition+menuPosition

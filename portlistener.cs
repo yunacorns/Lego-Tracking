@@ -20,6 +20,7 @@ public class portlistener : MonoBehaviour
     public GameObject menuGameMode;
     public GameObject[] PistonOneEnd;
     public GameObject[] BoomEnd;
+    public GameObject[] Overshoot;
     public GameObject boomoneanimation;
     public GameObject ExcavatorBase;
     public GameObject ExcavatorBaseCircle;
@@ -28,9 +29,12 @@ public class portlistener : MonoBehaviour
     public LineRenderer[] PistonMovingLine;
     public LineRenderer[] PistonFixedLine;
     public LineRenderer[] BoomCurve;
+    //public GameObject[] StopAnimation;
     public LineRenderer PistonOneCurve;
     public TextMeshProUGUI PistonOneFraction;
     public TextMeshProUGUI GameModeErrorMessage;
+    public TextMeshProUGUI GameModeObjectRetrieveMessage;
+    //public TextMeshProUGUI[] StopAnimationText;
     //public GameObject[] LinkArray;
     Thread mThread;
     public string connectionIP = "127.0.0.1";
@@ -46,11 +50,13 @@ public class portlistener : MonoBehaviour
     public Vector3 receivedPos10 = new Vector3(-100,0,0);
     public Vector3 receivedPos11 = new Vector3(-100,0,0);
     public Vector3 receivedPos12 = new Vector3(-100,0,0);
+    public Vector3 receivedPos25 = new Vector3(-100,0,0);
     Vector3 size = Vector3.zero;
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
     public Vector3 MenuData = new Vector3(10,0,0);
     public bool status = false;
+    public bool AnimationStatusTwo = false;
     public bool GameStatus = true;
     public bool running; //nothing
 
@@ -98,6 +104,7 @@ public class portlistener : MonoBehaviour
             receivedPos10 = StringToVector3(dataReceived,"10");
             receivedPos11 = StringToVector3(dataReceived,"11");
             receivedPos12 = StringToVector3(dataReceived,"12");
+            receivedPos25 = StringToVector3(dataReceived,"25");
             //---Sending Data to Host----
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
@@ -563,14 +570,14 @@ public class portlistener : MonoBehaviour
         int ArrayLength = BoomArray.Length;
         Vector3[] AngularVelocity = new Vector3[ArrayLength];
         AngularVelocity[0] = new Vector3(0f, 0f, 0f) ;
-        for ( int i = 1; i < ArrayLength; i++)
+        for ( int i = 1; i < ArrayLength-1; i++)
 	    {
         float AngleChange = (float)Math.Atan2(BoomArray[i][1], BoomArray[i][0]) - (float)Math.Atan2(BoomArray[(i-1)][1], BoomArray[(i-1)][0]);
         float x =  i*TimeStep;
         float y =  AngleChange/TimeStep;
         AngularVelocity[i] = new Vector3(x, y, 0f);
         }
-        for ( int i = 1; i <ArrayLength; i++)
+        for ( int i = 1; i <ArrayLength-1; i++)
 	    {
         float y = (AngularVelocity[i][1] + AngularVelocity[i+1][1] )/2;
         AngularVelocity[i][1] = y;
@@ -733,7 +740,7 @@ public class portlistener : MonoBehaviour
         Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
         float[] AngleChangeBoom1 = RotationFromStartCalculation(BoomArray1);
         float TotalBoomRange1 = BoomRangeCalculation(BoomArray1);
-        //Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep); //x=time, y=omega
+        Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep); //x=time, y=omega
         //Vector3[] Omega1Contract = VelocityContracting(Omega1); //Array position still correspond to position in BoomArray - therefore time is going from total time to 0 from i=0 to end
         //Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
         //Vector3[] V1Contract = VelocityContracting(V1);
@@ -760,12 +767,16 @@ public class portlistener : MonoBehaviour
 
         //Object To Retrieve (sand) Fixed Pos Range
         Vector3 ObjectToRetrievePos = new Vector3(673,-391,0);
-        int xminObj = (int)ExcavatorPos[0]-20;
-        int xmaxObj = (int)ExcavatorPos[0]+20;
-        int yminObj = (int)ExcavatorPos[1]-20;
-        int ymaxObj = (int)ExcavatorPos[1]+20;
-        //string InObjectPosBoomArray1 = InMenuRegion(xminObj,xmaxObj,yminObj,ymaxObj,BoomArray1[ArrayLength1]);
+        int xminObj = (int)ObjectToRetrievePos[0]-70;
+        int xmaxObj = (int)ObjectToRetrievePos[0]+70;
+        int yminObj = (int)ObjectToRetrievePos[1]-50;
+        int ymaxObj = (int)ObjectToRetrievePos[1]+5;
+        string InObjectPosBoomArray1 = InMenuRegion(xminObj,xmaxObj,yminObj,ymaxObj,BoomArray1[ArrayLength1-1]);
 
+        //Stop Animation One Range
+        Vector3 StopAnimationAruco = receivedPos25;
+        int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -590; int ymaxAnimOne = -500;
+        string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
 
         //Boom 2
         //BData
@@ -822,11 +833,14 @@ public class portlistener : MonoBehaviour
         {
         //edit
         status = false;
+        //StopAnimation[0].GetComponent<Renderer>().enabled=false;
+        //StopAnimationText[0].enabled = false;
         BoomCurve[0].GetComponent<Renderer>().enabled=false;
         BoomCurve[1].GetComponent<Renderer>().enabled=false;
         menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+        GameModeObjectRetrieveMessage.enabled=false;
 
         //render components only if they exist
          void IfExistFixedBoom(Vector3 theAruco, int i){
@@ -834,6 +848,7 @@ public class portlistener : MonoBehaviour
             {
                 squareArray[i].SetActive(true);
                 squareArray[i].transform.position = theAruco;
+                Overshoot[i].transform.position = StartBoom1;
             }
             else
             {
@@ -845,19 +860,19 @@ public class portlistener : MonoBehaviour
             {
                 squareArray[i].SetActive(true);
                 squareArray[i].transform.position = theAruco;
-                BoomEnd[j].transform.position = EndBoom1;
+                BoomEnd[j].transform.position = theAruco;
             }
             else
             {
                 squareArray[i].SetActive(false);
             }
         }
-        void IfExistPiston(Vector3 theAruco, int i,int j){
+        void IfExistPiston(Vector3 theAruco, Vector3 PistonEndPos, int i,int j){
             if(theAruco != outofframe)
             {
                 squareArray[i].SetActive(true);
                 squareArray[i].transform.position = theAruco;
-                PistonOneEnd[j].transform.position = EndPiston1;
+                PistonOneEnd[j].transform.position = PistonEndPos;
             }
             else
             {
@@ -867,9 +882,9 @@ public class portlistener : MonoBehaviour
 
         IfExistFixedBoom(FixedBoom1,0);
         IfExistFreeBoom(EndBoom1,1,0);
-        IfExistPiston(StartPiston1,2,0);
+        IfExistPiston(StartPiston1,EndPiston1,2,0);
         IfExistFreeBoom(EndBoom2,3,1);
-        IfExistPiston(StartPiston2,4,1);
+        IfExistPiston(StartPiston2,EndPiston2,4,1);
 
         void IfExistBoomLine(Vector3 StartBoomPos, Vector3 EndBoomPos, int i )
         {
@@ -885,7 +900,7 @@ public class portlistener : MonoBehaviour
             }
         }
 
-        IfExistBoomLine(FixedBoom1,EndBoom1,0);
+        IfExistBoomLine(StartBoom1,EndBoom1,0);
         IfExistBoomLine(EndBoom1,EndBoom2,1);
 
         void IfExistPistonMovingLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
@@ -957,11 +972,14 @@ public class portlistener : MonoBehaviour
 
 
         }
-        if(MenuData[0]==1 && status==false && GameStatus == true)
+        if(MenuData[0]==1 && status==false && GameStatus == true && AnimationStatusTwo == false)
         {
         //animate
         status = true;
+        AnimationStatusTwo = true;
         GameStatus = true;
+        //StopAnimationText[0].enabled = true;
+        //StopAnimation[0].GetComponent<Renderer>().enabled=true;
         BoomCurve[0].GetComponent<Renderer>().enabled=true;
         menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -973,6 +991,7 @@ public class portlistener : MonoBehaviour
             {
                 squareArray[i].SetActive(true);
                 squareArray[i].transform.position = theAruco;
+                Overshoot[i].transform.position = StartBoom1;
             }
             else
             {
@@ -984,19 +1003,19 @@ public class portlistener : MonoBehaviour
             {
                 squareArray[i].SetActive(true);
                 squareArray[i].transform.position = theAruco;
-                BoomEnd[j].transform.position = EndBoom1;
+                BoomEnd[j].transform.position = theAruco;
             }
             else
             {
                 squareArray[i].SetActive(false);
             }
         }
-        void IfExistPiston(Vector3 theAruco, int i,int j){
+        void IfExistPiston(Vector3 theAruco, Vector3 PistonEndPos, int i,int j){
             if(theAruco != outofframe)
             {
                 squareArray[i].SetActive(true);
                 squareArray[i].transform.position = theAruco;
-                PistonOneEnd[j].transform.position = EndPiston1;
+                PistonOneEnd[j].transform.position = PistonEndPos;
             }
             else
             {
@@ -1006,9 +1025,9 @@ public class portlistener : MonoBehaviour
 
         IfExistFixedBoom(FixedBoom1,0);
         IfExistFreeBoom(EndBoom1,1,0);
-        IfExistPiston(StartPiston1,2,0);
+        IfExistPiston(StartPiston1,EndPiston1,2,0);
         IfExistFreeBoom(EndBoom2,3,1);
-        IfExistPiston(StartPiston2,4,1);
+        IfExistPiston(StartPiston2,EndPiston2,4,1);
 
         void IfExistBoomLine(Vector3 StartBoomPos, Vector3 EndBoomPos, int i )
         {
@@ -1024,7 +1043,7 @@ public class portlistener : MonoBehaviour
             }
         }
 
-        IfExistBoomLine(FixedBoom1,EndBoom1,0);
+        IfExistBoomLine(StartBoom1,EndBoom1,0);
         IfExistBoomLine(EndBoom1,EndBoom2,1);
 
         void IfExistPistonMovingLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
@@ -1093,15 +1112,30 @@ public class portlistener : MonoBehaviour
 
         StartCoroutine(FollowPistonOnePath());
         StartCoroutine(FollowLinkOnePath());
+        //if(status == false){
         //StartCoroutine(FollowLinkTwoPath());
+        //}
 
         //In Game Mode if retrieves object
-        // if(InGameMode == "in range")
+        if(InObjectPosBoomArray1 == "in range")
+        {
+            GameModeObjectRetrieveMessage.text = "Success!";
+        }
+        else if(InObjectPosBoomArray1 == "out of range")
+        {
+            GameModeObjectRetrieveMessage.text = "u suck shit try again";
+        }
+        //If in Stop Animation One Box
+        // if(InStopAnimationOne == "in range")
         // {
+        //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.blue;
+        // }
+        // else if(InStopAnimationOne == "out of range")
+        // {
+        //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.white;
+        // }
 
-
-
-     }
+        }
         if (MenuData[0]==2)
         {
         //data
@@ -1136,25 +1170,39 @@ public class portlistener : MonoBehaviour
         Vector3 StartPiston1 = receivedPos7;
         //Boom 1 Calcs
 	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
-
+        Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
         //RenderComponents();
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
         for(int i=0; i<BoomArray1.Length;i++)
         {
-            Vector3 pos = BoomArray1[i];
-            float speed = 10f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
-            yield return StartCoroutine(DrawLinkOneLine(pos, speed));
+            Vector3 endpos = BoomArray1[i];
+            //Vector3 begpos = BoomArray1Start[i];
+            float endspeed = 10f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
+            //float begspeed = 10f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
+            yield return StartCoroutine(DrawLinkOneLine(endpos,endspeed));
         }
         }
         status = false;
 
     }
 
-    public IEnumerator DrawLinkOneLine(Vector3 posonlink, float speed)
+    // public IEnumerator DrawLinkOneLine(Vector3 posonlinkend, Vector3 posonlinkovershoot, float endspeed, float begspeed)
+    // {
+    //     while(BoomEnd[0].transform.position != posonlinkend){
+    //         BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
+    //         Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
+    //         Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
+    //         BoomLine[0].SetPositions(LinePosition1);
+    //         yield return null;
+    //     }
+    // }
+
+     public IEnumerator DrawLinkOneLine(Vector3 posonlinkend, float endspeed)
     {
-        while(BoomEnd[0].transform.position != posonlink){
-            BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlink, speed);
-            Vector3[] LinePosition1 = {squareArray[0].transform.position, posonlink};
+        while(BoomEnd[0].transform.position != posonlinkend){
+            BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
+            //Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
+            Vector3[] LinePosition1 = {squareArray[0].transform.position, posonlinkend};
             BoomLine[0].SetPositions(LinePosition1);
             yield return null;
         }
@@ -1205,7 +1253,7 @@ public class portlistener : MonoBehaviour
         float TimeStep = TheTimeStep();
 
         //Boom 1 Data
-        float BoomOverShootFraction1 = 0f;
+        float BoomOverShootFraction1 = 0.2f;
         float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
 
         //Boom 2 Data
@@ -1229,8 +1277,13 @@ public class portlistener : MonoBehaviour
         //Boom2 Translated Arrays - Vector3[Position Through Boom 1 Movement, Position Through Boom 2 Movement]
         Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
 
+        //Stop Animation One Range
+        Vector3 StopAnimationAruco = receivedPos25;
+        int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -500; int ymaxAnimOne = -590;
+        string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
         //RenderComponents();
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe && EndBoom2!=outofframe && StartPiston2!=outofframe){
+        //while(InStopAnimationOne == "in range"){
         for(int i=0; i<BoomArray2Array.Length;i++)
         {
             //fix this length thing
@@ -1238,8 +1291,9 @@ public class portlistener : MonoBehaviour
             float speed = 10f*DistanceBetweenPoints(BoomArray2Array[i,0], BoomArray2Array[i+1,0])/TimeStep;
             yield return StartCoroutine(DrawLinkTwoLine(pos, speed));
         }
+        //}
         }
-        status = false;
+        AnimationStatusTwo = false;
 
     }
 

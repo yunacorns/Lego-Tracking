@@ -21,10 +21,13 @@ public class portlistener : MonoBehaviour
     public GameObject[] PistonOneEnd;
     public GameObject[] BoomEnd;
     public GameObject[] Overshoot;
+    public GameObject[] SubMenuArray;
     public GameObject boomoneanimation;
     public GameObject ExcavatorBase;
     public GameObject ExcavatorBaseCircle;
     public GameObject ObjectToRetrieve;
+    public GameObject SelectorHighlighter;
+    public GameObject SliderPositionHighlighter;
     public LineRenderer[] BoomLine;
     public LineRenderer[] PistonMovingLine;
     public LineRenderer[] PistonFixedLine;
@@ -32,10 +35,13 @@ public class portlistener : MonoBehaviour
     public LineRenderer[] OverShootCurve;
     //public GameObject[] StopAnimation;
     public LineRenderer PistonOneCurve;
-    public TextMeshProUGUI PistonOneFraction;
+    public TextMeshProUGUI PistonFraction1Text;
+    public TextMeshProUGUI PistonExtension1Text;
     public TextMeshProUGUI GameModeErrorMessage;
     public TextMeshProUGUI GameModeObjectRetrieveMessage;
     public TextMeshProUGUI[] Velocity;
+    public TextMeshProUGUI[] MenuText;
+    public TextMeshProUGUI[] SliderPositionText;
     //public TextMeshProUGUI[] StopAnimationText;
     //public GameObject[] LinkArray;
     Thread mThread;
@@ -52,7 +58,8 @@ public class portlistener : MonoBehaviour
     public Vector3 receivedPos10 = new Vector3(-100,0,0);
     public Vector3 receivedPos11 = new Vector3(-100,0,0);
     public Vector3 receivedPos12 = new Vector3(-100,0,0);
-    public Vector3 receivedPos25 = new Vector3(-100,0,0);
+    public Vector3 receivedPos13 = new Vector3(-100,0,0);
+    public Vector3 receivedPos14 = new Vector3(-100,0,0);
     Vector3 size = Vector3.zero;
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
@@ -106,7 +113,8 @@ public class portlistener : MonoBehaviour
             receivedPos10 = StringToVector3(dataReceived,"10");
             receivedPos11 = StringToVector3(dataReceived,"11");
             receivedPos12 = StringToVector3(dataReceived,"12");
-            receivedPos25 = StringToVector3(dataReceived,"25");
+            receivedPos13 = StringToVector3(dataReceived,"13");
+            receivedPos14 = StringToVector3(dataReceived,"14");
             //---Sending Data to Host----
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
@@ -209,7 +217,7 @@ public class portlistener : MonoBehaviour
 
     }
     // George's Calculation here
-    public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOverShootFraction)
+public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOverShootFraction)
         {
             Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
             Vector3 BoomStart = BoomFixed + (BoomOverShootFraction*VectorBoomEndToBoomFixed);
@@ -534,15 +542,28 @@ public class portlistener : MonoBehaviour
             return PistonArray;
 
         }
+    // public Vector3[] BoomStartArray(Vector3 BoomFixed, Vector3[] BoomArray, float BoomOvershoot)
+    // {
+    //     int ArrayLength = BoomArray.Length;
+    //     float MultiplyingFactor = 1f + BoomOvershoot;
+    //     Vector3[] NewBoomStartArray = new Vector3[ArrayLength];
+    //     for(int i=0; i < ArrayLength; i++)
+    //     {
+    //         float x = BoomArray[i][0] - ((BoomFixed[0] - BoomArray[i][0])*MultiplyingFactor);
+    //         float y = BoomArray[i][1] - ((BoomFixed[1] - BoomArray[i][1])*MultiplyingFactor);
+    //         NewBoomStartArray[i] = new Vector3(x, y, 0f);
+    //     }
+    //     return NewBoomStartArray;
+    // }
+
     public Vector3[] BoomStartArray(Vector3 BoomFixed, Vector3[] BoomArray, float BoomOvershoot)
     {
         int ArrayLength = BoomArray.Length;
-        float MultiplyingFactor = 1f + BoomOvershoot;
         Vector3[] NewBoomStartArray = new Vector3[ArrayLength];
         for(int i=0; i < ArrayLength; i++)
         {
-            float x = BoomArray[i][0] - ((BoomFixed[0] - BoomArray[i][0])*MultiplyingFactor);
-            float y = BoomArray[i][1] - ((BoomFixed[1] - BoomArray[i][1])*MultiplyingFactor);
+            float x = BoomFixed[0] + ((BoomFixed[0] - BoomArray[i][0])*BoomOvershoot);
+            float y = BoomFixed[1] + ((BoomFixed[1] - BoomArray[i][1])*BoomOvershoot);
             NewBoomStartArray[i] = new Vector3(x, y, 0f);
         }
         return NewBoomStartArray;
@@ -711,22 +732,125 @@ public class portlistener : MonoBehaviour
             return EndVelocity;
     }
 
-    public async void Update()
+public async void Update()
     {
         //Time Step Generic
         float TimeStep = TheTimeStep();
 
         //Boom 1 Data
         float BoomOverShootFraction1 = 0f;
-        float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
-        if(receivedPos8!=outofframe && receivedPos9!=outofframe)
-        {
-            PistonOneFraction.text = PistonFraction1.ToString();
+        Vector3 SliderPosition = receivedPos8; //Moving
+        Vector3 HandlePosition = receivedPos9; //Still
+        float PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
+        float PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
+
+        //Slider Assignment
+        Vector3 EditSubMenuAruco = receivedPos13;
+        Vector3 TypeSelectionAruco = receivedPos14;
+        string EditSubMenuPiston = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
+        string EditSubMenuBoom = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
+        string TypeSelectionOne = InMenuRegion(850, 950, -120, -70, TypeSelectionAruco);
+        string TypeSelectionTwo = InMenuRegion(850, 950, -170, -120, TypeSelectionAruco);
+        string TypeSelectionThree = InMenuRegion(850, 950, -220, -170, TypeSelectionAruco);
+        string TypeSelectionFour = InMenuRegion(850, 950, -270, -220, TypeSelectionAruco);
+        string TypeSelectionWhole = InMenuRegion(850, 950, -270, -70, TypeSelectionAruco);
+
+        if(MenuData[0]==0){
+            if(EditSubMenuPiston == "in range")//Piston Selected
+            {
+                //Highlight Piston To Blue
+                SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                SliderPositionText[0].enabled = true;
+                SliderPositionText[1].enabled = true;
+                MenuText[0].text = "Piston Selection";
+                //Piston Fraction or Boom Overshoot
+                if(TypeSelectionOne == "in range") //Piston One
+                {
+                    //Highlights Piston One Selection
+                    SelectorHighlighter.transform.position = new Vector3(890,-95,0);
+                    //If LHS
+                    if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
+                    {
+                    PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
+                    PistonFraction1Text.text = PistonFraction1.ToString();
+                    }
+                    //If RHS
+                    else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
+                    {
+                    PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
+                    PistonExtension1Text.text =PistonExtension1.ToString();
+                    }
+                    //If Slider not in frame/undetected by webcam
+                    else if(SliderPosition==outofframe || HandlePosition==outofframe)
+                    {
+                    PistonFraction1Text.text = "slider not detected";
+                    PistonExtension1Text.text = "slider not detected";
+                    }
+                }
+                if(TypeSelectionTwo == "in range")//Piston Two
+                {
+                    SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection
+                }
+                if(TypeSelectionThree == "in range")
+                {
+                    SelectorHighlighter.transform.position = new Vector3(890,-195,0); //Highlights Piston Three
+                }
+                if(TypeSelectionFour == "in range")
+                {
+                    SelectorHighlighter.transform.position = new Vector3(890,-245,0); // Highlights Piston Four
+                }
+                if(TypeSelectionWhole == "in range")
+                {
+                    //If RHS Highlights
+                    if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
+                    {
+                        SliderPositionHighlighter.SetActive(true);
+                        SliderPositionHighlighter.transform.position = new Vector3(275,-585,0);
+                    }
+                    //If LHS Highlights
+                    else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
+                    {
+                        SliderPositionHighlighter.SetActive(true);
+                        SliderPositionHighlighter.transform.position = new Vector3(675,-585,0);
+                    }
+                    else
+                    {
+                        SliderPositionHighlighter.SetActive(false);
+                    }
+                }
+            }
+            else if(EditSubMenuBoom == "in range") //Boom One
+            {
+                //Highlight Boom To Blue
+                SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                MenuText[0].text = "Link Selection";
+                SliderPositionText[0].enabled = false;
+                SliderPositionText[1].enabled = false;
+                if(TypeSelectionTwo == "in range")//Link Two
+                {
+                    SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection
+                }
+                if(TypeSelectionThree == "in range")//Link Three
+                {
+                    SelectorHighlighter.transform.position = new Vector3(890,-195,0); //Highlights Piston Three
+                }
+                if(TypeSelectionFour == "in range")//Link Four
+                {
+                    SelectorHighlighter.transform.position = new Vector3(890,-245,0); // Highlights Piston Four
+                }
+
+            }
+            else
+            {
+                SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                MenuText[0].text = "Bitch pls pick Piston or Link ";
+            }
         }
-        else
-        {
-            PistonOneFraction.text = "slider not detected";
-        }
+
+
 
         //Boom 1 Positions
         Vector3 FixedBoom1 = receivedPos5;
@@ -753,8 +877,8 @@ public class portlistener : MonoBehaviour
 
         //Game Mode Menu
         Vector3 GameModeAruco = receivedPos12;
-        int xminGame = 750;
-        int xmaxGame = 836;
+        int xminGame = 775;
+        int xmaxGame = 825;
         int yminGame = -100;
         int ymaxGame = 0;
         string InGameMode = InMenuRegion(xminGame,xmaxGame,yminGame,ymaxGame,GameModeAruco);
@@ -776,13 +900,13 @@ public class portlistener : MonoBehaviour
         string InObjectPosBoomArray1 = InMenuRegion(xminObj,xmaxObj,yminObj,ymaxObj,BoomArray1[ArrayLength1-1]);
 
         //Stop Animation One Range
-        Vector3 StopAnimationAruco = receivedPos25;
-        int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -590; int ymaxAnimOne = -500;
-        string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
+        //Vector3 StopAnimationAruco = receivedPos25;
+        //int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -590; int ymaxAnimOne = -500;
+        //string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
 
         //Boom 2
         //BData
-        float BoomOverShootFraction2 = 0.3f;
+        float BoomOverShootFraction2 = 0f;
         float PistonFraction2 = 0.7f;
         float JointFraction2 = 0f;
 
@@ -1267,7 +1391,7 @@ public class portlistener : MonoBehaviour
         float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
 
         //Boom 2 Data
-        float BoomOverShootFraction2 = 0.3f;
+        float BoomOverShootFraction2 = 0f;
         float PistonFraction2 = 0.7f;
         float JointFraction2 = 0f;
 
@@ -1288,9 +1412,9 @@ public class portlistener : MonoBehaviour
         Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
 
         //Stop Animation One Range
-        Vector3 StopAnimationAruco = receivedPos25;
-        int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -500; int ymaxAnimOne = -590;
-        string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
+        //Vector3 StopAnimationAruco = receivedPos25;
+        //int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -500; int ymaxAnimOne = -590;
+        //string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
         //RenderComponents();
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe && EndBoom2!=outofframe && StartPiston2!=outofframe){
         //while(InStopAnimationOne == "in range"){

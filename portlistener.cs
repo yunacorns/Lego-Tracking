@@ -741,8 +741,8 @@ public async void Update()
         float BoomOverShootFraction1 = 0f;
         Vector3 SliderPosition = receivedPos8; //Moving
         Vector3 HandlePosition = receivedPos9; //Still
-        float PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
-        float PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
+        float PistonFraction1;
+        float PistonExtension1;
 
         //Slider Assignment
         Vector3 EditSubMenuAruco = receivedPos13;

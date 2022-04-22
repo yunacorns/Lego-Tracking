@@ -741,8 +741,8 @@ public async void Update()
         float BoomOverShootFraction1 = 0f;
         Vector3 SliderPosition = receivedPos8; //Moving
         Vector3 HandlePosition = receivedPos9; //Still
-        float PistonFraction1;
-        float PistonExtension1;
+        float PistonFraction1 = 1f;
+        //float PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
 
         //Slider Assignment
         Vector3 EditSubMenuAruco = receivedPos13;
@@ -772,14 +772,14 @@ public async void Update()
                     //If LHS
                     if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
-                    PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
+                    //PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
                     PistonFraction1Text.text = PistonFraction1.ToString();
                     }
                     //If RHS
                     else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
-                    PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
-                    PistonExtension1Text.text =PistonExtension1.ToString();
+                    //PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
+                   // PistonExtension1Text.text =PistonExtension1.ToString();
                     }
                     //If Slider not in frame/undetected by webcam
                     else if(SliderPosition==outofframe || HandlePosition==outofframe)
@@ -872,8 +872,10 @@ public async void Update()
         Vector3[] V1Contract = VelocityContracting(V1);
 
         int ArrayLength1 = BoomArray1.Length;
+        int OverShootArrayLength1 = BoomArray1Start.Length;
 
         BoomCurve[0].positionCount = BoomArray1.Length;
+        OverShootCurve[0].positionCount = BoomArray1Start.Length;
 
         //Game Mode Menu
         Vector3 GameModeAruco = receivedPos12;
@@ -1215,15 +1217,25 @@ public async void Update()
         {
             BoomCurve[0].GetComponent<Renderer>().enabled = true;
             BoomCurve[0].SetPosition(i,BoomArray1[i]);
-            OverShootCurve[0].GetComponent<Renderer>().enabled = true;
-            OverShootCurve[0].SetPosition(i,BoomArray1Start[i]);
         }
         }
         else
         {
             BoomCurve[0].GetComponent<Renderer>().enabled = false;
-            OverShootCurve[0].GetComponent<Renderer>().enabled = false;
         }
+
+        // if(!StartPiston1.Equals(outofframe))
+        // {
+        // for(int i=0; i<OverShootArrayLength1; i++)
+        // {
+        //     OverShootCurve[0].GetComponent<Renderer>().enabled = true;
+        //     OverShootCurve[0].SetPosition(i,BoomArray1Start[i]);
+        // }
+        // }
+        // else
+        // {
+        //     OverShootCurve[0].GetComponent<Renderer>().enabled = false;
+        // }
 
 
          if(!StartPiston1.Equals(outofframe)&&!StartPiston2.Equals(outofframe))
@@ -1293,7 +1305,8 @@ public async void Update()
 
         //Boom 1 Data
         float BoomOverShootFraction1 = 0f;
-        float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
+        //float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
+        float PistonFraction1 = 1f;
 
         //Boom 1 Positions
         Vector3 FixedBoom1 = receivedPos5;
@@ -1309,39 +1322,39 @@ public async void Update()
         for(int i=0; i<BoomArray1.Length;i++)
         {
             Vector3 endpos = BoomArray1[i];
-            //Vector3 begpos = BoomArray1Start[i];
+            Vector3 begpos = BoomArray1Start[i];
             float endspeed = 10f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
-            //float begspeed = 10f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
+            float begspeed = 10f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
             Velocity[0].enabled = true;
             Velocity[0].text = V1[i][1].ToString();
-            yield return StartCoroutine(DrawLinkOneLine(endpos,endspeed));
+            yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
         }
         }
         status = false;
 
     }
 
-    // public IEnumerator DrawLinkOneLine(Vector3 posonlinkend, Vector3 posonlinkovershoot, float endspeed, float begspeed)
-    // {
-    //     while(BoomEnd[0].transform.position != posonlinkend){
-    //         BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
-    //         Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
-    //         Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
-    //         BoomLine[0].SetPositions(LinePosition1);
-    //         yield return null;
-    //     }
-    // }
-
-     public IEnumerator DrawLinkOneLine(Vector3 posonlinkend, float endspeed)
+    public IEnumerator DrawLinkOneLine(Vector3 posonlinkend, Vector3 posonlinkovershoot, float endspeed, float begspeed)
     {
         while(BoomEnd[0].transform.position != posonlinkend){
             BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
-            //Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
-            Vector3[] LinePosition1 = {squareArray[0].transform.position, posonlinkend};
+            Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
+            Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
             BoomLine[0].SetPositions(LinePosition1);
             yield return null;
         }
     }
+
+    //  public IEnumerator DrawLinkOneLine(Vector3 posonlinkend, float endspeed)
+    // {
+    //     while(BoomEnd[0].transform.position != posonlinkend){
+    //         BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
+    //         //Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
+    //         Vector3[] LinePosition1 = {squareArray[0].transform.position, posonlinkend};
+    //         BoomLine[0].SetPositions(LinePosition1);
+    //         yield return null;
+    //     }
+    // }
 
     public IEnumerator FollowPistonOnePath()
     {
@@ -1349,8 +1362,9 @@ public async void Update()
         float TimeStep = TheTimeStep();
 
         //Boom 1 Data
-        float BoomOverShootFraction1 = 0f;
-        float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
+        float BoomOverShootFraction1=0f;
+        //float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
+        float PistonFraction1 = 1f;
         //Boom 1 Positions
         Vector3 FixedBoom1 = receivedPos5;
         Vector3 EndBoom1 = receivedPos6;
@@ -1387,8 +1401,9 @@ public async void Update()
         float TimeStep = TheTimeStep();
 
         //Boom 1 Data
-        float BoomOverShootFraction1 = 0f;
-        float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
+        float BoomOverShootFraction1=0f;
+        //float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
+        float PistonFraction1 = 1f;
 
         //Boom 2 Data
         float BoomOverShootFraction2 = 0f;

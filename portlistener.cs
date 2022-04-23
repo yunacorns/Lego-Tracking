@@ -1117,10 +1117,10 @@ public async void Update()
         if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
         {
             AnimationOneStatus = true;
-            StartCoroutine(FollowPistonOnePath());
-            StartCoroutine(FollowLinkOnePath());
             SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
             SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+            StartCoroutine(FollowPistonOnePath());
+            StartCoroutine(FollowLinkOnePath());
 
         }
 
@@ -1340,6 +1340,8 @@ public async void Update()
             Vector3 begpos = BoomArray1Start[i];
             float endspeed = 2f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
             float begspeed = 2f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
+            Velocity[0].enabled = true;
+            Velocity[0].text = V1[i][1].ToString();
             yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
             //}
             // else if(EditSubMenuTwo=="in range"){
@@ -1355,46 +1357,15 @@ public async void Update()
 
     public IEnumerator DrawLinkOneLine(Vector3 posonlinkend, Vector3 posonlinkovershoot, float endspeed, float begspeed)
     {
-        //Time Step Generic
-        float TimeStep = TheTimeStep();
-
-        //Boom 1 Data
-        float BoomOverShootFraction1 = 0f;
-        //float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
-        float PistonFraction1 = 1f;
-
-        //Boom 1 Positions
-        Vector3 FixedBoom1 = receivedPos5;
-        Vector3 EndBoom1 = receivedPos6;
-        Vector3 StartPiston1 = receivedPos7;
-        //Boom 1 Calcs
-	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
-        Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
-        Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep); //x=time, y=omega
-        Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
-
         Vector3 EditSubMenuAruco = receivedPos26;
         string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
         while(BoomEnd[0].transform.position != posonlinkend ){
-            if(EditSubMenuTwo=="out of range"){
-                SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-                SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-                for(int i=0; i<BoomArray1.Length; i++)
-                {
-                    Velocity[0].enabled = true;
-                    Velocity[0].text = V1[i][1].ToString();
-                }
-                BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
-                Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
-                Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
-                BoomLine[0].SetPositions(LinePosition1);
-                yield return null;
-            }
-            else if(EditSubMenuTwo =="in range")
-            {
-                yield break;
-            }
+            BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
+            Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
+            Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
+            BoomLine[0].SetPositions(LinePosition1);
+            yield return new WaitUntil(() => EditSubMenuOne == "in range");
         }
     }
 
@@ -1445,14 +1416,15 @@ public async void Update()
         string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
         while(PistonOneEnd[0].transform.position != posonlink){
-            if(EditSubMenuTwo=="out of range"){
+           // if(EditSubMenuTwo=="out of range"){
             PistonOneEnd[0].transform.position = Vector3.MoveTowards (PistonOneEnd[0].transform.position, posonlink, speed);
             Vector3[] LinePosition1 = {squareArray[2].transform.position, posonlink};
             PistonMovingLine[0].SetPositions(LinePosition1);
-            yield return null;
-            } else if(EditSubMenuTwo == "in range"){
-            yield break;
-            }
+            yield return new WaitUntil(() => EditSubMenuOne == "in range");
+            // yield return null;
+            // } else if(EditSubMenuTwo == "in range"){
+            // yield break;
+            // }
         }
     }
     public IEnumerator FollowLinkTwoPath()

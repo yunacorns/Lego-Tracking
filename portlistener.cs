@@ -1360,13 +1360,24 @@ public async void Update()
         Vector3 EditSubMenuAruco = receivedPos26;
         string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
+        if(EditSubMenuTwo=="out of range"){
         while(BoomEnd[0].transform.position != posonlinkend ){
             BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
             Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
             Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
             BoomLine[0].SetPositions(LinePosition1);
+            yield return null;
+        }
+        }
+        else if(EditSubMenuTwo =="in range")
+        {
+            SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+            SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
             yield return new WaitUntil(() => EditSubMenuOne == "in range");
         }
+
+
+
     }
 
 
@@ -1416,15 +1427,14 @@ public async void Update()
         string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
         while(PistonOneEnd[0].transform.position != posonlink){
-           // if(EditSubMenuTwo=="out of range"){
+            if(EditSubMenuTwo=="out of range"){
             PistonOneEnd[0].transform.position = Vector3.MoveTowards (PistonOneEnd[0].transform.position, posonlink, speed);
             Vector3[] LinePosition1 = {squareArray[2].transform.position, posonlink};
             PistonMovingLine[0].SetPositions(LinePosition1);
+            yield return null;
+            } else if(EditSubMenuTwo == "in range"){
             yield return new WaitUntil(() => EditSubMenuOne == "in range");
-            // yield return null;
-            // } else if(EditSubMenuTwo == "in range"){
-            // yield break;
-            // }
+            }
         }
     }
     public IEnumerator FollowLinkTwoPath()

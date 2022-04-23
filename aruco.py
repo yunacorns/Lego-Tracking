@@ -179,12 +179,12 @@ def main():
                                 totalAnimatePos.append(0)
                                 totalAnimatePos.append(0)
                         for i in range(25,28):
-                            if[i] in ids_c:
+                            if [i] in ids_c:
                                 pos = ids_formatted_c.index(i)
-                                TL = bbox_p[pos][0][0]
-                                TR = bbox_p[pos][0][1]
-                                BR = bbox_p[pos][0][2]
-                                BL = bbox_p[pos][0][3]
+                                TL = bbox_c[pos][0][0]
+                                TR = bbox_c[pos][0][1]
+                                BR = bbox_c[pos][0][2]
+                                BL = bbox_c[pos][0][3]
                                 c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
                                 # find centre of aruco marker
                                 M = cv2.moments(c)

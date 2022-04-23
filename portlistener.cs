@@ -42,6 +42,7 @@ public class portlistener : MonoBehaviour
     public TextMeshProUGUI[] Velocity;
     public TextMeshProUGUI[] MenuText;
     public TextMeshProUGUI[] SliderPositionText;
+    public TextMeshProUGUI[] SubMenuText;
     //public TextMeshProUGUI[] StopAnimationText;
     //public GameObject[] LinkArray;
     Thread mThread;
@@ -57,15 +58,15 @@ public class portlistener : MonoBehaviour
     public Vector3 receivedPos9 = new Vector3(-100,0,0);
     public Vector3 receivedPos10 = new Vector3(-100,0,0);
     public Vector3 receivedPos11 = new Vector3(-100,0,0);
-    public Vector3 receivedPos12 = new Vector3(-100,0,0);
-    public Vector3 receivedPos13 = new Vector3(-100,0,0);
-    public Vector3 receivedPos14 = new Vector3(-100,0,0);
+    public Vector3 receivedPos25 = new Vector3(-100,0,0);
+    public Vector3 receivedPos26 = new Vector3(-100,0,0);
+    public Vector3 receivedPos27 = new Vector3(-100,0,0);
     Vector3 size = Vector3.zero;
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
     public Vector3 MenuData = new Vector3(10,0,0);
-    public bool status = false;
-    public bool AnimationStatusTwo = false;
+    public bool AnimationOneStatus = false;
+    public bool AnimationTwoStatus = false;
     public bool GameStatus = true;
     public bool running; //nothing
 
@@ -112,9 +113,9 @@ public class portlistener : MonoBehaviour
             receivedPos9 = StringToVector3(dataReceived,"9");
             receivedPos10 = StringToVector3(dataReceived,"10");
             receivedPos11 = StringToVector3(dataReceived,"11");
-            receivedPos12 = StringToVector3(dataReceived,"12");
-            receivedPos13 = StringToVector3(dataReceived,"13");
-            receivedPos14 = StringToVector3(dataReceived,"14");
+            receivedPos25 = StringToVector3(dataReceived,"25");
+            receivedPos26 = StringToVector3(dataReceived,"26");
+            receivedPos27 = StringToVector3(dataReceived,"27");
             //---Sending Data to Host----
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
@@ -745,8 +746,8 @@ public async void Update()
         //float PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
 
         //Slider Assignment
-        Vector3 EditSubMenuAruco = receivedPos13;
-        Vector3 TypeSelectionAruco = receivedPos14;
+        Vector3 EditSubMenuAruco = receivedPos26;
+        Vector3 TypeSelectionAruco = receivedPos27;
         string EditSubMenuPiston = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
         string EditSubMenuBoom = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string TypeSelectionOne = InMenuRegion(850, 950, -120, -70, TypeSelectionAruco);
@@ -756,6 +757,10 @@ public async void Update()
         string TypeSelectionWhole = InMenuRegion(850, 950, -270, -70, TypeSelectionAruco);
 
         if(MenuData[0]==0){
+            //SubMenu Text
+            SubMenuText[0].text = "Piston";
+            SubMenuText[1].text = "Link";
+            SubMenuArray[2].GetComponent<Renderer>().enabled=false;
             if(EditSubMenuPiston == "in range")//Piston Selected
             {
                 //Highlight Piston To Blue
@@ -852,6 +857,8 @@ public async void Update()
 
 
 
+
+
         //Boom 1 Positions
         Vector3 FixedBoom1 = receivedPos5;
         Vector3 EndBoom1 = receivedPos6;
@@ -878,7 +885,7 @@ public async void Update()
         OverShootCurve[0].positionCount = BoomArray1Start.Length;
 
         //Game Mode Menu
-        Vector3 GameModeAruco = receivedPos12;
+        Vector3 GameModeAruco = receivedPos25;
         int xminGame = 775;
         int xmaxGame = 825;
         int yminGame = -100;
@@ -960,7 +967,7 @@ public async void Update()
         if(MenuData[0]==0)
         {
         //edit
-        status = false;
+        AnimationOneStatus = false;
         Velocity[0].enabled = false;
         //StopAnimation[0].GetComponent<Renderer>().enabled=false;
         //StopAnimationText[0].enabled = false;
@@ -1102,11 +1109,16 @@ public async void Update()
 
 
         }
-        if(MenuData[0]==1 && status==false && GameStatus == true && AnimationStatusTwo == false)
+        if(MenuData[0]==1 && AnimationOneStatus==false && GameStatus == true)
         {
+        //SubMenu Text and Box
+        SubMenuText[0].text = "Play";
+        SubMenuText[1].text = "Stop";
+        SubMenuText[2].text = "Reset";
+        SubMenuArray[2].GetComponent<Renderer>().enabled=true;
         //animate
-        status = true;
-        AnimationStatusTwo = true;
+        AnimationOneStatus = true;
+        AnimationTwoStatus = true;
         GameStatus = true;
         //StopAnimationText[0].enabled = true;
         //StopAnimation[0].GetComponent<Renderer>().enabled=true;
@@ -1224,20 +1236,6 @@ public async void Update()
             BoomCurve[0].GetComponent<Renderer>().enabled = false;
         }
 
-        // if(!StartPiston1.Equals(outofframe))
-        // {
-        // for(int i=0; i<OverShootArrayLength1; i++)
-        // {
-        //     OverShootCurve[0].GetComponent<Renderer>().enabled = true;
-        //     OverShootCurve[0].SetPosition(i,BoomArray1Start[i]);
-        // }
-        // }
-        // else
-        // {
-        //     OverShootCurve[0].GetComponent<Renderer>().enabled = false;
-        // }
-
-
          if(!StartPiston1.Equals(outofframe)&&!StartPiston2.Equals(outofframe))
         {
         for(int i=0; i<ArrayLength2; i++)
@@ -1255,9 +1253,7 @@ public async void Update()
 
         StartCoroutine(FollowPistonOnePath());
         StartCoroutine(FollowLinkOnePath());
-        //if(status == false){
-        //StartCoroutine(FollowLinkTwoPath());
-        //}
+
 
         //In Game Mode if retrieves object
         if(InObjectPosBoomArray1 == "in range")
@@ -1330,7 +1326,7 @@ public async void Update()
             yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
         }
         }
-        status = false;
+        AnimationOneStatus = false;
 
     }
 
@@ -1382,7 +1378,7 @@ public async void Update()
         }
         }
 
-        status = false;
+        AnimationOneStatus = false;
 
     }
 
@@ -1442,7 +1438,7 @@ public async void Update()
         }
         //}
         }
-        AnimationStatusTwo = false;
+        AnimationTwoStatus = false;
 
     }
 

@@ -100,7 +100,8 @@ def main():
                 totalPosition = []
                 totalAnimatePos = []
                 # central aruco markers
-                for i in range(5,15):
+                allArucos = [5,6,7,8,9,10,11,25,26,27]
+                for i in allArucos:
                     if [i] in ids_c:
                         pos = ids_formatted_c.index(i)
                         TL = bbox_c[pos][0][0]
@@ -147,17 +148,39 @@ def main():
                         status = True
                         menuPosition.append(0)
                         menuPosition.append("edit")
-
                     elif cX<=100 and 120<cY<170:
                         status = False
+                        # paused frame
                         if ids_p is not None:
                             length_ids_p = len(ids_p)
                         ids_formatted_p = []
                         for i in range(length_ids_p):
                             ids_formatted_p.append(ids_p[i][0])
-                        for i in range (5,15):
+                        for i in range (5,12):
                             if [i] in ids_p:
                                 pos = ids_formatted_p.index(i)
+                                TL = bbox_p[pos][0][0]
+                                TR = bbox_p[pos][0][1]
+                                BR = bbox_p[pos][0][2]
+                                BL = bbox_p[pos][0][3]
+                                c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
+                                # find centre of aruco marker
+                                M = cv2.moments(c)
+                                cX = int(M["m10"] / M["m00"])
+                                cY= int(M["m01"] / M["m00"])
+                                # send coordinates to unity
+                                totalAnimatePos.append(i)
+                                totalAnimatePos.append(cX)
+                                totalAnimatePos.append(-cY)
+                                totalAnimatePos.append(0)
+                            else:
+                                totalAnimatePos.append(i)
+                                totalAnimatePos.append(-100)
+                                totalAnimatePos.append(0)
+                                totalAnimatePos.append(0)
+                        for i in range(25,28):
+                            if[i] in ids_c:
+                                pos = ids_formatted_c.index(i)
                                 TL = bbox_p[pos][0][0]
                                 TR = bbox_p[pos][0][1]
                                 BR = bbox_p[pos][0][2]
@@ -220,7 +243,7 @@ def main():
                 # only send position when on the edit menu
                 menuandtotal = totalPosition+menuPosition
                 menuandtotalanimate = totalAnimatePos+menuPosition
-                newtotalPosString = ','.join(map(str,menuandtotalanimate))
+                # newtotalPosString = ','.join(map(str,menuandtotalanimate))
                 # totalPosString = ''
                 pos24 = menuPosition.index(24)
                 if menuPosition[pos24+1]==0:
@@ -228,10 +251,11 @@ def main():
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
 
-                elif menuPosition[pos24+1]==1 and newtotalPosString!=totalPosString:
+                elif menuPosition[pos24+1]==1:
                     totalPosString = ','.join(map(str,menuandtotalanimate))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
+                    # and newtotalPosString!=totalPosString
                 # elif menuPosition[pos24+1]==2:
                 #     totalPosString = ','.join(map(str,menuandtotalanimate))
                 #     print(totalPosString)

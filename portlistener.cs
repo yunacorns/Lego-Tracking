@@ -748,8 +748,8 @@ public async void Update()
         //Slider Assignment
         Vector3 EditSubMenuAruco = receivedPos26;
         Vector3 TypeSelectionAruco = receivedPos27;
-        string EditSubMenuPiston = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
-        string EditSubMenuBoom = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
+        string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
+        string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string TypeSelectionOne = InMenuRegion(850, 950, -120, -70, TypeSelectionAruco);
         string TypeSelectionTwo = InMenuRegion(850, 950, -170, -120, TypeSelectionAruco);
         string TypeSelectionThree = InMenuRegion(850, 950, -220, -170, TypeSelectionAruco);
@@ -761,7 +761,8 @@ public async void Update()
             SubMenuText[0].text = "Piston";
             SubMenuText[1].text = "Link";
             SubMenuArray[2].GetComponent<Renderer>().enabled=false;
-            if(EditSubMenuPiston == "in range")//Piston Selected
+            SubMenuText[2].enabled = false;
+            if(EditSubMenuOne == "in range")//Piston Selected
             {
                 //Highlight Piston To Blue
                 SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -825,7 +826,7 @@ public async void Update()
                     }
                 }
             }
-            else if(EditSubMenuBoom == "in range") //Boom One
+            else if(EditSubMenuTwo == "in range") //Boom One
             {
                 //Highlight Boom To Blue
                 SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
@@ -1111,23 +1112,29 @@ public async void Update()
         }
         if(MenuData[0]==1 && AnimationOneStatus==false && GameStatus == true)
         {
+        //Menu
+        if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
+        {
+            AnimationOneStatus = true;
+            StartCoroutine(FollowPistonOnePath());
+            StartCoroutine(FollowLinkOnePath());
+            SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+        }
+        GameStatus = true;
         //SubMenu Text and Box
         SubMenuText[0].text = "Play";
         SubMenuText[1].text = "Stop";
         SubMenuText[2].text = "Reset";
         SubMenuArray[2].GetComponent<Renderer>().enabled=true;
-        //animate
-        AnimationOneStatus = true;
-        AnimationTwoStatus = true;
-        GameStatus = true;
+
         //StopAnimationText[0].enabled = true;
         //StopAnimation[0].GetComponent<Renderer>().enabled=true;
         BoomCurve[0].GetComponent<Renderer>().enabled=true;
         menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
-         //render components only if they exist
 
+        //render components only if they exist
         void IfExistFixedBoom(Vector3 theAruco, int i){
             if(theAruco != outofframe)
             {
@@ -1251,8 +1258,10 @@ public async void Update()
         }
 
 
-        StartCoroutine(FollowPistonOnePath());
-        StartCoroutine(FollowLinkOnePath());
+
+
+
+
 
 
         //In Game Mode if retrieves object
@@ -1313,17 +1322,22 @@ public async void Update()
         Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
         Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep); //x=time, y=omega
         Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
+        Vector3 EditSubMenuAruco = receivedPos26;
+        string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
+        string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
 
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
+        while(EditSubMenuTwo=="out of range" && EditSubMenuOne == "in range"){
         for(int i=0; i<BoomArray1.Length;i++)
         {
             Vector3 endpos = BoomArray1[i];
             Vector3 begpos = BoomArray1Start[i];
-            float endspeed = 10f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
-            float begspeed = 10f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
+            float endspeed = 5f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
+            float begspeed = 5f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
             Velocity[0].enabled = true;
             Velocity[0].text = V1[i][1].ToString();
             yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
+        }
         }
         }
         AnimationOneStatus = false;
@@ -1367,14 +1381,19 @@ public async void Update()
         Vector3 StartPiston1 = receivedPos7;
         Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
         Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+        Vector3 EditSubMenuAruco = receivedPos26;
+        string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
+        string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
 
         //RenderComponents();
+        while(EditSubMenuTwo == "out of range" && EditSubMenuOne =="in range"){
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
         for(int i=0; i<PistonArray1.Length;i++)
         {
             Vector3 pos = PistonArray1[i];
-            float speed = 10f*DistanceBetweenPoints(PistonArray1[i], PistonArray1[i+1])/TimeStep;
+            float speed = 5f*DistanceBetweenPoints(PistonArray1[i], PistonArray1[i+1])/TimeStep;
             yield return StartCoroutine(DrawPistonOneLine(pos, speed));
+        }
         }
         }
 

@@ -10,6 +10,7 @@ using System.Threading;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using System.Linq;
 
 [RequireComponent(typeof(LineRenderer))]
 
@@ -33,6 +34,7 @@ public class portlistener : MonoBehaviour
     public LineRenderer[] PistonFixedLine;
     public LineRenderer[] BoomCurve;
     public LineRenderer[] OverShootCurve;
+    public LineRenderer[] Graphsplot;
     //public GameObject[] StopAnimation;
     public LineRenderer PistonOneCurve;
     public TextMeshProUGUI PistonFraction1Text;
@@ -217,6 +219,7 @@ public class portlistener : MonoBehaviour
         }
 
     }
+
     // George's Calculation here
 public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOverShootFraction)
         {
@@ -1289,9 +1292,52 @@ public async void Update()
         // }
 
         }
+
+        //Drawing graph
+
+        float Xminfloat1 = FindMinX(V1); //finding min and max value in array using function
+        float Xmaxfloat1 = FindMaxX(V1);
+        float Yminfloat1 = FindMinY(V1);
+        float Ymaxfloat1 = FindMaxY(V1);
+
+        float Xtotal1 = 390f;
+        float Xscale1 = Xtotal1/Xmaxfloat1; //calculating scaling factor
+        float Ytotal1 = 380f;
+        float Yminmax = Math.Abs(Yminfloat1)+Math.Abs(Ymaxfloat1);
+        float Yscale1 = Ytotal1/Yminmax;
+
+        Vector3 zerozero1 = new Vector3(1150,295,0); //where you want the axis to cross - position
+        Vector3[] V1final = ScaleandMove(V1, Xscale1, Yscale1, zerozero1); //scaling and moving the whole array
+
+        //Drawing axis
+        float Xmin1 = FindMinX(V1final);
+        float Xmax1 = FindMaxX(V1final);
+        float Ymin1 = FindMinY(V1final);
+        float Ymax1 = FindMaxY(V1final);
+
+        Vector3 axisXmax1 = Xfloattov3(Xmax1, zerozero1, 10);
+        Vector3 axisYmax1 = Yfloattov3(Ymax1, zerozero1, 20);
+
+
         if (MenuData[0]==2)
         {
         //data
+        //plot axis lines
+        Vector3[] xaxis1 = {zerozero1, axisXmax1};
+        Graphsplot[1].SetPositions(xaxis1);
+
+        Vector3 ymin1 = new Vector3(zerozero1[0], Ymin1-20,0);
+        Vector3[] yaxis1 = {ymin1, axisYmax1};
+        Graphsplot[2].SetPositions(yaxis1);
+
+        //plot graph
+        int V1finallength = V1final.Count();
+        Graphsplot[2].positionCount = V1finallength;
+        for(int i=0; i<V1finallength; i++)
+        {
+            Graphsplot[2].SetPosition(i,V1final[i]);
+        }
+
         menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -1498,6 +1544,59 @@ public async void Update()
         }
     }
 
+    public Vector3 Xfloattov3(float X, Vector3 zero, float offset)
+    {
+        Vector3 vec= new Vector3 (X+zero.x+offset, zero.y, 0);
+        return vec;
+    }
 
+    public Vector3 Yfloattov3(float Y, Vector3 zero, float offset)
+    {
+        Vector3 vec= new Vector3 (zero.x, Y+zero.y+offset, 0);
+        return vec;
+    }
 
+    public float FindMinX(Vector3[] array)
+    {
+        float MinX = array.Select(v=>v.x).Min();
+        return MinX;
+    }
+
+    public float FindMinY(Vector3[] array)
+    {
+        float MinY = array.Select(v=>v.y).Min();
+        return MinY;
+    }
+
+    public float FindMaxX(Vector3[] array)
+    {
+        float MaxX = array.Select(v=>v.x).Max();
+        return MaxX;
+    }
+
+    public float FindMaxY(Vector3[] array)
+    {
+        float MaxY = array.Select(v=>v.y).Max();
+        return MaxY;
+    }
+
+    public float Yminmax(float Yminfloat, float Ymaxfloat)
+    {
+        float Yminmax = Math.Abs(Yminfloat) + Math.Abs(Ymaxfloat);
+        return Yminmax;
+    }
+
+    public Vector3[] ScaleandMove(Vector3[] array, float Xscale, float Yscale, Vector3 zerozero)
+    {
+        List<Vector3> arraylist = new List<Vector3>();
+        for(int i=0; i<arraylist.Count; i++)
+        {
+            float x = array[i][0]*Xscale + zerozero[0];
+            float y = array[i][1]*Yscale + zerozero[1];
+            arraylist.Add(new Vector3(x,y,0f));
+        }
+        Vector3[] arrayout = arraylist.ToArray();
+
+        return arrayout;
+    }
 }

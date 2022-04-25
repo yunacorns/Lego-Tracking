@@ -203,7 +203,8 @@ def main():
 
                         menuPosition.append(1)
                         menuPosition.append("animate")
-                    elif cX<=835 and 170<cY<220:
+                    elif cX<=100 and 170<cY<220:
+                        status = True
                         menuPosition.append(2)
                         menuPosition.append("data")
                     else:
@@ -256,10 +257,11 @@ def main():
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
                     # and newtotalPosString!=totalPosString
-                # elif menuPosition[pos24+1]==2:
-                #     totalPosString = ','.join(map(str,menuandtotalanimate))
-                #     print(totalPosString)
-                #     sock.sendall(totalPosString.encode("UTF-8"))
+                elif menuPosition[pos24+1]==2:
+                    totalPosString = ','.join(map(str,menuandtotal))
+                    print(totalPosString)
+                    sock.sendall(totalPosString.encode("UTF-8"))
+
 
 
 if __name__ == "__main__":

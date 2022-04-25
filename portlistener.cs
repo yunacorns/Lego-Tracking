@@ -78,6 +78,7 @@ public class portlistener : MonoBehaviour
         ThreadStart ts = new ThreadStart(GetInfo);
         mThread = new Thread(ts);
         mThread.Start();
+        //Display.display
 
     }
     public void GetInfo() //nothing
@@ -597,7 +598,7 @@ public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOve
         int ArrayLength = BoomArray.Length;
         Vector3[] AngularVelocity = new Vector3[ArrayLength];
         AngularVelocity[0] = new Vector3(0f, 0f, 0f) ;
-        for ( int i = 1; i < ArrayLength-1; i++)
+        for ( int i = 1; i < ArrayLength; i++)
 	    {
         float AngleChange = (float)Math.Atan2(BoomArray[i][1], BoomArray[i][0]) - (float)Math.Atan2(BoomArray[(i-1)][1], BoomArray[(i-1)][0]);
         float x =  i*TimeStep;
@@ -609,6 +610,7 @@ public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOve
         float y = (AngularVelocity[i][1] + AngularVelocity[i+1][1] )/2;
         AngularVelocity[i][1] = y;
         }
+
         AngularVelocity[ArrayLength-1][1] = 0;
 
         return AngularVelocity;
@@ -782,20 +784,22 @@ public async void Update()
                     if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
                     //PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
-                    PistonFraction1Text.text = PistonFraction1.ToString();
+
                     }
                     //If RHS
                     else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
                     //PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
-                   // PistonExtension1Text.text =PistonExtension1.ToString();
+                   //
                     }
                     //If Slider not in frame/undetected by webcam
                     else if(SliderPosition==outofframe || HandlePosition==outofframe)
                     {
-                    PistonFraction1Text.text = "slider not detected";
-                    PistonExtension1Text.text = "slider not detected";
+                    //PistonFraction1Text.text = "slider not detected";
+                    //PistonExtension1Text.text = "slider not detected";
                     }
+                // PistonFraction1Text.text = PistonFraction1.ToString();
+                // PistonExtension1Text.text =PistonExtension1.ToString();
                 }
                 if(TypeSelectionTwo == "in range")//Piston Two
                 {
@@ -1125,7 +1129,16 @@ public async void Update()
             StartCoroutine(FollowPistonOnePath());
             StartCoroutine(FollowLinkOnePath());
 
+
+
+
         }
+        // if(EditSubMenuTwo == "in range")
+        // {
+        //     Vector3 StoppedPos = BoomEnd[0].transform.position;
+        //     int StoppedPosIndex = System.Array.IndexOf(BoomArray1,StoppedPos);
+        //     print(StoppedPosIndex);
+        // }
 
 
         GameStatus = true;
@@ -1295,33 +1308,49 @@ public async void Update()
 
         //Drawing graph
 
-        float Xminfloat1 = FindMinX(V1); //finding min and max value in array using function
-        float Xmaxfloat1 = FindMaxX(V1);
-        float Yminfloat1 = FindMinY(V1);
-        float Ymaxfloat1 = FindMaxY(V1);
 
-        float Xtotal1 = 390f;
-        float Xscale1 = Xtotal1/Xmaxfloat1; //calculating scaling factor
-        float Ytotal1 = 380f;
-        float Yminmax = Math.Abs(Yminfloat1)+Math.Abs(Ymaxfloat1);
-        float Yscale1 = Ytotal1/Yminmax;
-
-        Vector3 zerozero1 = new Vector3(1150,295,0); //where you want the axis to cross - position
-        Vector3[] V1final = ScaleandMove(V1, Xscale1, Yscale1, zerozero1); //scaling and moving the whole array
-
-        //Drawing axis
-        float Xmin1 = FindMinX(V1final);
-        float Xmax1 = FindMaxX(V1final);
-        float Ymin1 = FindMinY(V1final);
-        float Ymax1 = FindMaxY(V1final);
-
-        Vector3 axisXmax1 = Xfloattov3(Xmax1, zerozero1, 10);
-        Vector3 axisYmax1 = Yfloattov3(Ymax1, zerozero1, 20);
 
 
         if (MenuData[0]==2)
         {
+        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
         //data
+        float Xminfloat1 = FindMinX(V1); //original
+        float Xmaxfloat1 = FindMaxX(V1);
+        float Yminfloat1 = FindMinY(V1);
+        float Ymaxfloat1 = FindMaxY(V1);
+
+        Debug.Log("print"+Xminfloat1);
+        Debug.Log("print"+Xmaxfloat1);
+        Debug.Log("print"+Yminfloat1);
+        Debug.Log("print"+Ymaxfloat1);
+
+        // float Xtotal1 = 390f;
+        // float Xscale1 = Xtotal1/Xmaxfloat1; //calculating scaling factor
+        float Ytotal1 = 380f;
+        float Yminmax = Math.Abs(Yminfloat1)+Math.Abs(Ymaxfloat1);
+        float Yscale1 = Ytotal1/Yminmax;
+        Debug.Log("print"+Yscale1);
+
+        Vector3 zerozero1 = new Vector3(1150,-295,0); //where you want the axis to cross - position
+        Vector3[] V1final = ScaleandMove(V1, Yscale1, zerozero1); //scaling and moving the whole array
+
+        //Drawing axis
+        float Xmin1 = FindMinX(V1final); //moved
+        float Xmax1 = FindMaxX(V1final);
+        float Ymin1 = FindMinY(V1final); //scaled and moved
+        float Ymax1 = FindMaxY(V1final);
+
+        Debug.Log("print"+Xmin1);
+        Debug.Log("print"+Xmax1);
+        Debug.Log("print"+Ymin1);
+        Debug.Log("print"+Ymax1);
+
+        Vector3 axisXmax1 = Xfloattov3(Xmaxfloat1, zerozero1, 10);
+        Vector3 axisYmax1 = Yfloattov3(Ymax1, zerozero1, 20);
+
         //plot axis lines
         Vector3[] xaxis1 = {zerozero1, axisXmax1};
         Graphsplot[1].SetPositions(xaxis1);
@@ -1338,9 +1367,8 @@ public async void Update()
             Graphsplot[2].SetPosition(i,V1final[i]);
         }
 
-        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
+
+
         }
 
        //What needs animating though movement of boom one at the same time
@@ -1396,6 +1424,7 @@ public async void Update()
             // }
         }
         }
+
         //}
         AnimationOneStatus = false;
 
@@ -1420,8 +1449,12 @@ public async void Update()
             SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
             SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
             yield return new WaitUntil(() => EditSubMenuOne == "in range");
-        }
 
+        }
+        // Vector3 StoppedPos = BoomEnd[0].transform.position;
+        // int StoppedPosIndex = System.Array.IndexOf(BoomArray1,StoppedPos);
+
+        // print(StoppedPosIndex);
 
 
     }
@@ -1455,6 +1488,8 @@ public async void Update()
             Vector3 pos = PistonArray1[i];
             float speed = 2f*DistanceBetweenPoints(PistonArray1[i], PistonArray1[i+1])/TimeStep;
             yield return StartCoroutine(DrawPistonOneLine(pos, speed));
+            //int StoppedIndex = DrawPistonOneLine(pos,speed);
+            //print(StoppedIndex);
             //} else if (EditSubMenuTwo == "in range"){
             //yield break;
             //}
@@ -1469,6 +1504,23 @@ public async void Update()
 
     public IEnumerator DrawPistonOneLine(Vector3 posonlink, float speed)
     {
+
+        //Time Step Generic
+        float TimeStep = TheTimeStep();
+        //Boom 1 Positions
+        float BoomOverShootFraction1 = 0f;
+        float PistonFraction1 = 1f;
+
+        Vector3 FixedBoom1 = receivedPos5;
+        Vector3 EndBoom1 = receivedPos6;
+        Vector3 StartPiston1 = receivedPos7;
+
+        Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
+        Vector3 EndPiston1 = PistonEnd(FixedBoom1, EndBoom1, PistonFraction1);
+
+        //Boom 1 Calcs
+	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+
         Vector3 EditSubMenuAruco = receivedPos26;
         string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
@@ -1481,8 +1533,10 @@ public async void Update()
             } else if(EditSubMenuTwo == "in range"){
             yield return new WaitUntil(() => EditSubMenuOne == "in range");
             }
+
         }
     }
+
     public IEnumerator FollowLinkTwoPath()
     {
         //Time Step Generic
@@ -1513,6 +1567,7 @@ public async void Update()
         Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
         //Boom2 Translated Arrays - Vector3[Position Through Boom 1 Movement, Position Through Boom 2 Movement]
         Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
+
 
         //Stop Animation One Range
         //Vector3 StopAnimationAruco = receivedPos25;
@@ -1586,17 +1641,20 @@ public async void Update()
         return Yminmax;
     }
 
-    public Vector3[] ScaleandMove(Vector3[] array, float Xscale, float Yscale, Vector3 zerozero)
+    public Vector3[] ScaleandMove(Vector3[] array, float Yscale, Vector3 zerozero)
     {
-        List<Vector3> arraylist = new List<Vector3>();
-        for(int i=0; i<arraylist.Count; i++)
+
+        int arraylength = array.Count();
+        Vector3[] arrayout = new Vector3[arraylength];
+        for (int i=0; i<arraylength; i++)
         {
-            float x = array[i][0]*Xscale + zerozero[0];
+            // float x = array[i][0]*Xscale + zerozero[0];
+            float x = array[i][0] + zerozero[0];
             float y = array[i][1]*Yscale + zerozero[1];
-            arraylist.Add(new Vector3(x,y,0f));
+            arrayout[i] = new Vector3(x,y,0f);
         }
-        Vector3[] arrayout = arraylist.ToArray();
 
         return arrayout;
     }
+
 }

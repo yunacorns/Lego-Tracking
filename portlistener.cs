@@ -1,5 +1,3 @@
-
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -119,6 +117,8 @@ public class portlistener : MonoBehaviour
             receivedPos25 = StringToVector3(dataReceived,"25");
             receivedPos26 = StringToVector3(dataReceived,"26");
             receivedPos27 = StringToVector3(dataReceived,"27");
+
+
             //---Sending Data to Host----
             byte[] myWriteBuffer = Encoding.ASCII.GetBytes("Hey I got your message Python! Do You see this massage?"); //Converting string to byte data
             nwStream.Write(myWriteBuffer, 0, myWriteBuffer.Length); //Sending the data in Bytes to Python
@@ -155,7 +155,7 @@ public class portlistener : MonoBehaviour
         // split the items
         string[] sArray = sVector.Split(',');
         //get index of 24
-        int index = Array.IndexOf(sArray, "24");
+        int index = Array.IndexOf(sArray, "17");
         Vector3 result = new Vector3(
             float.Parse(sArray[index+1]),0,0);
         return result;
@@ -208,6 +208,7 @@ public class portlistener : MonoBehaviour
         }
         else if(0<=slider_current_value&&slider_current_value<=1)
         {
+            slider_default_value = slider_current_value;
             return slider_current_value;
         }
         else if (slider_current_value<=0)
@@ -221,7 +222,12 @@ public class portlistener : MonoBehaviour
 
     }
 
-    // George's Calculation here
+
+
+
+
+
+// George's Calculation here
 public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOverShootFraction)
         {
             Vector3 VectorBoomEndToBoomFixed = BoomFixed - BoomEnd;
@@ -738,6 +744,9 @@ public Vector3 BoomStartFinder(Vector3 BoomFixed, Vector3 BoomEnd, float BoomOve
             return EndVelocity;
     }
 
+
+//function to save values
+
 public async void Update()
     {
         //Time Step Generic
@@ -763,6 +772,7 @@ public async void Update()
 
         if(MenuData[0]==0){
             //SubMenu Text
+            //float PistonFraction1Test;
             SubMenuText[0].text = "Piston";
             SubMenuText[1].text = "Link";
             SubMenuArray[2].GetComponent<Renderer>().enabled=false;
@@ -783,23 +793,22 @@ public async void Update()
                     //If LHS
                     if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
-                    //PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
-
+                    PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
+                    PistonFraction1Text.text = PistonFraction1.ToString();
                     }
                     //If RHS
                     else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
-                    //PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
-                   //
+                    float PistonExtension1Test = sliderValue(HandlePosition,SliderPosition);
+                    PistonExtension1Text.text =PistonExtension1Test.ToString();
                     }
                     //If Slider not in frame/undetected by webcam
                     else if(SliderPosition==outofframe || HandlePosition==outofframe)
                     {
-                    //PistonFraction1Text.text = "slider not detected";
-                    //PistonExtension1Text.text = "slider not detected";
+                    PistonFraction1Text.text = "slider not detected";
+                    PistonExtension1Text.text = "slider not detected";
                     }
-                // PistonFraction1Text.text = PistonFraction1.ToString();
-                // PistonExtension1Text.text =PistonExtension1.ToString();
+
                 }
                 if(TypeSelectionTwo == "in range")//Piston Two
                 {
@@ -1133,12 +1142,12 @@ public async void Update()
 
 
         }
-        // if(EditSubMenuTwo == "in range")
-        // {
-        //     Vector3 StoppedPos = BoomEnd[0].transform.position;
-        //     int StoppedPosIndex = System.Array.IndexOf(BoomArray1,StoppedPos);
-        //     print(StoppedPosIndex);
-        // }
+        if(EditSubMenuTwo == "in range")
+        {
+            Vector3 StoppedPos = BoomEnd[0].transform.position;
+            int StoppedPosIndex = System.Array.IndexOf(BoomArray1,StoppedPos);
+            print(StoppedPosIndex);
+        }
 
 
         GameStatus = true;
@@ -1317,47 +1326,61 @@ public async void Update()
         menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
         menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
         //data
-        float Xminfloat1 = FindMinX(V1); //original
+        float Xminfloat1 = FindMinX(V1); //V1
         float Xmaxfloat1 = FindMaxX(V1);
         float Yminfloat1 = FindMinY(V1);
         float Ymaxfloat1 = FindMaxY(V1);
 
-        Debug.Log("print"+Xminfloat1);
-        Debug.Log("print"+Xmaxfloat1);
-        Debug.Log("print"+Yminfloat1);
-        Debug.Log("print"+Ymaxfloat1);
+        float Xminfloat1c = FindMinX(V1Contract); //V1 Contract
+        float Xmaxfloat1c = FindMaxX(V1Contract);
+        float Yminfloat1c = FindMinY(V1Contract);
+        float Ymaxfloat1c = FindMaxY(V1Contract);
 
-        // float Xtotal1 = 390f;
-        // float Xscale1 = Xtotal1/Xmaxfloat1; //calculating scaling factor
-        float Ytotal1 = 380f;
-        float Yminmax = Math.Abs(Yminfloat1)+Math.Abs(Ymaxfloat1);
-        float Yscale1 = Ytotal1/Yminmax;
-        Debug.Log("print"+Yscale1);
+        float Xtotal = 390f;
+        float Xscale1 = Xtotal/Xmaxfloat1; //calculating scaling factor
+        float Xscale1c = Xtotal/Xmaxfloat1c; //calculating scaling factor
+        float Ytotal = 420f;
+        float Yminmax1 = Math.Abs(Yminfloat1)+Math.Abs(Ymaxfloat1);
+        float Yminmax1c = Math.Abs(Yminfloat1c)+Math.Abs(Ymaxfloat1c);
+        float Yscale1 = Ytotal/Yminmax1;
+        float Yscale1c = Ytotal/Yminmax1c;
 
         Vector3 zerozero1 = new Vector3(1150,-295,0); //where you want the axis to cross - position
-        Vector3[] V1final = ScaleandMove(V1, Yscale1, zerozero1); //scaling and moving the whole array
+        Vector3 zerozero1c = new Vector3(1600,-295,0);
+        Vector3[] V1final = ScaleandMove(V1, Xscale1, Yscale1, zerozero1); //scaling and moving
+        Vector3[] V1cfinal = ScaleandMove(V1Contract, Xscale1c, Yscale1c, zerozero1c);
 
         //Drawing axis
-        float Xmin1 = FindMinX(V1final); //moved
+        float Xmin1 = FindMinX(V1final); //scaled and moved
         float Xmax1 = FindMaxX(V1final);
-        float Ymin1 = FindMinY(V1final); //scaled and moved
+        float Ymin1 = FindMinY(V1final);
         float Ymax1 = FindMaxY(V1final);
 
-        Debug.Log("print"+Xmin1);
-        Debug.Log("print"+Xmax1);
-        Debug.Log("print"+Ymin1);
-        Debug.Log("print"+Ymax1);
+        float Xmin1c = FindMinX(V1cfinal);
+        float Xmax1c = FindMaxX(V1cfinal);
+        float Ymin1c = FindMinY(V1cfinal);
+        float Ymax1c = FindMaxY(V1cfinal);
 
-        Vector3 axisXmax1 = Xfloattov3(Xmaxfloat1, zerozero1, 10);
+        Vector3 axisXmax1 = Xfloattov3(Xmax1, zerozero1, 30);
         Vector3 axisYmax1 = Yfloattov3(Ymax1, zerozero1, 20);
+
+        Vector3 axisXmax1c = Xfloattov3(Xmax1c, zerozero1c, 30);
+        Vector3 axisYmax1c = Yfloattov3(Ymax1c, zerozero1c, 20);
 
         //plot axis lines
         Vector3[] xaxis1 = {zerozero1, axisXmax1};
-        Graphsplot[1].SetPositions(xaxis1);
+        Graphsplot[0].SetPositions(xaxis1);
 
-        Vector3 ymin1 = new Vector3(zerozero1[0], Ymin1-20,0);
+        Vector3[] xaxis1c = {zerozero1c, axisXmax1c};
+        Graphsplot[3].SetPositions(xaxis1c);
+
+        Vector3 ymin1 = new Vector3(zerozero1[0], Ymin1-20f,0);
         Vector3[] yaxis1 = {ymin1, axisYmax1};
-        Graphsplot[2].SetPositions(yaxis1);
+        Graphsplot[1].SetPositions(yaxis1);
+
+        Vector3 ymin1c = new Vector3(zerozero1c[0], Ymin1c-20f,0);
+        Vector3[] yaxis1c = {ymin1c, axisYmax1c};
+        Graphsplot[4].SetPositions(yaxis1c);
 
         //plot graph
         int V1finallength = V1final.Count();
@@ -1365,6 +1388,13 @@ public async void Update()
         for(int i=0; i<V1finallength; i++)
         {
             Graphsplot[2].SetPosition(i,V1final[i]);
+        }
+
+        int V1cfinallength = V1cfinal.Count();
+        Graphsplot[5].positionCount = V1cfinallength;
+        for(int i=0; i<V1cfinallength; i++)
+        {
+            Graphsplot[5].SetPosition(i,V1cfinal[i]);
         }
 
 
@@ -1448,7 +1478,8 @@ public async void Update()
         {
             SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
             SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            yield return new WaitUntil(() => EditSubMenuOne == "in range");
+            // yield return new WaitUntil(() => EditSubMenuOne == "in range");
+            yield break;
 
         }
         // Vector3 StoppedPos = BoomEnd[0].transform.position;
@@ -1531,7 +1562,8 @@ public async void Update()
             PistonMovingLine[0].SetPositions(LinePosition1);
             yield return null;
             } else if(EditSubMenuTwo == "in range"){
-            yield return new WaitUntil(() => EditSubMenuOne == "in range");
+            // yield return new WaitUntil(() => EditSubMenuOne == "in range");
+            yield break;
             }
 
         }
@@ -1601,13 +1633,13 @@ public async void Update()
 
     public Vector3 Xfloattov3(float X, Vector3 zero, float offset)
     {
-        Vector3 vec= new Vector3 (X+zero.x+offset, zero.y, 0);
+        Vector3 vec= new Vector3 (X+offset, zero.y, 0);
         return vec;
     }
 
     public Vector3 Yfloattov3(float Y, Vector3 zero, float offset)
     {
-        Vector3 vec= new Vector3 (zero.x, Y+zero.y+offset, 0);
+        Vector3 vec= new Vector3 (zero.x, Y+offset, 0);
         return vec;
     }
 
@@ -1641,15 +1673,15 @@ public async void Update()
         return Yminmax;
     }
 
-    public Vector3[] ScaleandMove(Vector3[] array, float Yscale, Vector3 zerozero)
+    public Vector3[] ScaleandMove(Vector3[] array, float Xscale, float Yscale, Vector3 zerozero)
     {
 
         int arraylength = array.Count();
         Vector3[] arrayout = new Vector3[arraylength];
         for (int i=0; i<arraylength; i++)
         {
-            // float x = array[i][0]*Xscale + zerozero[0];
-            float x = array[i][0] + zerozero[0];
+            float x = array[i][0]*Xscale + zerozero[0];
+            // float x = array[i][0] + zerozero[0];
             float y = array[i][1]*Yscale + zerozero[1];
             arrayout[i] = new Vector3(x,y,0f);
         }

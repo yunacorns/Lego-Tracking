@@ -130,8 +130,8 @@ def main():
 
                 menuPosition = []
                 # edit animate data menu
-                if [24] in ids_c:
-                    pos = ids_formatted_c.index(24)
+                if [17] in ids_c:
+                    pos = ids_formatted_c.index(17)
                     TL = bbox_c[pos][0][0]
                     TR = bbox_c[pos][0][1]
                     BR = bbox_c[pos][0][2]
@@ -141,8 +141,8 @@ def main():
                     M = cv2.moments(c)
                     cX = int(M["m10"] / M["m00"])
                     cY= int(M["m01"] / M["m00"])
-                    # if in first box send "24,edit". if in second box send"24,animate". if third send "24,data"
-                    menuPosition.append(24)
+                    # if in first box send "17,edit". if in second box send"17,animate". if third send "17,data"
+                    menuPosition.append(17)
                     # print(cX,cY,0)
                     if cX<=100 and 70<cY<120:
                         status = True
@@ -211,7 +211,7 @@ def main():
                         menuPosition.append(10)
                         menuPosition.append("none")
                 else:
-                    menuPosition.append(24)
+                    menuPosition.append(17)
                     menuPosition.append(10)
                     menuPosition.append("none")
 
@@ -246,18 +246,18 @@ def main():
                 menuandtotalanimate = totalAnimatePos+menuPosition
                 # newtotalPosString = ','.join(map(str,menuandtotalanimate))
                 # totalPosString = ''
-                pos24 = menuPosition.index(24)
-                if menuPosition[pos24+1]==0:
+                pos17 = menuPosition.index(17)
+                if menuPosition[pos17+1]==0:
                     totalPosString = ','.join(map(str,menuandtotal))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
 
-                elif menuPosition[pos24+1]==1:
+                elif menuPosition[pos17+1]==1:
                     totalPosString = ','.join(map(str,menuandtotalanimate))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
                     # and newtotalPosString!=totalPosString
-                elif menuPosition[pos24+1]==2:
+                elif menuPosition[pos17+1]==2:
                     totalPosString = ','.join(map(str,menuandtotal))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))

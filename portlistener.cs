@@ -903,7 +903,7 @@ public async void Update()
                             PistonExtension2 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            PistonExtensionText[3].text = PistonExtension1.ToString();
+                            PistonExtensionText[3].text = PistonExtension2.ToString();
                             PistonExtensionStatus2 = false;
                         }
                         else if(UnlockMenu == "in range")
@@ -1075,7 +1075,9 @@ public async void Update()
         //BData
         //float BoomOverShootFraction2 = 0f;
         // float PistonFraction2 = 0.7f;
-        float JointFraction2 = 0f;
+        float JointFraction2 = PistonExtension2;
+
+        //
 
         // //Positions
         Vector3 EndBoom2 = receivedPos10; //???
@@ -1196,7 +1198,7 @@ public async void Update()
         }
 
         IfExistBoomLine(StartBoom1,EndBoom1,0);
-        IfExistBoomLine(EndBoom1,EndBoom2,1);
+        IfExistBoomLine(StartBoom2,EndBoom2,1);
 
         void IfExistPistonMovingLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
         {
@@ -1364,7 +1366,7 @@ public async void Update()
         }
 
         IfExistBoomLine(StartBoom1,EndBoom1,0);
-        IfExistBoomLine(EndBoom1,EndBoom2,1);
+        IfExistBoomLine(StartBoom2,EndBoom2,1);
 
         void IfExistPistonMovingLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
         {

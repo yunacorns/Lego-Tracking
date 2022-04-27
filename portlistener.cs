@@ -1023,7 +1023,7 @@ public async void Update()
         Vector3 StartPiston1 = receivedPos7;
 
         Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
-        Vector3 EndPiston1 = PistonEnd(StartBoom1, EndBoom1, PistonFraction1);
+        Vector3 EndPiston1 = PistonEnd(FixedBoom1, EndBoom1, PistonFraction1);
 
         //Boom 1 Calcs
 	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
@@ -1086,7 +1086,7 @@ public async void Update()
 
         Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
         Vector3 StartBoom2 = BoomStartFinder(FixedBoom2, EndBoom2, BoomOverShootFraction2);
-        Vector3 EndPiston2 = PistonEnd(StartBoom2, EndBoom2, PistonFraction2);
+        Vector3 EndPiston2 = PistonEnd(EndBoom1, EndBoom2, PistonFraction2);
 
         //Arrays of Translated Positions relative to boom1 rotaions
         Vector3[] EndBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
@@ -1627,7 +1627,7 @@ public async void Update()
         Vector3 EndBoom1 = receivedPos6;
         Vector3 StartPiston1 = receivedPos7;
         Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
-        Vector3[] PistonArray1 = PistonRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+        Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
         Vector3 EditSubMenuAruco = receivedPos26;
         string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
@@ -1669,7 +1669,7 @@ public async void Update()
         Vector3 StartPiston1 = receivedPos7;
 
         Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
-        Vector3 EndPiston1 = PistonEnd(StartBoom1, EndBoom1, PistonFraction1);
+        Vector3 EndPiston1 = PistonEnd(FixedBoom1, EndBoom1, PistonFraction1);
 
         //Boom 1 Calcs
 	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
@@ -1704,7 +1704,7 @@ public async void Update()
         //Boom 2 Data
         float BoomOverShootFraction2 = 0f;
         float PistonFraction2 = 0.7f;
-        float JointFraction2 = 1f;
+        float JointFraction2 = 0f;
 
         //Boom 1 Positions
         Vector3 FixedBoom1 = receivedPos5;

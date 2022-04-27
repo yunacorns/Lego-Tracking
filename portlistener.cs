@@ -73,7 +73,7 @@ public class portlistener : MonoBehaviour
     public bool GameStatus = true;
     public bool PistonFractionStatus1 = true;
     public bool PistonExtensionStatus1 = true;
-    public bool LinkOverShootStatus = true;
+    public bool LinkOverShootStatus1 = true;
     public bool running; //nothing
     public float PistonFraction1;
     public float PistonExtension1;
@@ -807,6 +807,7 @@ public async void Update()
                 SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                 SliderPositionText[0].enabled = true;
                 SliderPositionText[1].enabled = true;
+                SliderPositionText[2].enabled = false;
                 SliderPositionText[0].transform.position = new Vector3(237,-530,0);
                 SliderPositionText[1].transform.position = new Vector3(711,-530,0);
                 MenuText[0].text = "Piston Selection";
@@ -876,13 +877,13 @@ public async void Update()
                     if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
                         SliderPositionHighlighter.SetActive(true);
-                        SliderPositionHighlighter.transform.position = new Vector3(275,-585,0);
+                        SliderPositionHighlighter.transform.position = new Vector3(237,-585,0);
                     }
                     //If LHS Highlights
                     else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
                         SliderPositionHighlighter.SetActive(true);
-                        SliderPositionHighlighter.transform.position = new Vector3(675,-585,0);
+                        SliderPositionHighlighter.transform.position = new Vector3(711,-585,0);
                     }
                     else
                     {
@@ -890,14 +891,37 @@ public async void Update()
                     }
                 }
             }
-            else if(EditSubMenuTwo == "in range") //Boom One
+            else if(EditSubMenuTwo == "in range") //Link Selected
             {
                 //Highlight Boom To Blue
+                SliderPositionHighlighter.SetActive(false);
                 SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                 SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                 MenuText[0].text = "Link Selection";
                 SliderPositionText[0].enabled = false;
                 SliderPositionText[1].enabled = false;
+                SliderPositionText[2].enabled = true;
+                SliderPositionText[2].transform.position = new Vector3(475,-530,0);
+                if(TypeSelectionOne == "in range")//Link One
+                {
+                    SelectorHighlighter.transform.position = new Vector3(890,-95,0);
+                    if(LockMenu == "in range" && LinkOverShootStatus1 == true)
+                    {
+                        BoomOverShootFraction1 = sliderValue(HandlePosition,SliderPosition);
+                        LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        LinkOvershootText[1].text = BoomOverShootFraction1.ToString();
+                        LinkOverShootStatus1 = false;
+                    }
+                    else if(UnlockMenu == "in range")
+                    {
+                        LinkOverShootStatus1 = true;
+                        BoomOverShootFraction1 = sliderValue(HandlePosition,SliderPosition);
+                        LinkOvershootText[1].text = BoomOverShootFraction1.ToString();
+                        LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                    }
+                }
                 if(TypeSelectionTwo == "in range")//Link Two
                 {
                     SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection

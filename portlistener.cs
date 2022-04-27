@@ -74,10 +74,16 @@ public class portlistener : MonoBehaviour
     public bool PistonFractionStatus1 = true;
     public bool PistonExtensionStatus1 = true;
     public bool LinkOverShootStatus1 = true;
+    public bool PistonFractionStatus2 = true;
+    public bool PistonExtensionStatus2 = true;
+    public bool LinkOverShootStatus2 = true;
     public bool running; //nothing
     public float PistonFraction1;
     public float PistonExtension1;
     public float BoomOverShootFraction1;
+    public float PistonFraction2;
+    public float PistonExtension2;
+    public float BoomOverShootFraction2;
 
 
     public void Start() //private
@@ -771,6 +777,13 @@ public async void Update()
         LinkOvershootText[0].transform.position = new Vector3(235,-70,0);
         LinkOvershootText[1].transform.position = new Vector3(400,-70,0);
 
+        PistonFractionText[2].transform.position = new Vector3(435,-30,0); //piston two
+        PistonFractionText[3].transform.position = new Vector3(600,-30,0);
+        PistonExtensionText[2].transform.position = new Vector3(435,-50,0);
+        PistonExtensionText[3].transform.position = new Vector3(600,-50,0);
+        LinkOvershootText[2].transform.position = new Vector3(435,-70,0);
+        LinkOvershootText[3].transform.position = new Vector3(600,-70,0);
+
         //Boom 1 Data
         //float BoomOverShootFraction1 = 0f;
         Vector3 SliderPosition = receivedPos8; //Moving
@@ -862,6 +875,46 @@ public async void Update()
                 if(TypeSelectionTwo == "in range")//Piston Two
                 {
                     SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection
+                    if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
+                    {
+                        if(LockMenu == "in range" && PistonFractionStatus2 == true)
+                        {
+                            PistonFraction2 = sliderValue(HandlePosition,SliderPosition);
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            PistonFractionText[3].text = PistonFraction2.ToString();
+                            PistonFractionStatus2 = false;
+                        }
+                        else if(UnlockMenu == "in range")
+                        {
+                            PistonFractionStatus2 = true;
+                            PistonFraction2 = sliderValue(HandlePosition,SliderPosition);
+                            PistonFractionText[3].text = PistonFraction2.ToString();
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        }
+
+                    }
+                    //If RHS
+                    else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
+                    {
+                        if(LockMenu == "in range" && PistonExtensionStatus2 == true)
+                        {
+                            PistonExtension2 = sliderValue(HandlePosition,SliderPosition);
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            PistonExtensionText[3].text = PistonExtension1.ToString();
+                            PistonExtensionStatus2 = false;
+                        }
+                        else if(UnlockMenu == "in range")
+                        {
+                            PistonExtensionStatus2 = true;
+                            PistonExtension2 = sliderValue(HandlePosition,SliderPosition);
+                            PistonExtensionText[3].text = PistonExtension2.ToString();
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        }
+                    }
                 }
                 if(TypeSelectionThree == "in range")
                 {
@@ -925,6 +978,22 @@ public async void Update()
                 if(TypeSelectionTwo == "in range")//Link Two
                 {
                     SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection
+                    if(LockMenu == "in range" && LinkOverShootStatus2 == true)
+                    {
+                        BoomOverShootFraction2 = sliderValue(HandlePosition,SliderPosition);
+                        LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        LinkOvershootText[3].text = BoomOverShootFraction2.ToString();
+                        LinkOverShootStatus2 = false;
+                    }
+                    else if(UnlockMenu == "in range")
+                    {
+                        LinkOverShootStatus2 = true;
+                        BoomOverShootFraction2 = sliderValue(HandlePosition,SliderPosition);
+                        LinkOvershootText[3].text = BoomOverShootFraction2.ToString();
+                        LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                    }
                 }
                 if(TypeSelectionThree == "in range")//Link Three
                 {
@@ -1004,8 +1073,8 @@ public async void Update()
 
         //Boom 2
         //BData
-        float BoomOverShootFraction2 = 0f;
-        float PistonFraction2 = 0.7f;
+        //float BoomOverShootFraction2 = 0f;
+        // float PistonFraction2 = 0.7f;
         float JointFraction2 = 0f;
 
         // //Positions

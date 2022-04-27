@@ -21,6 +21,7 @@ public class portlistener : MonoBehaviour
     public GameObject[] BoomEnd;
     public GameObject[] Overshoot;
     public GameObject[] SubMenuArray;
+    public GameObject[] LockMenuArray;
     public GameObject boomoneanimation;
     public GameObject ExcavatorBase;
     public GameObject ExcavatorBaseCircle;
@@ -35,8 +36,9 @@ public class portlistener : MonoBehaviour
     public LineRenderer[] Graphsplot;
     //public GameObject[] StopAnimation;
     public LineRenderer PistonOneCurve;
-    public TextMeshProUGUI PistonFraction1Text;
-    public TextMeshProUGUI PistonExtension1Text;
+    public TextMeshProUGUI[] PistonFractionText;
+    public TextMeshProUGUI[] PistonExtensionText;
+    public TextMeshProUGUI[] LinkOvershootText;
     public TextMeshProUGUI GameModeErrorMessage;
     public TextMeshProUGUI GameModeObjectRetrieveMessage;
     public TextMeshProUGUI[] Velocity;
@@ -61,6 +63,7 @@ public class portlistener : MonoBehaviour
     public Vector3 receivedPos25 = new Vector3(-100,0,0);
     public Vector3 receivedPos26 = new Vector3(-100,0,0);
     public Vector3 receivedPos27 = new Vector3(-100,0,0);
+    public Vector3 receivedPos28 = new Vector3(-100,0,0);
     Vector3 size = Vector3.zero;
     Vector3 zeros = Vector3.zero;
     Vector3 outofframe = new Vector3(-100,0,0);
@@ -68,7 +71,14 @@ public class portlistener : MonoBehaviour
     public bool AnimationOneStatus = false;
     public bool AnimationTwoStatus = false;
     public bool GameStatus = true;
+    public bool PistonFractionStatus1 = true;
+    public bool PistonExtensionStatus1 = true;
+    public bool LinkOverShootStatus = true;
     public bool running; //nothing
+    public float PistonFraction1;
+    public float PistonExtension1;
+    public float BoomOverShootFraction1;
+
 
     public void Start() //private
     {
@@ -117,6 +127,7 @@ public class portlistener : MonoBehaviour
             receivedPos25 = StringToVector3(dataReceived,"25");
             receivedPos26 = StringToVector3(dataReceived,"26");
             receivedPos27 = StringToVector3(dataReceived,"27");
+            receivedPos28 = StringToVector3(dataReceived,"28");
 
 
             //---Sending Data to Host----
@@ -752,16 +763,25 @@ public async void Update()
         //Time Step Generic
         float TimeStep = TheTimeStep();
 
+        //Top data
+        PistonFractionText[0].transform.position = new Vector3(235,-30,0); //piston one
+        PistonFractionText[1].transform.position = new Vector3(400,-30,0);
+        PistonExtensionText[0].transform.position = new Vector3(235,-50,0);
+        PistonExtensionText[1].transform.position = new Vector3(400,-50,0);
+        LinkOvershootText[0].transform.position = new Vector3(235,-70,0);
+        LinkOvershootText[1].transform.position = new Vector3(400,-70,0);
+
         //Boom 1 Data
-        float BoomOverShootFraction1 = 0f;
+        //float BoomOverShootFraction1 = 0f;
         Vector3 SliderPosition = receivedPos8; //Moving
         Vector3 HandlePosition = receivedPos9; //Still
-        float PistonFraction1 = 1f;
+        //float PistonFraction1 = 1f;
         //float PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
 
         //Slider Assignment
         Vector3 EditSubMenuAruco = receivedPos26;
         Vector3 TypeSelectionAruco = receivedPos27;
+        Vector3 LockMenuAruco = receivedPos28;
         string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
         string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
         string TypeSelectionOne = InMenuRegion(850, 950, -120, -70, TypeSelectionAruco);
@@ -769,6 +789,9 @@ public async void Update()
         string TypeSelectionThree = InMenuRegion(850, 950, -220, -170, TypeSelectionAruco);
         string TypeSelectionFour = InMenuRegion(850, 950, -270, -220, TypeSelectionAruco);
         string TypeSelectionWhole = InMenuRegion(850, 950, -270, -70, TypeSelectionAruco);
+        string LockMenu = InMenuRegion(850,950,-400,-350,LockMenuAruco);
+        string UnlockMenu = InMenuRegion(850,950,-450,-400,LockMenuAruco);
+
 
         if(MenuData[0]==0){
             //SubMenu Text
@@ -784,31 +807,56 @@ public async void Update()
                 SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                 SliderPositionText[0].enabled = true;
                 SliderPositionText[1].enabled = true;
+                SliderPositionText[0].transform.position = new Vector3(237,-530,0);
+                SliderPositionText[1].transform.position = new Vector3(711,-530,0);
                 MenuText[0].text = "Piston Selection";
                 //Piston Fraction or Boom Overshoot
                 if(TypeSelectionOne == "in range") //Piston One
                 {
                     //Highlights Piston One Selection
+                    SelectorHighlighter.GetComponent<Renderer>().enabled = true;
                     SelectorHighlighter.transform.position = new Vector3(890,-95,0);
                     //If LHS
                     if(SliderPosition[0]<495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
-                    PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
-                    PistonFraction1Text.text = PistonFraction1.ToString();
+                        if(LockMenu == "in range" && PistonFractionStatus1 == true)
+                        {
+                            PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            PistonFractionText[1].text = PistonFraction1.ToString();
+                            PistonFractionStatus1 = false;
+                        }
+                        else if(UnlockMenu == "in range")
+                        {
+                            PistonFractionStatus1 = true;
+                            PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
+                            PistonFractionText[1].text = PistonFraction1.ToString();
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        }
+
                     }
                     //If RHS
                     else if(SliderPosition[0]>=495 && SliderPosition!=outofframe && HandlePosition!=outofframe)
                     {
-                    float PistonExtension1Test = sliderValue(HandlePosition,SliderPosition);
-                    PistonExtension1Text.text =PistonExtension1Test.ToString();
+                        if(LockMenu == "in range" && PistonExtensionStatus1 == true)
+                        {
+                            PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            PistonExtensionText[1].text = PistonExtension1.ToString();
+                            PistonExtensionStatus1 = false;
+                        }
+                        else if(UnlockMenu == "in range")
+                        {
+                            PistonExtensionStatus1 = true;
+                            PistonExtension1 = sliderValue(HandlePosition,SliderPosition);
+                            PistonExtensionText[1].text = PistonExtension1.ToString();
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        }
                     }
-                    //If Slider not in frame/undetected by webcam
-                    else if(SliderPosition==outofframe || HandlePosition==outofframe)
-                    {
-                    PistonFraction1Text.text = "slider not detected";
-                    PistonExtension1Text.text = "slider not detected";
-                    }
-
                 }
                 if(TypeSelectionTwo == "in range")//Piston Two
                 {

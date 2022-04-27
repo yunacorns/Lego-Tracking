@@ -100,7 +100,7 @@ def main():
                 totalPosition = []
                 totalAnimatePos = []
                 # central aruco markers
-                allArucos = [5,6,7,8,9,10,11,25,26,27]
+                allArucos = [5,6,7,8,9,10,11,25,26,27,28]
                 for i in allArucos:
                     if [i] in ids_c:
                         pos = ids_formatted_c.index(i)
@@ -178,7 +178,7 @@ def main():
                                 totalAnimatePos.append(-100)
                                 totalAnimatePos.append(0)
                                 totalAnimatePos.append(0)
-                        for i in range(25,28):
+                        for i in range(25,29):
                             if [i] in ids_c:
                                 pos = ids_formatted_c.index(i)
                                 TL = bbox_c[pos][0][0]
@@ -258,7 +258,7 @@ def main():
                     sock.sendall(totalPosString.encode("UTF-8"))
                     # and newtotalPosString!=totalPosString
                 elif menuPosition[pos17+1]==2:
-                    totalPosString = ','.join(map(str,menuandtotal))
+                    totalPosString = ','.join(map(str,menuandtotalanimate))
                     print(totalPosString)
                     sock.sendall(totalPosString.encode("UTF-8"))
 

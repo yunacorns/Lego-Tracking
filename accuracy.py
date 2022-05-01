@@ -90,7 +90,7 @@ while True:
 
      for c in cnts:
          area = cv2.contourArea(c)
-         if area > 5000:
+         if area > 400:
 
 
              cv2.drawContours(frame,[c],-1,(0,255,0), 3)
@@ -135,21 +135,30 @@ while True:
      for cnt in contours:
         area = cv2.contourArea(cnt)
         approx = cv2.approxPolyDP(cnt, 0.02*cv2.arcLength(cnt, True), True)
-        x = approx.ravel()[0]
-        y = approx.ravel()[1]
-
+        # cv2.drawContours(frame,[cnt],-1,(0,255,0), 3)
         if area > 400:
-            cv2.drawContours(frame, [approx], 0, (0, 0, 0), 5)
+            M = cv2.moments(cnt)
 
-            if len(approx) == 3:
-                cv2.putText(frame, "Triangle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
-                cv2.putText(frame,"("+str(x)+","+str(y)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
-            elif len(approx) == 4:
-                cv2.putText(frame, "Rectangle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
-                cv2.putText(frame,"("+str(x)+","+str(y)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
-            elif 10 < len(approx) < 20:
-                cv2.putText(frame, "Circle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
-                cv2.putText(frame,"("+str(x)+","+str(y)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+            cx_r = int(M["m10"]/ M["m00"])
+            cy_r = int(M["m01"]/ M["m00"])
+            x = approx.ravel()[0]
+            y = approx.ravel()[1]
+
+            if cy_r > 240 and cx_r<320:
+                cv2.drawContours(frame, [approx], 0, (0, 0, 0), 5)
+
+                if len(approx) == 3:
+                    cv2.circle(frame,(cx_r,cy_r),7,(255,255,255),-1)
+                    cv2.putText(frame, "Triangle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                    cv2.putText(frame,"("+str(cx_r)+","+str(cy_r)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                elif len(approx) == 4:
+                    cv2.circle(frame,(cx_r,cy_r),7,(255,255,255),-1)
+                    cv2.putText(frame, "Rectangle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                    cv2.putText(frame,"("+str(cx_r)+","+str(cy_r)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                elif 10 < len(approx) < 20:
+                    cv2.circle(frame,(cx_r,cy_r),7,(255,255,255),-1)
+                    cv2.putText(frame, "Circle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                    cv2.putText(frame,"("+str(cx_r)+","+str(cy_r)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
 
      cv2.imshow("result",frame)
     #  cv2.imshow("Mask", mask)

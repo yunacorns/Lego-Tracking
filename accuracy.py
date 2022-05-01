@@ -12,13 +12,7 @@ cap= cv2.VideoCapture(0)
 cap.set(3,640)
 cap.set(4,480)
 
-cv2.namedWindow("Trackbars")
-cv2.createTrackbar("L-H", "Trackbars", 0, 180, nothing)
-cv2.createTrackbar("L-S", "Trackbars", 66, 255, nothing)
-cv2.createTrackbar("L-V", "Trackbars", 134, 255, nothing)
-cv2.createTrackbar("U-H", "Trackbars", 180, 180, nothing)
-cv2.createTrackbar("U-S", "Trackbars", 255, 255, nothing)
-cv2.createTrackbar("U-V", "Trackbars", 243, 255, nothing)
+
 font = cv2.FONT_HERSHEY_COMPLEX
 
 while True:
@@ -83,11 +77,16 @@ while True:
 
      lower_red = np.array([161,155,84])
      upper_red = np.array([179,255,255])
+     low_blue = np.array([38,86,0])
+     high_blue = np.array([121,255,255])
 
      mask = cv2.inRange(hsv,lower_red,upper_red)
+     blue_mask = cv2.inRange(hsv, low_blue, high_blue)
 
      cnts = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
      cnts = imutils.grab_contours(cnts)
+     cnts_blue = cv2.findContours(blue_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+     cnts_blue = imutils.grab_contours(cnts_blue)
 
      for c in cnts:
          area = cv2.contourArea(c)
@@ -102,18 +101,36 @@ while True:
              cy = int(M["m01"]/ M["m00"])
 
              cv2.circle(frame,(cx,cy),7,(255,255,255),-1)
-             cv2.putText(frame,"("+str(cx)+","+str(cy)+")",(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,2.5,(255,255,255),3)
+             cv2.putText(frame,'red',(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+             cv2.putText(frame,"("+str(cx)+","+str(cy)+")",(cx-40,cy-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+    #  for c in cnts_blue:
+    #      area = cv2.contourArea(c)
+    #      if area > 500:
 
-     kernel = np.ones((5, 5), np.uint8)
-     mask = cv2.erode(mask, kernel)
+
+    #          cv2.drawContours(frame,[c],-1,(0,255,0), 3)
+
+    #          M = cv2.moments(c)
+
+    #          cx = int(M["m10"]/ M["m00"])
+    #          cy = int(M["m01"]/ M["m00"])
+
+    #          cv2.circle(frame,(cx,cy),7,(255,255,255),-1)
+    #          cv2.putText(frame,'blue',(cx-20,cy-20),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+    #          cv2.putText(frame,'x={}, y={}'.format(cx,cy),(cx-30,cy-30),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+
+
+
+    #  kernel = np.ones((5, 5), np.uint8)
+    #  mask = cv2.erode(mask, kernel)
 
      # Contours detection
      if int(cv2.__version__[0]) > 3:
         # Opencv 4.x.x
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, _ = cv2.findContours(blue_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
      else:
         # Opencv 3.x.x
-        _, contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        _, contours, _ = cv2.findContours(blue_mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
      for cnt in contours:
         area = cv2.contourArea(cnt)
@@ -125,14 +142,17 @@ while True:
             cv2.drawContours(frame, [approx], 0, (0, 0, 0), 5)
 
             if len(approx) == 3:
-                cv2.putText(frame, "Triangle", (x, y), font, 1, (0, 0, 0))
+                cv2.putText(frame, "Triangle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                cv2.putText(frame,"("+str(x)+","+str(y)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
             elif len(approx) == 4:
-                cv2.putText(frame, "Rectangle", (x, y), font, 1, (0, 0, 0))
+                cv2.putText(frame, "Rectangle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                cv2.putText(frame,"("+str(x)+","+str(y)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
             elif 10 < len(approx) < 20:
-                cv2.putText(frame, "Circle", (x, y), font, 1, (0, 0, 0))
+                cv2.putText(frame, "Circle", (x-20, y-20), cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
+                cv2.putText(frame,"("+str(x)+","+str(y)+")",(x-40,y-40),cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,255),3)
 
      cv2.imshow("result",frame)
-     cv2.imshow("Mask", mask)
+    #  cv2.imshow("Mask", mask)
 
      k = cv2.waitKey(5)
      if k == 27:

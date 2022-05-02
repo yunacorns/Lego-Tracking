@@ -33,7 +33,6 @@ def main():
         arucoDict = aruco.Dictionary_get(key)
         arucoParam = aruco.DetectorParameters_create()
         bbox, ids, rejected = aruco.detectMarkers(imgGray,arucoDict, parameters=arucoParam)
-        # aruco.drawDetectedMarkers(frame,bbox)
         img_counter = 0
         cv2.imshow("result",frame)
         cv2.waitKey(1)

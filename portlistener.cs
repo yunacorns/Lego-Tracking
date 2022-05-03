@@ -24,6 +24,7 @@ public class portlistener : MonoBehaviour
         public GameObject[] Overshoot;
         public GameObject[] SubMenuArray;
         public GameObject[] LockMenuArray;
+        public GameObject[] AnimateMenuArray;
         public GameObject boomoneanimation;
         public GameObject ExcavatorBase;
         public GameObject ExcavatorBaseCircle;
@@ -43,6 +44,7 @@ public class portlistener : MonoBehaviour
         public TextMeshProUGUI[] MenuText;
         public TextMeshProUGUI[] SliderPositionText;
         public TextMeshProUGUI[] SubMenuText;
+        public TextMeshProUGUI[] AnimateMenuText;
         public TextMeshProUGUI[] DataText;
         public TextMeshProUGUI[] AnimateTable;
     //Thread and Positions
@@ -922,6 +924,13 @@ public async void Update()
         //Assigning Slider Values
             if(MenuData[0]==0)
             {
+                    //Disable Animate Text and Boxes
+                    AnimateMenuText[0].enabled = false;
+                    AnimateMenuText[1].enabled = false;
+                    AnimateMenuText[2].enabled = false;
+                    AnimateMenuArray[0].GetComponent<Renderer>().enabled = false;
+                    AnimateMenuArray[1].GetComponent<Renderer>().enabled = false;
+                    AnimateMenuArray[2].GetComponent<Renderer>().enabled = false;
                     //SubMenu Text
                     //Velocity[0].enabled = false;
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
@@ -1310,6 +1319,7 @@ public async void Update()
             //IfExistPistonFixedLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
 
         //Boom 1 Calcs
+
 	        Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
             Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
             Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
@@ -1497,8 +1507,23 @@ public async void Update()
             }
         if(MenuData[0]==1 && AnimationOneStatus==false && GameStatus == true)
             {
-            //Menu
 
+            SubMenuText[0].text = "Piston";
+            SubMenuText[1].text = "Adjust Position";
+            SubMenuText[2].enabled = false;
+            AnimateMenuText[0].enabled = true;
+            AnimateMenuText[1].enabled = true;
+            AnimateMenuText[2].enabled = true;
+            AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateMenuArray[2].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateMenuText[0].transform.position = new Vector3(700,-530,0);
+            AnimateMenuText[1].transform.position = new Vector3(750,-530,0);
+            AnimateMenuText[2].transform.position = new Vector3(800,-530,0);
+            AnimateMenuArray[0].transform.position = new Vector3(700,-565,0);
+            AnimateMenuArray[0].transform.position = new Vector3(750,-565,0);
+            AnimateMenuArray[0].transform.position = new Vector3(800,-565,0);
+            SubMenuArray[2].GetComponent<SpriteRenderer>().enabled = false;
             if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
             {
             AnimationOneStatus = true;

@@ -85,15 +85,16 @@ public class portlistener : MonoBehaviour
         public bool LinkOverShootStatus3 = true;
         public bool PositionStatus1 = true;
         public bool running; //nothing
-        public float PistonFraction1;  // if 10 set default to 0.7
-        public float BoomOverShootFraction1; // if 20 set default to 0
+        public float PistonFraction1;  //set default values in portlistener in unity
+        public float BoomOverShootFraction1;
         public float PistonFraction2;
         public float BoomOverShootFraction2;
-        public float JointFraction2; // if 30 set default to 1
+        public float JointFraction2;
         public float PistonFraction3;
         public float JointFraction3;
         public float BoomOverShootFraction3;
         public float AnimationPosition1;
+        public int BoomArray1AnimatePosition;
 
     public void Start() //private
         {
@@ -1544,6 +1545,7 @@ public async void Update()
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
+                            BoomArray1AnimatePosition = ArrayLength1-(int)(ArrayLength1*AnimationPosition1);
                             PositionStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
@@ -1553,9 +1555,26 @@ public async void Update()
                             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            BoomArray1AnimatePosition = ArrayLength1-(int)(ArrayLength1*AnimationPosition1);
                         }
                 }
             }
+
+            void IfExistBoomLineAnimate(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, Vector3 FractionThroughBoomPos, int i )
+            {
+                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                {
+                    BoomLine[i].GetComponent<Renderer>().enabled = true;
+                    Vector3[] LinePosition1 = {StartBoomPos,FractionThroughBoomPos};
+                    BoomLine[i].SetPositions(LinePosition1);
+                }
+                else
+                {
+                    BoomLine[i].GetComponent<Renderer>().enabled = false;
+                }
+
+            }
+            IfExistBoomLineAnimate(StartBoom1,FixedBoom1,EndBoom1,BoomArray1[BoomArray1AnimatePosition],0);
 
             // if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
             // {

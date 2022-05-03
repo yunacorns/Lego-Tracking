@@ -46,6 +46,7 @@ public class portlistener : MonoBehaviour
         public TextMeshProUGUI[] MenuText;
         public TextMeshProUGUI[] SliderPositionText;
         public TextMeshProUGUI[] SubMenuText;
+        public TextMeshProUGUI[] DataText;
     //Thread and Positions
         Thread mThread;
         public string connectionIP = "127.0.0.1";
@@ -777,7 +778,7 @@ public class portlistener : MonoBehaviour
         }
             return EndVelocity;
         }
-    public float[,,] ThreeMovingBoomsVelocity(Vector3[] FirstBoomAngularVelocity, Vector3 FirstFixedPoint, Vector3[] SecondBoomFixedArray, Vector3[,] EndTwoBoomVelocity, Vector3[,,] FinalBoomArrays)
+    public float[,,] ThreeMovingBoomsVelocity(Vector3[] FirstBoomAngularVelocity, Vector3 FirstFixedPoint, Vector3[] SecondBoomFixedArray, float[,] EndTwoBoomVelocity, Vector3[,,] FinalBoomArrays)
         {
         int FirstArrayLength = FirstBoomAngularVelocity.Length;
         int SecondArrayLength = EndTwoBoomVelocity.GetLength(0);
@@ -797,7 +798,7 @@ public class portlistener : MonoBehaviour
                 float VelocityDueBoom1 = RadiusBoom3FromFixed1*FirstBoomAV;
                 //Velocity due to Boom2 rotation
                 //X Y components
-                float OriginalVB3 = EndTwoBoomVelocity[j,k][1];
+                float OriginalVB3 = EndTwoBoomVelocity[j,k];
                 float AngleB3 = (float)Math.Atan2((FinalBoomEndPosition[1]-SecondFixedPosition[1]), (FinalBoomEndPosition[0]-SecondFixedPosition[0]));
                 float AngleF1toB3 = (float)Math.Atan2((FinalBoomEndPosition[1]-FirstFixedPoint[1]), (FinalBoomEndPosition[0]-FirstFixedPoint[0]));
                 float VelocityDueBoom2and3 = OriginalVB3*(float)Math.Cos(AngleF1toB3-AngleB3);
@@ -1192,7 +1193,7 @@ public async void Update()
 
             Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
             Vector3 StartBoom2 = BoomStartFinder(FixedBoom2, EndBoom2, BoomOverShootFraction2);
-            Vector3 EndPiston2 = PistonEnd(EndBoom1, EndBoom2, PistonFraction2);
+            Vector3 EndPiston2 = PistonEnd(StartBoom2, EndBoom2, PistonFraction2);
 
 
          //B3 Positions
@@ -1370,7 +1371,7 @@ public async void Update()
             Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
 
          //Max Reach of Both Booms
-            Vector3[] MaxReachPositionsBoom2 = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
+            //Vector3[] MaxReachPositionsBoom2 = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
          //Velocity at Combined
             float[,] EndVelocityBoom1ExtendBoom2Extend = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2, BoomArray2Array); //Boom1 Extend Boom2 Extending
             float[,] EndVelocityBoom1ExtendBoom2Contract = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Extend Boom2 Contract
@@ -1388,48 +1389,49 @@ public async void Update()
 
 
             //Fixed Position due to boom 2 movement
-            Vector3[] FixedBoom3Array = RelativePosition(FixedBoom2, FixedBoom3, AngleChangeBoom2);
-            //Fixed Position due for each boom 1 and 2 movement [i,j]
-            Vector3[,] FixedBoom3ArrayArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
-         //Boom3 Calcs
-            Vector3[] BoomArray3 = BoomRotationCalculation(FixedBoom3, EndBoom3, StartPiston3, BoomOverShootFraction3, PistonFraction3,TimeStep);
-            Vector3[] BoomArray3Start = BoomStartArray(FixedBoom3, BoomArray3, BoomOverShootFraction3);
-            Vector3[] PistonArray3 = PistonRotationCalculation(StartBoom3, EndBoom3, StartPiston3, BoomOverShootFraction3, PistonFraction3,TimeStep);
-            float[] AngleChangeBoom3 = RotationFromStartCalculation(BoomArray3, FixedBoom3);
-            float TotalBoomRange3 = BoomRangeCalculation(AngleChangeBoom3);
-            Vector3[] Omega3 = AngularVelocityCalculation(BoomArray3, TimeStep, FixedBoom3);
-            Vector3[] Omega3Contract = VelocityContracting(Omega3);
-            Vector3[] V3 = VelocityCalculation(Omega3, FixedBoom3, EndBoom3);
-            Vector3[] V3Contract = VelocityContracting(V3);
-         //Boom 3 Relative to Other Booms Movement
-            //Boom 3 Relative to Boom 2 Movement [j,k]
-            Vector3[,] BoomArray3Array = ArrayRelativePosition(FixedBoom2, BoomArray3, AngleChangeBoom2);
-            Vector3[,] BoomArray3StartArray = ArrayRelativePosition(FixedBoom2, BoomArray3Start, AngleChangeBoom2);
-            Vector3[,] PistonArray3Array = ArrayRelativePosition(FixedBoom2, PistonArray3, AngleChangeBoom2);
-            //Boom 3 Relative to Both Boom previous [i,j,k]
-            Vector3[,,] BoomArray3Array3D = ArrayRelativePosition3Booms(FixedBoom1, BoomArray3Array, AngleChangeBoom1);
-            Vector3[,,] BoomArray3StartArray3D = ArrayRelativePosition3Booms(FixedBoom1, BoomArray3StartArray, AngleChangeBoom1);
-            Vector3[,,] PistonArray3Array3D = ArrayRelativePosition3Booms(FixedBoom1, PistonArray3Array, AngleChangeBoom1);
-         //MaxBoomRange
-            //Boom3 from Boom2
-            Vector3[] MaxReachPositionsBoom3FromBoom2 = MaxRangePosition(FixedBoom2, BoomArray2, BoomArray3Array);
-            //Boom3 from Boom1
-            //Vector3[] MaxReachPositionsBoom3 = MaxRangePosition(FixedBoom1, BoomArray1, MaxReachPositionsBoom3FromBoom2);
-         //Velocities Per Position
-            //Boom3 with boom 2
-            float[,] EndVelocityBoom2ExtendBoom3Extend = TwoMovingBoomsVelocity(Omega2, FixedBoom2, FixedBoom3Array, V3, BoomArray3Array); //Boom1 Extend Boom2 Extending
-            float[,] EndVelocityBoom2ExtendBoom3Contract = TwoMovingBoomsVelocity(Omega2, FixedBoom2, FixedBoom3Array, V3Contract, BoomArray3Array); //Boom1 Extend Boom2 Contract
-            float[,] EndVelocityBoom2ContractBoom3Extend = TwoMovingBoomsVelocity(Omega2Contract, FixedBoom2, FixedBoom3Array, V3, BoomArray3Array); //Boom1 Contract Boom2 Extending
-            float[,] EndVelocityBoom2ContractBoom3Contract = TwoMovingBoomsVelocity(Omega2Contract, FixedBoom2, FixedBoom3Array, V3Contract, BoomArray3Array); //Boom1 Contract Boom2 Contract
-            //Boom 3 end due to boom 2 and boom 1
-            //float[,,] EndVelocity3BoomEEE = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Extend,BoomArray3Array3D);
-            // float[,,] EndVelocity3BoomEEC = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Contract,BoomArray3Array3D);
-            // float[,,] EndVelocity3BoomECE = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Extend,BoomArray3Array3D);
-            // float[,,] EndVelocity3BoomECC = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Contract,BoomArray3Array3D);
-            // float[,,] EndVelocity3BoomCEE = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Extend,BoomArray3Array3D);
-            // float[,,] EndVelocity3BoomCEC = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Contract,BoomArray3Array3D);
-            // float[,,] EndVelocity3BoomCCE = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Extend,BoomArray3Array3D);
-            // float[,,] EndVelocity3BoomCCC = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Contract,BoomArray3Array3D);
+        //     Vector3[] FixedBoom3Array = RelativePosition(FixedBoom2, FixedBoom3, AngleChangeBoom2);
+        //     //Fixed Position due for each boom 1 and 2 movement [i,j]
+        //     Vector3[,] FixedBoom3ArrayArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
+        //  //Boom3 Calcs
+        //     Vector3[] BoomArray3 = BoomRotationCalculation(FixedBoom3, EndBoom3, StartPiston3, BoomOverShootFraction3, PistonFraction3,TimeStep);
+        //     Vector3[] BoomArray3Start = BoomStartArray(FixedBoom3, BoomArray3, BoomOverShootFraction3);
+        //     Vector3[] PistonArray3 = PistonRotationCalculation(StartBoom3, EndBoom3, StartPiston3, BoomOverShootFraction3, PistonFraction3,TimeStep);
+        //     float[] AngleChangeBoom3 = RotationFromStartCalculation(BoomArray3, FixedBoom3);
+        //     float TotalBoomRange3 = BoomRangeCalculation(AngleChangeBoom3);
+        //     Vector3[] Omega3 = AngularVelocityCalculation(BoomArray3, TimeStep, FixedBoom3);
+        //     Vector3[] Omega3Contract = VelocityContracting(Omega3);
+        //     Vector3[] V3 = VelocityCalculation(Omega3, FixedBoom3, EndBoom3);
+        //     Vector3[] V3Contract = VelocityContracting(V3);
+        //  //Boom 3 Relative to Other Booms Movement
+        //     //Boom 3 Relative to Boom 2 Movement [j,k]
+        //     Vector3[,] BoomArray3Array = ArrayRelativePosition(FixedBoom2, BoomArray3, AngleChangeBoom2);
+        //     Vector3[,] BoomArray3StartArray = ArrayRelativePosition(FixedBoom2, BoomArray3Start, AngleChangeBoom2);
+        //     Vector3[,] PistonArray3Array = ArrayRelativePosition(FixedBoom2, PistonArray3, AngleChangeBoom2);
+        //     //Boom 3 Relative to Both Boom previous [i,j,k]
+        //     Vector3[,,] BoomArray3Array3D = ArrayRelativePosition3Booms(FixedBoom1, BoomArray3Array, AngleChangeBoom1);
+        //     Vector3[,,] BoomArray3StartArray3D = ArrayRelativePosition3Booms(FixedBoom1, BoomArray3StartArray, AngleChangeBoom1);
+        //     Vector3[,,] PistonArray3Array3D = ArrayRelativePosition3Booms(FixedBoom1, PistonArray3Array, AngleChangeBoom1);
+        //  //MaxBoomRange
+        //     //Boom3 from Boom2
+        //     Vector3[] MaxReachPositionsBoom3FromBoom2 = MaxRangePosition(FixedBoom2, BoomArray2, BoomArray3Array);
+        //     //Boom3 from Boom1
+        //     Vector3[,] MaxReachBoom3From2RelativeArrayForBoom1Rotation = ArrayRelativePosition(FixedBoom1, MaxReachPositionsBoom3FromBoom2, AngleChangeBoom1);
+        //     Vector3[] MaxReachPositionsBoom3 = MaxRangePosition(FixedBoom1, BoomArray1, MaxReachBoom3From2RelativeArrayForBoom1Rotation);
+        //  //Velocities Per Position
+        //     //Boom3 with boom 2
+        //     float[,] EndVelocityBoom2ExtendBoom3Extend = TwoMovingBoomsVelocity(Omega2, FixedBoom2, FixedBoom3Array, V3, BoomArray3Array); //Boom1 Extend Boom2 Extending
+        //     float[,] EndVelocityBoom2ExtendBoom3Contract = TwoMovingBoomsVelocity(Omega2, FixedBoom2, FixedBoom3Array, V3Contract, BoomArray3Array); //Boom1 Extend Boom2 Contract
+        //     float[,] EndVelocityBoom2ContractBoom3Extend = TwoMovingBoomsVelocity(Omega2Contract, FixedBoom2, FixedBoom3Array, V3, BoomArray3Array); //Boom1 Contract Boom2 Extending
+        //     float[,] EndVelocityBoom2ContractBoom3Contract = TwoMovingBoomsVelocity(Omega2Contract, FixedBoom2, FixedBoom3Array, V3Contract, BoomArray3Array); //Boom1 Contract Boom2 Contract
+        //     //Boom 3 end due to boom 2 and boom 1
+        //     float[,,] EndVelocity3BoomEEE = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Extend,BoomArray3Array3D);
+        //     float[,,] EndVelocity3BoomEEC = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Contract,BoomArray3Array3D);
+        //     float[,,] EndVelocity3BoomECE = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Extend,BoomArray3Array3D);
+        //     float[,,] EndVelocity3BoomECC = ThreeMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Contract,BoomArray3Array3D);
+        //     float[,,] EndVelocity3BoomCEE = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Extend,BoomArray3Array3D);
+        //     float[,,] EndVelocity3BoomCEC = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ExtendBoom3Contract,BoomArray3Array3D);
+        //     float[,,] EndVelocity3BoomCCE = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Extend,BoomArray3Array3D);
+        //     float[,,] EndVelocity3BoomCCC = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Contract,BoomArray3Array3D);
         //    }
         if(MenuData[0]==0)
             {
@@ -1582,58 +1584,85 @@ public async void Update()
             menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
             menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
             menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            //data
-            float Xminfloat1 = FindMinX(V1); //original
 
-        //Graph Plotting
-            float Xmaxfloat1 = FindMaxX(V1);
-            float Yminfloat1 = FindMinY(V1);
-            float Ymaxfloat1 = FindMaxY(V1);
+            //drawing graph
+            float XmaxV1 = FindMaxX(V1);
+            Vector3[] NewV1Contract = NewContract(XmaxV1, V1Contract);
 
-            Debug.Log("print"+Xminfloat1);
-            Debug.Log("print"+Xmaxfloat1);
-            Debug.Log("print"+Yminfloat1);
-            Debug.Log("print"+Ymaxfloat1);
+            Vector3[] V1Total = CombineVector3Arrays(V1,NewV1Contract); //combining V and VContract
+            float Xminori = FindMinX(V1Total); //original data
+            float Xmaxori = FindMaxX(V1Total);
+            float Yminori = FindMinY(V1Total);
+            float Ymaxori = FindMaxY(V1Total);
 
-            // float Xtotal1 = 390f;
-            // float Xscale1 = Xtotal1/Xmaxfloat1; //calculating scaling factor
-            float Ytotal1 = 380f;
-            float Yminmax = Math.Abs(Yminfloat1)+Math.Abs(Ymaxfloat1);
-            float Yscale1 = Ytotal1/Yminmax;
-            Debug.Log("print"+Yscale1);
+            float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
+            float ratioa = Ymaxori/lengthYori; //upper positive ratio
+            float ratiob = 1f-ratioa; //lower negative ratio
+            Debug.Log("print"+ratiob);
 
-            Vector3 zerozero1 = new Vector3(1150,-295,0); //where you want the axis to cross - position
-            Vector3[] V1final = ScaleandMove(V1, Yscale1, zerozero1); //scaling and moving the whole array
+            float zeroX = 1250f; //fixed
+            Vector3 fixedYmax = new Vector3(zeroX, -130f, 0f); //with offset
+            Vector3 fixedYmin = new Vector3(zeroX, -550f, 0f);
+
+            float Xtotal = 720f; //without offset - fixed
+            float Xscale = Xtotal/Xmaxori; //scaling factor
+            float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
+            float Yscale = Ytotal/lengthYori;
+
+            Vector3[] scaledV1 = ScaleData(V1Total, Xscale, Yscale); //times everything in data to scaling factor
+            float Xminscaled = FindMinX(scaledV1); //scaled
+            float Xmaxscaled = FindMaxX(scaledV1);
+            float Yminscaled = FindMinY(scaledV1);
+            float Ymaxscaled = FindMaxY(scaledV1);
+
+            float lengthYscaled = Math.Abs(Yminscaled)+Math.Abs(Ymaxscaled);
+            // float zeroY = Yminscaled + (lengthYscaled*ratiob);
+            float zeroY = -325f;
+            Debug.Log("print"+zeroY);
+
+            Vector3 zerozero = new Vector3 (zeroX, zeroY, 0f);
+
+            Vector3[] finalV1 = MoveData(scaledV1, zerozero);
+            float Xminfinal = FindMinX(finalV1); //moved and scaled
+            float Xmaxfinal = FindMaxX(finalV1);
+            float Yminfinal = FindMinY(finalV1);
+            float Ymaxfinal = FindMaxY(finalV1);
 
             //Drawing axis
-            float Xmin1 = FindMinX(V1final); //moved
-            float Xmax1 = FindMaxX(V1final);
-            float Ymin1 = FindMinY(V1final); //scaled and moved
-            float Ymax1 = FindMaxY(V1final);
+            Vector3 axisXmax = Xfloattov3(Xmaxfinal, zerozero, 20);
 
-            Debug.Log("print"+Xmin1);
-            Debug.Log("print"+Xmax1);
-            Debug.Log("print"+Ymin1);
-            Debug.Log("print"+Ymax1);
+            Vector3[] xaxis = {zerozero, axisXmax};
+            Graphsplot[0].SetPositions(xaxis);
 
-            Vector3 axisXmax1 = Xfloattov3(Xmaxfloat1, zerozero1, 10);
-            Vector3 axisYmax1 = Yfloattov3(Ymax1, zerozero1, 20);
-
-            //plot axis lines
-            Vector3[] xaxis1 = {zerozero1, axisXmax1};
-            Graphsplot[0].SetPositions(xaxis1);
-
-            Vector3 ymin1 = new Vector3(zerozero1[0], Ymin1-20,0);
-            Vector3[] yaxis1 = {ymin1, axisYmax1};
-            Graphsplot[1].SetPositions(yaxis1);
+            Vector3[] yaxis = {fixedYmin, fixedYmax};
+            Graphsplot[1].SetPositions(yaxis);
 
             //plot graph
-            int V1finallength = V1final.Count();
-            Graphsplot[2].positionCount = V1finallength;
-            for(int i=0; i<V1finallength; i++)
+            int finalV1length = finalV1.Count();
+            Graphsplot[2].positionCount = finalV1length;
+            for(int i=0; i<finalV1length; i++)
             {
-            Graphsplot[2].SetPosition(i,V1final[i]);
+                Graphsplot[2].SetPosition(i,finalV1[i]);
             }
+            //text
+            DataText[0].text = "Velocity";
+            DataText[0].transform.position = new Vector3(1250,-50,0);
+            DataText[1].text = "Time";
+            DataText[1].transform.position = new Vector3(2010,-325,0);
+            DataText[2].text = "Velocity Graph";
+            DataText[2].transform.position = new Vector3(1400,-30,0);
+            DataText[3].text = "Range of movement:";
+            DataText[3].transform.position = new Vector3(1600,-30,0);
+            DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
+            DataText[4].transform.position = new Vector3(1970,-355,0);
+            DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
+            DataText[5].transform.position = new Vector3(1220,-110,0);
+            DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
+            DataText[6].transform.position = new Vector3(1220,-530,0);
+            DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
+            DataText[7].transform.position = new Vector3(1850,-30,0);
+
+
 
 
 
@@ -1844,63 +1873,89 @@ public async void Update()
             yield return null;
         }
         }
-    public Vector3 Xfloattov3(float X, Vector3 zero, float offset)
-        {
-        Vector3 vec= new Vector3 (X+zero.x+offset, zero.y, 0);
-        return vec;
-        }
 
-    public Vector3 Yfloattov3(float Y, Vector3 zero, float offset)
-        {
-        Vector3 vec= new Vector3 (zero.x, Y+zero.y+offset, 0);
+    public Vector3 Xfloattov3(float Xmaxscaled, Vector3 zerozero, float offset)
+    {
+        Vector3 vec= new Vector3 (Xmaxscaled+offset, zerozero.y, 0f);
         return vec;
-        }
+    }
 
     public float FindMinX(Vector3[] array)
-        {
+    {
         float MinX = array.Select(v=>v.x).Min();
         return MinX;
-        }
+    }
 
     public float FindMinY(Vector3[] array)
-        {
+    {
         float MinY = array.Select(v=>v.y).Min();
         return MinY;
-        }
+    }
 
     public float FindMaxX(Vector3[] array)
-        {
+    {
         float MaxX = array.Select(v=>v.x).Max();
         return MaxX;
-        }
+    }
 
     public float FindMaxY(Vector3[] array)
-        {
+    {
         float MaxY = array.Select(v=>v.y).Max();
         return MaxY;
-        }
+    }
 
-    public float Yminmax(float Yminfloat, float Ymaxfloat)
-        {
-        float Yminmax = Math.Abs(Yminfloat) + Math.Abs(Ymaxfloat);
-        return Yminmax;
-        }
+    public Vector3[] CombineVector3Arrays (Vector3[] array1, Vector3[] array2)
+    {
+        var array3 = new Vector3[array1.Count() + array2.Count()];
+        System.Array.Copy (array1, array3, array1.Count());
+        System.Array.Copy (array2, 0, array3, array1.Count(), array2.Count());
+        return array3;
+    }
 
-    public Vector3[] ScaleandMove(Vector3[] array, float Yscale, Vector3 zerozero)
-        {
+    public Vector3[] NewContract(float XmaxV1, Vector3[] array)
+    {
 
         int arraylength = array.Count();
         Vector3[] arrayout = new Vector3[arraylength];
         for (int i=0; i<arraylength; i++)
         {
-            // float x = array[i][0]*Xscale + zerozero[0];
-            float x = array[i][0] + zerozero[0];
-            float y = array[i][1]*Yscale + zerozero[1];
+            float x = array[i][0] + XmaxV1;
+            float y = array[i][1];
             arrayout[i] = new Vector3(x,y,0f);
         }
 
         return arrayout;
+    }
+    public Vector3[] ScaleData(Vector3[] array, float Xscale, float Yscale)
+    {
+
+        int arraylength = array.Count();
+        Vector3[] arrayout = new Vector3[arraylength];
+        for (int i=0; i<arraylength; i++)
+        {
+            float x = array[i][0]*Xscale;
+            float y = array[i][1]*Yscale;
+            arrayout[i] = new Vector3(x,y,0f);
         }
+
+        return arrayout;
+    }
+
+    public Vector3[] MoveData(Vector3[] array, Vector3 zerozero)
+    {
+
+        int arraylength = array.Count();
+        Vector3[] arrayout = new Vector3[arraylength];
+        for (int i=0; i<arraylength; i++)
+        {
+            float x = array[i][0] + zerozero[0];
+            float y = array[i][1] + zerozero[1];
+            arrayout[i] = new Vector3(x,y,0f);
+        }
+
+        return arrayout;
+    }
+
 
 
 }

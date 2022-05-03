@@ -24,6 +24,7 @@ public class portlistener : MonoBehaviour
         public GameObject[] Overshoot;
         public GameObject[] SubMenuArray;
         public GameObject[] LockMenuArray;
+        public GameObject[] AnimateMenuArray;
         public GameObject boomoneanimation;
         public GameObject ExcavatorBase;
         public GameObject ExcavatorBaseCircle;
@@ -45,6 +46,7 @@ public class portlistener : MonoBehaviour
         public TextMeshProUGUI[] MenuText;
         public TextMeshProUGUI[] SliderPositionText;
         public TextMeshProUGUI[] SubMenuText;
+        public TextMeshProUGUI[] AnimateMenuText;
         public TextMeshProUGUI[] DataText;
     //Thread and Positions
         Thread mThread;
@@ -1488,6 +1490,22 @@ public async void Update()
         if(MenuData[0]==1 && AnimationOneStatus==false && GameStatus == true)
             {
             //Menu
+            SubMenuText[0].text = "Play";
+            SubMenuText[1].text = "Adjust Position";
+            SubMenuText[2].enabled = false;
+            AnimateMenuText[0].enabled = true;
+            AnimateMenuText[1].enabled = true;
+            AnimateMenuText[2].enabled = true;
+            AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateMenuArray[2].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateMenuText[0].transform.position = new Vector3(700,-530,0);
+            AnimateMenuText[1].transform.position = new Vector3(746,-530,0);
+            AnimateMenuText[2].transform.position = new Vector3(800,-530,0);
+            AnimateMenuArray[0].transform.position = new Vector3(700,-565,0);
+            AnimateMenuArray[1].transform.position = new Vector3(750,-565,0);
+            AnimateMenuArray[2].transform.position = new Vector3(800,-565,0);
+            SubMenuArray[2].transform.position = new Vector3(-100,0,0);
             //Animate Table
             AnimateTable[0].transform.position = new Vector3(500,-32,0); //text
             AnimateTable[1].transform.position = new Vector3(640,7,0); //number

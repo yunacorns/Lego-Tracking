@@ -24,7 +24,6 @@ public class portlistener : MonoBehaviour
         public GameObject[] Overshoot;
         public GameObject[] SubMenuArray;
         public GameObject[] LockMenuArray;
-        public GameObject[] AnimateMenuArray;
         public GameObject boomoneanimation;
         public GameObject ExcavatorBase;
         public GameObject ExcavatorBaseCircle;
@@ -41,12 +40,11 @@ public class portlistener : MonoBehaviour
         public TextMeshProUGUI[] EditTableText;
         public TextMeshProUGUI GameModeErrorMessage;
         public TextMeshProUGUI GameModeObjectRetrieveMessage;
+        public TextMeshProUGUI[] Velocity;
         public TextMeshProUGUI[] MenuText;
         public TextMeshProUGUI[] SliderPositionText;
         public TextMeshProUGUI[] SubMenuText;
-        public TextMeshProUGUI[] AnimateMenuText;
         public TextMeshProUGUI[] DataText;
-        public TextMeshProUGUI[] AnimateTable;
     //Thread and Positions
         Thread mThread;
         public string connectionIP = "127.0.0.1";
@@ -858,19 +856,6 @@ public async void Update()
             EditTableText[6].transform.position = new Vector3(380,-30,0); //j2
             EditTableText[9].transform.position = new Vector3(380,-47,0); //j3
 
-            //Animate Table
-            AnimateTable[0].transform.position = new Vector3(500,-31,0); //text
-            AnimateTable[1].transform.position = new Vector3(640,7,0); //number
-            AnimateTable[2].transform.position = new Vector3(555,-15,0); //percentage 1
-            AnimateTable[3].transform.position = new Vector3(645,-15,0); //percentage 2
-            AnimateTable[4].transform.position = new Vector3(735,-15,0); //percentage 3
-            AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
-            AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
-            AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
-            AnimateTable[8].transform.position = new Vector3(555,-50,0); //velocity 1
-            AnimateTable[9].transform.position = new Vector3(645,-50,0); //velocity 2
-            AnimateTable[10].transform.position = new Vector3(735,-50,0); //velocity 3
-
 
 
         //Slider Positions
@@ -924,15 +909,8 @@ public async void Update()
         //Assigning Slider Values
             if(MenuData[0]==0)
             {
-                    //Disable Animate Text and Boxes
-                    AnimateMenuText[0].enabled = false;
-                    AnimateMenuText[1].enabled = false;
-                    AnimateMenuText[2].enabled = false;
-                    AnimateMenuArray[0].GetComponent<Renderer>().enabled = false;
-                    AnimateMenuArray[1].GetComponent<Renderer>().enabled = false;
-                    AnimateMenuArray[2].GetComponent<Renderer>().enabled = false;
                     //SubMenu Text
-                    //Velocity[0].enabled = false;
+                    // Velocity[0].enabled = false;
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -973,14 +951,14 @@ public async void Update()
                                 PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
                                 LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                                 LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                                // PistonFractionText[1].text = PistonFraction1.ToString();
+                                EditTableText[1].text = PistonFraction1.ToString();
                                 PistonFractionStatus1 = false;
                             }
                             else if(UnlockMenu == "in range")
                             {
                                 PistonFractionStatus1 = true;
                                 PistonFraction1 = sliderValue(HandlePosition,SliderPosition);
-                                // PistonFractionText[1].text = PistonFraction1.ToString();
+                                EditTableText[1].text = PistonFraction1.ToString();
                                 LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                                 LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             }
@@ -998,14 +976,14 @@ public async void Update()
                                 PistonFraction2 = sliderValue(HandlePosition,SliderPosition);
                                 LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                                 LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                                // PistonFractionText[3].text = PistonFraction2.ToString();
+                                EditTableText[2].text = PistonFraction2.ToString();
                                 PistonFractionStatus2 = false;
                             }
                             else if(UnlockMenu == "in range")
                             {
                                 PistonFractionStatus2 = true;
                                 PistonFraction2 = sliderValue(HandlePosition,SliderPosition);
-                                // PistonFractionText[3].text = PistonFraction2.ToString();
+                                EditTableText[2].text = PistonFraction2.ToString();
                                 LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                                 LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             }
@@ -1023,14 +1001,14 @@ public async void Update()
                                 PistonFraction3 = sliderValue(HandlePosition,SliderPosition);
                                 LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                                 LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                                // PistonFractionText[5].text = PistonFraction3.ToString();
+                                EditTableText[3].text = PistonFraction3.ToString();
                                 PistonFractionStatus3 = false;
                             }
                             else if(UnlockMenu == "in range")
                             {
                                 PistonFractionStatus3 = true;
                                 PistonFraction3 = sliderValue(HandlePosition,SliderPosition);
-                                // PistonFractionText[5].text = PistonFraction3.ToString();
+                                EditTableText[3].text = PistonFraction3.ToString();
                                 LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                                 LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             }
@@ -1064,14 +1042,14 @@ public async void Update()
                             BoomOverShootFraction1 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            // LinkOvershootText[1].text = BoomOverShootFraction1.ToString();
+                            EditTableText[4].text = BoomOverShootFraction1.ToString();
                             LinkOverShootStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
                         {
                             LinkOverShootStatus1 = true;
                             BoomOverShootFraction1 = sliderValue(HandlePosition,SliderPosition);
-                            // LinkOvershootText[1].text = BoomOverShootFraction1.ToString();
+                            EditTableText[4].text = BoomOverShootFraction1.ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
@@ -1085,14 +1063,14 @@ public async void Update()
                             BoomOverShootFraction2 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            // LinkOvershootText[3].text = BoomOverShootFraction2.ToString();
+                            EditTableText[5].text = BoomOverShootFraction2.ToString();
                             LinkOverShootStatus2 = false;
                         }
                         else if(UnlockMenu == "in range")
                         {
                             LinkOverShootStatus2 = true;
                             BoomOverShootFraction2 = sliderValue(HandlePosition,SliderPosition);
-                            // LinkOvershootText[3].text = BoomOverShootFraction2.ToString();
+                            EditTableText[5].text = BoomOverShootFraction2.ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
@@ -1106,14 +1084,14 @@ public async void Update()
                             BoomOverShootFraction3 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            // LinkOvershootText[5].text = BoomOverShootFraction3.ToString();
+                            EditTableText[6].text = BoomOverShootFraction3.ToString();
                             LinkOverShootStatus3 = false;
                         }
                         else if(UnlockMenu == "in range")
                         {
                             LinkOverShootStatus3 = true;
                             BoomOverShootFraction3 = sliderValue(HandlePosition,SliderPosition);
-                            // LinkOvershootText[5].text = BoomOverShootFraction3.ToString();
+                            EditTableText[6].text = BoomOverShootFraction3.ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
@@ -1144,14 +1122,14 @@ public async void Update()
                             JointFraction2 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            // JointFractionText[1].text = JointFraction2.ToString();
+                            EditTableText[8].text = JointFraction2.ToString();
                             JointFractionStatus2 = false;
                         }
                         else if(UnlockMenu == "in range")
                         {
                             JointFractionStatus2 = true;
                             JointFraction2 = sliderValue(HandlePosition,SliderPosition);
-                            // JointFractionText[1].text = JointFraction2.ToString();
+                            EditTableText[8].text = JointFraction2.ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
@@ -1165,14 +1143,14 @@ public async void Update()
                             JointFraction3 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            // JointFractionText[3].text = JointFraction3.ToString();
+                            EditTableText[9].text = JointFraction3.ToString();
                             JointFractionStatus3 = false;
                         }
                         else if(UnlockMenu == "in range")
                         {
                             JointFractionStatus3 = true;
                             JointFraction3 = sliderValue(HandlePosition,SliderPosition);
-                            // JointFractionText[3].text = JointFraction3.ToString();
+                            EditTableText[9].text = JointFraction3.ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
@@ -1319,7 +1297,6 @@ public async void Update()
             //IfExistPistonFixedLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
 
         //Boom 1 Calcs
-
 	        Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
             Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
             Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
@@ -1456,10 +1433,9 @@ public async void Update()
             {
             //edit
             AnimationOneStatus = false;
-            //Velocity[0].enabled = false;
-            SubMenuText[0].text = "Piston";
-            SubMenuText[1].text = "Link";
-            SubMenuText[2].text = "Joint";
+            Velocity[0].enabled = false;
+            //StopAnimation[0].GetComponent<Renderer>().enabled=false;
+            //StopAnimationText[0].enabled = false;
             BoomCurve[0].GetComponent<Renderer>().enabled=false;
             BoomCurve[1].GetComponent<Renderer>().enabled=false;
             menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -1507,23 +1483,8 @@ public async void Update()
             }
         if(MenuData[0]==1 && AnimationOneStatus==false && GameStatus == true)
             {
+            //Menu
 
-            SubMenuText[0].text = "Piston";
-            SubMenuText[1].text = "Adjust Position";
-            SubMenuText[2].enabled = false;
-            AnimateMenuText[0].enabled = true;
-            AnimateMenuText[1].enabled = true;
-            AnimateMenuText[2].enabled = true;
-            AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
-            AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = true;
-            AnimateMenuArray[2].GetComponent<SpriteRenderer>().enabled = true;
-            AnimateMenuText[0].transform.position = new Vector3(700,-530,0);
-            AnimateMenuText[1].transform.position = new Vector3(750,-530,0);
-            AnimateMenuText[2].transform.position = new Vector3(800,-530,0);
-            AnimateMenuArray[0].transform.position = new Vector3(700,-565,0);
-            AnimateMenuArray[0].transform.position = new Vector3(750,-565,0);
-            AnimateMenuArray[0].transform.position = new Vector3(800,-565,0);
-            SubMenuArray[2].GetComponent<SpriteRenderer>().enabled = false;
             if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
             {
             AnimationOneStatus = true;
@@ -1750,8 +1711,8 @@ public async void Update()
             Vector3 begpos = BoomArray1Start[i];
             float endspeed = 2f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
             float begspeed = 2f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
-            //Velocity[0].enabled = true;
-            //Velocity[0].text = V1[i][1].ToString();
+            // Velocity[0].enabled = true;
+            // Velocity[0].text = V1[i][1].ToString();
             yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
             //}
             // else if(EditSubMenuTwo=="in range"){

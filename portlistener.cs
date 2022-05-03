@@ -85,11 +85,11 @@ public class portlistener : MonoBehaviour
         public bool JointFractionStatus3 = true;
         public bool LinkOverShootStatus3 = true;
         public bool running; //nothing
-        public float PistonFraction1 = 10f;
-        public float BoomOverShootFraction1 = 10f;
-        public float PistonFraction2 = 10f;
-        public float JointFraction2 = 10f;
-        public float BoomOverShootFraction2 = 10f;
+        public float PistonFraction1;  // if 10 set default to 0.7
+        public float BoomOverShootFraction1; // if 20 set default to 0
+        public float PistonFraction2;
+        public float BoomOverShootFraction2;
+        public float JointFraction2; // if 30 set default to 1
         public float PistonFraction3;
         public float JointFraction3;
         public float BoomOverShootFraction3;
@@ -870,27 +870,6 @@ public async void Update()
             float PistonFraction3 = 0.7f;
             float JointFraction3 = 1f;
 
-        //default fractions
-            if(PistonFraction1==10f)
-            {
-                PistonFraction1 = 0.5f;
-            }
-            if(BoomOverShootFraction1==10f)
-            {
-                BoomOverShootFraction1=0f;
-            }
-            if(PistonFraction2 ==10f)
-            {
-                PistonFraction2 = 0.5f;
-            }
-            if(BoomOverShootFraction2==10f)
-            {
-                BoomOverShootFraction2 = 0f;
-            }
-            if(JointFraction2==10f)
-            {
-                JointFraction2 = 1f;
-            }
 
 
 
@@ -913,7 +892,6 @@ public async void Update()
             if(MenuData[0]==0)
             {
                     //SubMenu Text
-                    // Velocity[0].enabled = false;
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -923,11 +901,16 @@ public async void Update()
                     SubMenuText[0].text = "Piston";
                     SubMenuText[1].text = "Link";
                     SubMenuText[2].text = "Joint";
-                    // LinkOvershootText[1].text = BoomOverShootFraction1.ToString();
-                    // LinkOvershootText[3].text = BoomOverShootFraction2.ToString();
-                    // JointFractionText[3].text = JointFraction2.ToString();
-                    // PistonFractionText[1].text = PistonFraction1.ToString();
-                    // PistonFractionText[3].text = PistonFraction2.ToString();
+
+                    //Default Values Text
+                    EditTableText[1].text = PistonFraction1.ToString();
+                    EditTableText[2].text = PistonFraction2.ToString();
+                    EditTableText[3].text = PistonFraction3.ToString();
+                    EditTableText[4].text = BoomOverShootFraction1.ToString();
+                    EditTableText[5].text = BoomOverShootFraction2.ToString();
+                    EditTableText[6].text = BoomOverShootFraction3.ToString();
+                    EditTableText[8].text = JointFraction2.ToString();
+
             if(EditSubMenuOne == "in range")//Piston Selected
                 {
                     //Highlight Piston To Blue
@@ -1516,6 +1499,8 @@ public async void Update()
             AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
             AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
             AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
+
+
 
             if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
             {

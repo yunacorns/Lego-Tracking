@@ -68,7 +68,6 @@ public class portlistener : MonoBehaviour
         public Vector3 receivedPos26 = new Vector3(-100,0,0);
         public Vector3 receivedPos27 = new Vector3(-100,0,0);
         public Vector3 receivedPos28 = new Vector3(-100,0,0);
-        public Vector3 receivedPos29 = new Vector3(-100,0,0);
         Vector3 size = Vector3.zero;
         Vector3 zeros = Vector3.zero;
         Vector3 outofframe = new Vector3(-100,0,0);
@@ -85,7 +84,6 @@ public class portlistener : MonoBehaviour
         public bool PistonFractionStatus3 = true;
         public bool JointFractionStatus3 = true;
         public bool LinkOverShootStatus3 = true;
-        public bool PositionStatus1 = true;
         public bool running; //nothing
         public float PistonFraction1 = 10f;
         public float BoomOverShootFraction1 = 10f;
@@ -95,7 +93,6 @@ public class portlistener : MonoBehaviour
         public float PistonFraction3;
         public float JointFraction3;
         public float BoomOverShootFraction3;
-        public float PositionFraction1;
 
     public void Start() //private
         {
@@ -148,7 +145,6 @@ public class portlistener : MonoBehaviour
             receivedPos26 = StringToVector3(dataReceived,"26");
             receivedPos27 = StringToVector3(dataReceived,"27");
             receivedPos28 = StringToVector3(dataReceived,"28");
-            receivedPos28 = StringToVector3(dataReceived,"29");
 
 
             //---Sending Data to Host----
@@ -902,7 +898,6 @@ public async void Update()
             Vector3 EditSubMenuAruco = receivedPos26;
             Vector3 TypeSelectionAruco = receivedPos27;
             Vector3 LockMenuAruco = receivedPos28;
-            Vector3 AnimateMenuAruco = receivedPos29;
             string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
             string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
             string EditSubMenuThree = InMenuRegion(0, 100, -500, -450, EditSubMenuAruco);
@@ -913,9 +908,6 @@ public async void Update()
             string TypeSelectionWhole = InMenuRegion(850, 950, -270, -70, TypeSelectionAruco);
             string LockMenu = InMenuRegion(850,950,-400,-350,LockMenuAruco);
             string UnlockMenu = InMenuRegion(850,950,-450,-400,LockMenuAruco);
-            string AnimateMenuExtend = InMenuRegion(675, 725, -590, -565, AnimateMenuAruco);
-            string AnimateMenuContract = InMenuRegion(725, 775, -590, -565, AnimateMenuAruco);
-            string AnimateMenuStationary = InMenuRegion(775, 825, -590, -565, AnimateMenuAruco);
 
         //Assigning Slider Values
             if(MenuData[0]==0)
@@ -1495,16 +1487,13 @@ public async void Update()
 
 
             }
-        if(MenuData[0]==1 && AnimationOneStatus==false)
+        if(MenuData[0]==1 && AnimationOneStatus==false && GameStatus == true)
             {
-            //highlight blue
-            menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-            menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
-            //Bottom Menu Render
+            //Menu
             SubMenuText[0].text = "Play";
             SubMenuText[1].text = "Adjust Position";
             SubMenuText[2].enabled = false;
+            SubMenuArray[2].GetComponent<Renderer>().enabled=false;
             AnimateMenuText[0].enabled = true;
             AnimateMenuText[1].enabled = true;
             AnimateMenuText[2].enabled = true;
@@ -1517,7 +1506,7 @@ public async void Update()
             AnimateMenuArray[0].transform.position = new Vector3(700,-565,0);
             AnimateMenuArray[1].transform.position = new Vector3(750,-565,0);
             AnimateMenuArray[2].transform.position = new Vector3(800,-565,0);
-            SubMenuArray[2].GetComponent<Renderer>().enabled=false;
+            SubMenuArray[2].transform.position = new Vector3(-100,0,0);
             //Animate Table
             AnimateTable[0].transform.position = new Vector3(500,-32,0); //text
             AnimateTable[1].transform.position = new Vector3(640,7,0); //number
@@ -1527,32 +1516,6 @@ public async void Update()
             AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
             AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
             AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
-
-            //assinging  slider values
-            // if(EditSubMenuTwo== "in range") // if in adjust position
-            // {
-            //     if(TypeSelectionOne == "in range") // if in link 1
-            //     {
-            //         if(LockMenu == "in range" && PositionStatus1 == true)
-            //         {
-            //             PositionFraction1 = sliderValue(HandlePosition,SliderPosition);
-            //             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            //             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-            //             AnimateTable[2].text = ((PositionFraction1*100).ToString())+"%";
-            //             LinkOverShootStatus3 = false;
-            //         }
-            //         else if(UnlockMenu == "in range")
-            //         {
-            //             PositionStatus1 = false;
-            //             PositionFraction1 = sliderValue(HandlePosition,SliderPosition);
-            //             AnimateTable[2].text = ((PositionFraction1*100).ToString())+"%";
-            //             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-            //             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            //         }
-
-            //     }
-            // }
-
 
             if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
             {
@@ -1578,11 +1541,12 @@ public async void Update()
             //SubMenu Text and Box
 
 
-
             //StopAnimationText[0].enabled = true;
             //StopAnimation[0].GetComponent<Renderer>().enabled=true;
             BoomCurve[0].GetComponent<Renderer>().enabled=true;
-
+            menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+            menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
 
 
 
@@ -1615,14 +1579,14 @@ public async void Update()
             // }
 
             //In Game Mode if retrieves object
-            // if(InObjectPosBoomArray1 == "in range")
-            // {
-            // GameModeObjectRetrieveMessage.text = "Success!";
-            // }
-            // else if(InObjectPosBoomArray1 == "out of range")
-            // {
-            // GameModeObjectRetrieveMessage.text = "u suck shit try again";
-            //}
+            if(InObjectPosBoomArray1 == "in range")
+            {
+            GameModeObjectRetrieveMessage.text = "Success!";
+            }
+            else if(InObjectPosBoomArray1 == "out of range")
+            {
+            GameModeObjectRetrieveMessage.text = "u suck shit try again";
+            }
             //If in Stop Animation One Box
             // if(InStopAnimationOne == "in range")
             // {

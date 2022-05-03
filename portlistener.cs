@@ -45,6 +45,7 @@ public class portlistener : MonoBehaviour
         public TextMeshProUGUI[] SliderPositionText;
         public TextMeshProUGUI[] SubMenuText;
         public TextMeshProUGUI[] DataText;
+        public TextMeshProUGUI[] AnimateTable;
     //Thread and Positions
         Thread mThread;
         public string connectionIP = "127.0.0.1";
@@ -856,6 +857,16 @@ public async void Update()
             EditTableText[6].transform.position = new Vector3(380,-30,0); //j2
             EditTableText[9].transform.position = new Vector3(380,-47,0); //j3
 
+            //Animate Table
+            AnimateTable[0].transform.position = new Vector3(500,-23,0); //text
+            AnimateTable[1].transform.position = new Vector3(640,7,0); //number
+            AnimateTable[2].transform.position = new Vector3(555,-15,0); //percentage 1
+            AnimateTable[3].transform.position = new Vector3(645,-15,0); //percentage 2
+            AnimateTable[4].transform.position = new Vector3(735,-15,0); //percentage 3
+            AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
+            AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
+            AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
+
 
 
         //Slider Positions
@@ -1434,8 +1445,9 @@ public async void Update()
             //edit
             AnimationOneStatus = false;
             Velocity[0].enabled = false;
-            //StopAnimation[0].GetComponent<Renderer>().enabled=false;
-            //StopAnimationText[0].enabled = false;
+            SubMenuText[0].text = "Piston";
+            SubMenuText[1].text = "Link";
+            SubMenuText[2].text = "Joint";
             BoomCurve[0].GetComponent<Renderer>().enabled=false;
             BoomCurve[1].GetComponent<Renderer>().enabled=false;
             menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;

@@ -40,7 +40,6 @@ public class portlistener : MonoBehaviour
         public TextMeshProUGUI[] EditTableText;
         public TextMeshProUGUI GameModeErrorMessage;
         public TextMeshProUGUI GameModeObjectRetrieveMessage;
-        public TextMeshProUGUI[] Velocity;
         public TextMeshProUGUI[] MenuText;
         public TextMeshProUGUI[] SliderPositionText;
         public TextMeshProUGUI[] SubMenuText;
@@ -858,7 +857,7 @@ public async void Update()
             EditTableText[9].transform.position = new Vector3(380,-47,0); //j3
 
             //Animate Table
-            AnimateTable[0].transform.position = new Vector3(500,-23,0); //text
+            AnimateTable[0].transform.position = new Vector3(500,-31,0); //text
             AnimateTable[1].transform.position = new Vector3(640,7,0); //number
             AnimateTable[2].transform.position = new Vector3(555,-15,0); //percentage 1
             AnimateTable[3].transform.position = new Vector3(645,-15,0); //percentage 2
@@ -866,6 +865,9 @@ public async void Update()
             AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
             AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
             AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
+            AnimateTable[8].transform.position = new Vector3(555,-50,0); //velocity 1
+            AnimateTable[9].transform.position = new Vector3(645,-50,0); //velocity 2
+            AnimateTable[10].transform.position = new Vector3(735,-50,0); //velocity 3
 
 
 
@@ -921,7 +923,7 @@ public async void Update()
             if(MenuData[0]==0)
             {
                     //SubMenu Text
-                    Velocity[0].enabled = false;
+                    //Velocity[0].enabled = false;
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -1444,7 +1446,7 @@ public async void Update()
             {
             //edit
             AnimationOneStatus = false;
-            Velocity[0].enabled = false;
+            //Velocity[0].enabled = false;
             SubMenuText[0].text = "Piston";
             SubMenuText[1].text = "Link";
             SubMenuText[2].text = "Joint";
@@ -1723,8 +1725,8 @@ public async void Update()
             Vector3 begpos = BoomArray1Start[i];
             float endspeed = 2f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
             float begspeed = 2f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
-            Velocity[0].enabled = true;
-            Velocity[0].text = V1[i][1].ToString();
+            //Velocity[0].enabled = true;
+            //Velocity[0].text = V1[i][1].ToString();
             yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
             //}
             // else if(EditSubMenuTwo=="in range"){

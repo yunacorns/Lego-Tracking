@@ -74,7 +74,6 @@ public class portlistener : MonoBehaviour
         public Vector3 MenuData = new Vector3(10,0,0);
         public bool AnimationOneStatus = false;
         public bool AnimationTwoStatus = false;
-        public bool GameStatus = true;
         public bool PistonFractionStatus1 = true;
         public bool JointFractionStatus1 = true;
         public bool LinkOverShootStatus1 = true;
@@ -911,6 +910,30 @@ public async void Update()
                     EditTableText[6].text = BoomOverShootFraction3.ToString();
                     EditTableText[8].text = JointFraction2.ToString();
 
+                    //disable animate bottom menu
+                    AnimateMenuText[0].enabled = false;
+                    AnimateMenuText[1].enabled = false;
+                    AnimateMenuText[2].enabled = false;
+                    AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = false;
+                    AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = false;
+                    AnimateMenuArray[2].GetComponent<SpriteRenderer>().enabled = false;
+
+                    //disable animate table
+                    AnimateTable[0].enabled = false;
+                    AnimateTable[1].enabled = false;
+                    AnimateTable[2].enabled = false;
+                    AnimateTable[3].enabled = false;
+                    AnimateTable[4].enabled = false;
+                    AnimateTable[5].enabled = false;
+                    AnimateTable[6].enabled = false;
+                    AnimateTable[7].enabled = false;
+
+                    BoomCurve[0].GetComponent<Renderer>().enabled=false;
+                    BoomCurve[1].GetComponent<Renderer>().enabled=false;
+                    menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                    menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                    menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+
             if(EditSubMenuOne == "in range")//Piston Selected
                 {
                     //Highlight Piston To Blue
@@ -1418,59 +1441,48 @@ public async void Update()
         //     float[,,] EndVelocity3BoomCCE = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Extend,BoomArray3Array3D);
         //     float[,,] EndVelocity3BoomCCC = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Contract,BoomArray3Array3D);
         //    }
-        if(MenuData[0]==0)
-            {
-            //edit
-            // AnimationOneStatus = false;
-            // Velocity[0].enabled = false;
-            //StopAnimation[0].GetComponent<Renderer>().enabled=false;
-            //StopAnimationText[0].enabled = false;
-            BoomCurve[0].GetComponent<Renderer>().enabled=false;
-            BoomCurve[1].GetComponent<Renderer>().enabled=false;
-            menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
-            GameModeObjectRetrieveMessage.enabled=false;
+        // if(MenuData[0]==0)
+        //     {
 
 
 
-            //Game Mode - show excavator
-            if(InGameMode == "in range")
-            {
-            ExcavatorBase.GetComponent<Renderer>().enabled=true;
-            ObjectToRetrieve.GetComponent<Renderer>().enabled=true;
-            ExcavatorBase.transform.position = ExcavatorPos;
-            ObjectToRetrieve.transform.position = ObjectToRetrievePos;
-            ExcavatorBaseCircle.GetComponent<Renderer>().enabled=true;
-            ExcavatorBaseCircle.transform.position = ExcavatorPos;
-            menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.blue;
-            //Fixed Joint in Excavator Circle Error Message
-            if(InExcavatorCircle == "out of range")
-            {
-                GameModeErrorMessage.enabled = true;
-                GameModeErrorMessage.text = "Place Fixed Joint on Excavator";
-                GameStatus = false;
-            }
-            else
-            {
-                GameModeErrorMessage.enabled = false;
-                GameStatus = true;
-            }
-            }
-            else if (InGameMode == "out of range")
-            {
-            GameStatus = true;
-            GameModeErrorMessage.enabled = false;
-            ExcavatorBase.GetComponent<Renderer>().enabled=false;
-            ExcavatorBaseCircle.GetComponent<Renderer>().enabled=false;
-            ObjectToRetrieve.GetComponent<Renderer>().enabled=false;
-            menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.white;
-            }
+        //     //Game Mode - show excavator
+        //     if(InGameMode == "in range")
+        //     {
+        //     ExcavatorBase.GetComponent<Renderer>().enabled=true;
+        //     ObjectToRetrieve.GetComponent<Renderer>().enabled=true;
+        //     ExcavatorBase.transform.position = ExcavatorPos;
+        //     ObjectToRetrieve.transform.position = ObjectToRetrievePos;
+        //     ExcavatorBaseCircle.GetComponent<Renderer>().enabled=true;
+        //     ExcavatorBaseCircle.transform.position = ExcavatorPos;
+        //     menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.blue;
+        //     //Fixed Joint in Excavator Circle Error Message
+        //     if(InExcavatorCircle == "out of range")
+        //     {
+        //         GameModeErrorMessage.enabled = true;
+        //         GameModeErrorMessage.text = "Place Fixed Joint on Excavator";
+        //         GameStatus = false;
+        //     }
+        //     else
+        //     {
+        //         GameModeErrorMessage.enabled = false;
+        //         GameStatus = true;
+        //     }
+        //     }
+        //     else if (InGameMode == "out of range")
+        //     {
+        //     GameStatus = true;
+        //     GameModeErrorMessage.enabled = false;
+        //     ExcavatorBase.GetComponent<Renderer>().enabled=false;
+        //     ExcavatorBaseCircle.GetComponent<Renderer>().enabled=false;
+        //     ObjectToRetrieve.GetComponent<Renderer>().enabled=false;
+        //     menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.white;
+        //     }
 
 
 
-            }
-        if(MenuData[0]==1 && AnimationOneStatus==false && GameStatus == true)
+         //   }
+        if(MenuData[0]==1)
             {
             //Menu
             SubMenuText[0].text = "Play";
@@ -1491,6 +1503,16 @@ public async void Update()
             AnimateMenuArray[2].transform.position = new Vector3(800,-565,0);
             SubMenuArray[2].transform.position = new Vector3(-100,0,0);
             //Animate Table
+            //enable
+            AnimateTable[0].enabled = true;
+            AnimateTable[1].enabled = true;
+            AnimateTable[2].enabled = true;
+            AnimateTable[3].enabled = true;
+            AnimateTable[4].enabled = true;
+            AnimateTable[5].enabled = true;
+            AnimateTable[6].enabled = true;
+            AnimateTable[7].enabled = true;
+            //transform
             AnimateTable[0].transform.position = new Vector3(500,-32,0); //text
             AnimateTable[1].transform.position = new Vector3(640,7,0); //number
             AnimateTable[2].transform.position = new Vector3(555,-15,0); //percentage 1
@@ -1501,37 +1523,36 @@ public async void Update()
             AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
 
 
-
-            if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
-            {
-            AnimationOneStatus = true;
-            SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-            StartCoroutine(FollowPistonOnePath());
-            StartCoroutine(FollowLinkOnePath());
+            BoomCurve[0].GetComponent<Renderer>().enabled=true;
+            menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+            menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
 
 
 
+            // if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
+            // {
+            // AnimationOneStatus = true;
+            // SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+            // SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+            // StartCoroutine(FollowPistonOnePath());
+            // StartCoroutine(FollowLinkOnePath());
 
-            }
-            if(EditSubMenuTwo == "in range")
-            {
-            Vector3 StoppedPos = BoomEnd[0].transform.position;
-            int StoppedPosIndex = System.Array.IndexOf(BoomArray1,StoppedPos);
-            print(StoppedPosIndex);
-            }
+            // }
+            // if(EditSubMenuTwo == "in range")
+            // {
+            // Vector3 StoppedPos = BoomEnd[0].transform.position;
+            // int StoppedPosIndex = System.Array.IndexOf(BoomArray1,StoppedPos);
+            // print(StoppedPosIndex);
+            // }
 
 
-            GameStatus = true;
             //SubMenu Text and Box
 
 
             //StopAnimationText[0].enabled = true;
             //StopAnimation[0].GetComponent<Renderer>().enabled=true;
-            BoomCurve[0].GetComponent<Renderer>().enabled=true;
-            menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-            menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+
 
 
 
@@ -1564,14 +1585,14 @@ public async void Update()
             // }
 
             //In Game Mode if retrieves object
-            if(InObjectPosBoomArray1 == "in range")
-            {
-            GameModeObjectRetrieveMessage.text = "Success!";
-            }
-            else if(InObjectPosBoomArray1 == "out of range")
-            {
-            GameModeObjectRetrieveMessage.text = "u suck shit try again";
-            }
+            // if(InObjectPosBoomArray1 == "in range")
+            // {
+            // GameModeObjectRetrieveMessage.text = "Success!";
+            // }
+            // else if(InObjectPosBoomArray1 == "out of range")
+            // {
+            // GameModeObjectRetrieveMessage.text = "u suck shit try again";
+            //}
             //If in Stop Animation One Box
             // if(InStopAnimationOne == "in range")
             // {

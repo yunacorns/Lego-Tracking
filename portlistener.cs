@@ -99,6 +99,8 @@ public class portlistener : MonoBehaviour
         ThreadStart ts = new ThreadStart(GetInfo);
         mThread = new Thread(ts);
         mThread.Start();
+        Display.displays[1].Activate();
+        Display.displays[2].Activate();
 
         }
     public void GetInfo() //nothing
@@ -733,7 +735,7 @@ public class portlistener : MonoBehaviour
         {
             MaxRange = BoomArray[i];
             float MaxDistance = DistanceBetweenPoints(OriginBoomFixed, BoomArray[i]);
-            for(int j=0; j<NextArrayLength; i++)
+            for(int j=0; j<NextArrayLength; j++)
             {
                 float Distance = DistanceBetweenPoints(OriginBoomFixed, NextBoomMovement[i,j]);
 
@@ -1371,7 +1373,7 @@ public async void Update()
             Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
 
          //Max Reach of Both Booms
-            //Vector3[] MaxReachPositionsBoom2 = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
+            Vector3[] MaxReachPositionsBoom2 = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
          //Velocity at Combined
             float[,] EndVelocityBoom1ExtendBoom2Extend = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2, BoomArray2Array); //Boom1 Extend Boom2 Extending
             float[,] EndVelocityBoom1ExtendBoom2Contract = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Extend Boom2 Contract

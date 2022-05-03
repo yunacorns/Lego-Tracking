@@ -83,9 +83,9 @@ public class portlistener : MonoBehaviour
     public bool running; //nothing
     public float PistonFraction1 = 10f;
     public float BoomOverShootFraction1 = 10f;
-    public float PistonFraction2 = 0.5f;
-    public float JointFraction2 = 0f;
-    public float BoomOverShootFraction2 = 0f;
+    public float PistonFraction2 = 10f;
+    public float JointFraction2 = 10f;
+    public float BoomOverShootFraction2 = 10f;
     public float PistonFraction3;
     public float JointFraction3;
     public float BoomOverShootFraction3;
@@ -223,15 +223,9 @@ public class portlistener : MonoBehaviour
         float start_magnitude = 40f;
         float end_magnitude = 120f;
         float slider_current_value = (float)Math.Round(((sliderdistance - start_magnitude) / end_magnitude),1);
-        float slider_default_value = 0.7f;
-        if(Handle_Position==outofframe||Slider_Position==outofframe)
+        if(slider_current_value>=1)
         {
-            return slider_default_value;
-        }
-        else if(0<=slider_current_value&&slider_current_value<=1)
-        {
-            slider_default_value = slider_current_value;
-            return slider_current_value;
+            return 1;
         }
         else if (slider_current_value<=0)
         {
@@ -239,7 +233,7 @@ public class portlistener : MonoBehaviour
         }
         else
         {
-            return 1;
+            return slider_current_value;
         }
 
     }
@@ -851,7 +845,13 @@ public async void Update()
 
         if(MenuData[0]==0){
             //SubMenu Text
-            //float PistonFraction1Test;
+            Velocity[0].enabled = false;
+            BoomCurve[0].GetComponent<Renderer>().enabled=false;
+            BoomCurve[1].GetComponent<Renderer>().enabled=false;
+            menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+            menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+            GameModeObjectRetrieveMessage.enabled=false;
             SubMenuText[0].text = "Piston";
             SubMenuText[1].text = "Link";
             SubMenuText[2].text = "Joint";
@@ -869,6 +869,7 @@ public async void Update()
                 SliderPositionText[0].enabled = true;
                 SliderPositionText[1].enabled = false;
                 SliderPositionText[2].enabled = false;
+                Select1Block[0].GetComponent<Renderer>().enabled = false;
                 SliderPositionText[0].transform.position = new Vector3(475,-530,0);
                 MenuText[0].text = "Piston Selection";
                 //Piston Fraction or Boom Overshoot
@@ -965,6 +966,7 @@ public async void Update()
                 SliderPositionText[0].enabled = false;
                 SliderPositionText[1].enabled = true;
                 SliderPositionText[2].enabled = false;
+                Select1Block[0].GetComponent<Renderer>().enabled = false;
                 SliderPositionText[1].transform.position = new Vector3(475,-530,0);
                 if(TypeSelectionOne == "in range")//Link One
                 {
@@ -1044,6 +1046,7 @@ public async void Update()
                 SliderPositionText[1].enabled = false;
                 SliderPositionText[2].enabled = true;
                 SliderPositionText[2].transform.position = new Vector3(475,-530,0);
+                Select1Block[0].GetComponent<Renderer>().enabled = true;
                 Select1Block[0].transform.position = new Vector3(925, -95, 0);
                 if(TypeSelectionTwo == "in range")//Link Two
                 {
@@ -1054,14 +1057,14 @@ public async void Update()
                         JointFraction2 = sliderValue(HandlePosition,SliderPosition);
                         LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                        JointFractionText[3].text = JointFraction2.ToString();
+                        JointFractionText[1].text = JointFraction2.ToString();
                         JointFractionStatus2 = false;
                     }
                     else if(UnlockMenu == "in range")
                     {
                         JointFractionStatus2 = true;
                         JointFraction2 = sliderValue(HandlePosition,SliderPosition);
-                        JointFractionText[3].text = JointFraction2.ToString();
+                        JointFractionText[1].text = JointFraction2.ToString();
                         LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                         LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                     }
@@ -1075,14 +1078,14 @@ public async void Update()
                         JointFraction3 = sliderValue(HandlePosition,SliderPosition);
                         LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                        JointFractionText[5].text = JointFraction3.ToString();
+                        JointFractionText[3].text = JointFraction3.ToString();
                         JointFractionStatus3 = false;
                     }
                     else if(UnlockMenu == "in range")
                     {
                         JointFractionStatus3 = true;
                         JointFraction3 = sliderValue(HandlePosition,SliderPosition);
-                        JointFractionText[5].text = JointFraction3.ToString();
+                        JointFractionText[3].text = JointFraction3.ToString();
                         LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                         LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                     }
@@ -1116,6 +1119,15 @@ public async void Update()
 
         Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
         Vector3 EndPiston1 = PistonEnd(FixedBoom1, EndBoom1, PistonFraction1);
+
+        //Boom 2 Positions
+
+        Vector3 EndBoom2 = receivedPos10; //???
+        Vector3 StartPiston2 = receivedPos11; //???
+
+        Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
+        Vector3 StartBoom2 = BoomStartFinder(FixedBoom2, EndBoom2, BoomOverShootFraction2);
+        Vector3 EndPiston2 = PistonEnd(EndBoom1, EndBoom2, PistonFraction2);
 
         //render components only if they exist
         void IfExistFixedBoom(Vector3 theAruco, int i){
@@ -1158,10 +1170,13 @@ public async void Update()
         IfExistFixedBoom(FixedBoom1,0);
         IfExistFreeBoom(EndBoom1,1,0);
         IfExistPiston(StartPiston1,EndPiston1,2,0);
+        IfExistFreeBoom(EndBoom2,3,1);
+        IfExistPiston(StartPiston2,EndPiston2,4,1);
 
-        void IfExistBoomLine(Vector3 StartBoomPos, Vector3 EndBoomPos, int i )
+
+        void IfExistBoomLine(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, int i )
         {
-            if(StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+            if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe)
             {
                 BoomLine[i].GetComponent<Renderer>().enabled = true;
                 Vector3[] LinePosition1 = {StartBoomPos,EndBoomPos};
@@ -1174,8 +1189,10 @@ public async void Update()
 
         }
 
-        IfExistBoomLine(StartBoom1,EndBoom1,0);
-        void IfExistPistonMovingLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
+        IfExistBoomLine(StartBoom1,FixedBoom1,EndBoom1,0);
+        IfExistBoomLine(FixedBoom2,EndBoom1,EndBoom2,1);
+
+        void IfExistPistonMovingLine(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
         {
             if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
             {
@@ -1188,7 +1205,25 @@ public async void Update()
                 PistonMovingLine[i].GetComponent<Renderer>().enabled = false;
             }
         }
-        IfExistPistonMovingLine(StartPiston1,EndPiston1,FixedBoom1,EndBoom1,0);
+        IfExistPistonMovingLine(EndPiston1,StartPiston1,FixedBoom1,EndBoom1,0);
+        IfExistPistonMovingLine(EndPiston2,StartPiston2,EndBoom1,EndBoom2,1);
+
+
+        //void IfExistPistonFixedLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
+        // {
+        //     if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+        //     {
+        //         PistonFixedLine[i].GetComponent<Renderer>().enabled = true;
+        //         Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
+        //         PistonFixedLine[i].SetPositions(LinePosition2);
+        //     }
+        //     else
+        //     {
+        //         PistonFixedLine[i].GetComponent<Renderer>().enabled = false;
+        //     }
+        // }
+        //IfExistPistonFixedLine(StartPiston1,EndPiston1,FixedBoom1,EndBoom1,0);
+        //IfExistPistonFixedLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
 
         //Boom 1 Calcs
 	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
@@ -1236,20 +1271,7 @@ public async void Update()
         //int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -590; int ymaxAnimOne = -500;
         //string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
 
-        //Boom 2
-        //BData
-        //float BoomOverShootFraction2 = 0f;
-        // float PistonFraction2 = 0.7f;
 
-        //
-
-        // //Positions
-        Vector3 EndBoom2 = receivedPos10; //???
-        Vector3 StartPiston2 = receivedPos11; //???
-
-        Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
-        Vector3 StartBoom2 = BoomStartFinder(FixedBoom2, EndBoom2, BoomOverShootFraction2);
-        Vector3 EndPiston2 = PistonEnd(EndBoom1, EndBoom2, PistonFraction2);
 
         //Arrays of Translated Positions relative to boom1 rotaions
         Vector3[] EndBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
@@ -1286,125 +1308,17 @@ public async void Update()
         int ArrayLength2 = BoomArray2Array.GetLength(0);
         BoomCurve[1].positionCount = ArrayLength2;
         //print(ArrayLength2);
-        print("calcend");
-
-        IfExistFreeBoom(EndBoom2,3,1);
-        IfExistPiston(StartPiston2,EndPiston2,4,1);
 
 
 
-        IfExistBoomLine(StartBoom2,EndBoom2,1);
-
-
-        IfExistPistonMovingLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
 
         if(MenuData[0]==0)
         {
         //edit
         //AnimationOneStatus = false;
-        Velocity[0].enabled = false;
-        //StopAnimation[0].GetComponent<Renderer>().enabled=false;
-        //StopAnimationText[0].enabled = false;
-        BoomCurve[0].GetComponent<Renderer>().enabled=false;
-        BoomCurve[1].GetComponent<Renderer>().enabled=false;
-        menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
-        menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-        menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
-        GameModeObjectRetrieveMessage.enabled=false;
 
-        // //render components only if they exist
-        //  void IfExistFixedBoom(Vector3 theAruco, int i){
-        //     if(theAruco != outofframe)
-        //     {
-        //         squareArray[i].SetActive(true);
-        //         squareArray[i].transform.position = theAruco;
-        //         Overshoot[i].transform.position = StartBoom1;
-        //     }
-        //     else
-        //     {
-        //         squareArray[i].SetActive(false);
-        //     }
-        // }
-        // void IfExistFreeBoom(Vector3 theAruco, int i, int j){
-        //     if(theAruco != outofframe)
-        //     {
-        //         squareArray[i].SetActive(true);
-        //         squareArray[i].transform.position = theAruco;
-        //         BoomEnd[j].transform.position = theAruco;
-        //     }
-        //     else
-        //     {
-        //         squareArray[i].SetActive(false);
-        //     }
-        // }
-        // void IfExistPiston(Vector3 theAruco, Vector3 PistonEndPos, int i,int j){
-        //     if(theAruco != outofframe)
-        //     {
-        //         squareArray[i].SetActive(true);
-        //         squareArray[i].transform.position = theAruco;
-        //         PistonOneEnd[j].transform.position = PistonEndPos;
-        //     }
-        //     else
-        //     {
-        //         squareArray[i].SetActive(false);
-        //     }
-        // }
 
-        // IfExistFixedBoom(FixedBoom1,0);
-        // IfExistFreeBoom(EndBoom1,1,0);
-        // IfExistPiston(StartPiston1,EndPiston1,2,0);
-        // IfExistFreeBoom(EndBoom2,3,1);
-        // IfExistPiston(StartPiston2,EndPiston2,4,1);
 
-        // void IfExistBoomLine(Vector3 StartBoomPos, Vector3 EndBoomPos, int i )
-        // {
-        //     if(StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
-        //     {
-        //         BoomLine[i].GetComponent<Renderer>().enabled = true;
-        //         Vector3[] LinePosition1 = {StartBoomPos,EndBoomPos};
-        //         BoomLine[i].SetPositions(LinePosition1);
-        //     }
-        //     else
-        //     {
-        //         BoomLine[i].GetComponent<Renderer>().enabled = false;
-        //     }
-
-        // }
-
-        // IfExistBoomLine(StartBoom1,EndBoom1,0);
-        // IfExistBoomLine(StartBoom2,EndBoom2,1);
-
-        // void IfExistPistonMovingLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
-        // {
-        //     if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
-        //     {
-        //         PistonMovingLine[i].GetComponent<Renderer>().enabled = true;
-        //         Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
-        //         PistonMovingLine[i].SetPositions(LinePosition2);
-        //     }
-        //     else
-        //     {
-        //         PistonMovingLine[i].GetComponent<Renderer>().enabled = false;
-        //     }
-        // }
-        // IfExistPistonMovingLine(StartPiston1,EndPiston1,FixedBoom1,EndBoom1,0);
-        // IfExistPistonMovingLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
-
-        //void IfExistPistonFixedLine(Vector3 StartPistonPos, Vector3 EndPistonPos, Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
-        // {
-        //     if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
-        //     {
-        //         PistonFixedLine[i].GetComponent<Renderer>().enabled = true;
-        //         Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
-        //         PistonFixedLine[i].SetPositions(LinePosition2);
-        //     }
-        //     else
-        //     {
-        //         PistonFixedLine[i].GetComponent<Renderer>().enabled = false;
-        //     }
-        // }
-        //IfExistPistonFixedLine(StartPiston1,EndPiston1,FixedBoom1,EndBoom1,0);
-        //IfExistPistonFixedLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
 
 
         //Game Mode - show excavator
@@ -1870,15 +1784,6 @@ public async void Update()
         //Time Step Generic
         float TimeStep = TheTimeStep();
 
-        //Boom 1 Data
-        float BoomOverShootFraction1=0f;
-        //float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
-        float PistonFraction1 = 1f;
-
-        //Boom 2 Data
-        float BoomOverShootFraction2 = 0f;
-        float PistonFraction2 = 0.7f;
-        float JointFraction2 = 0f;
 
         //Boom 1 Positions
         Vector3 FixedBoom1 = receivedPos5;

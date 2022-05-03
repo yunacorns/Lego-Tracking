@@ -1358,39 +1358,39 @@ public async void Update()
         //if(receivedPos10!=outofframe && receivedPos11!=outofframe)
         //{
          //Arrays of Translated Positions relative to boom1 rotaions
-        //     Vector3[] EndBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
-        //     Vector3[] StartPiston2Array = RelativePosition(FixedBoom1, StartPiston2, AngleChangeBoom1);
-        //     Vector3[] FixedBoom2Array = RelativePosition(FixedBoom1, FixedBoom2, AngleChangeBoom1);
-        //     Vector3[] StartBoom2Array = RelativePosition(FixedBoom1, StartBoom2, AngleChangeBoom1);
-        //     Vector3[] EndPiston2Array = RelativePosition(FixedBoom1, EndPiston2, AngleChangeBoom1);
+            Vector3[] EndBoom2Array = RelativePosition(FixedBoom1, EndBoom2, AngleChangeBoom1);
+            Vector3[] StartPiston2Array = RelativePosition(FixedBoom1, StartPiston2, AngleChangeBoom1);
+            Vector3[] FixedBoom2Array = RelativePosition(FixedBoom1, FixedBoom2, AngleChangeBoom1);
+            Vector3[] StartBoom2Array = RelativePosition(FixedBoom1, StartBoom2, AngleChangeBoom1);
+            Vector3[] EndPiston2Array = RelativePosition(FixedBoom1, EndPiston2, AngleChangeBoom1);
 
-        //  //Boom2 Calcs
-        //     Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
-        //     Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
-        //     Vector3[] PistonArray2 = PistonRotationCalculation(StartBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
-        //     float[] AngleChangeBoom2 = RotationFromStartCalculation(BoomArray2, FixedBoom2);
-        //     float TotalBoomRange2 = BoomRangeCalculation(AngleChangeBoom2);
-        //     Vector3[] Omega2 = AngularVelocityCalculation(BoomArray2, TimeStep, FixedBoom2);
-        //     Vector3[] Omega2Contract = VelocityContracting(Omega2);
-        //     Vector3[] V2 = VelocityCalculation(Omega2, FixedBoom2, EndBoom2);
-        //     Vector3[] V2Contract = VelocityContracting(V2);
+         //Boom2 Calcs
+            Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
+            Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
+            Vector3[] PistonArray2 = PistonRotationCalculation(StartBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
+            float[] AngleChangeBoom2 = RotationFromStartCalculation(BoomArray2, FixedBoom2);
+            float TotalBoomRange2 = BoomRangeCalculation(AngleChangeBoom2);
+            Vector3[] Omega2 = AngularVelocityCalculation(BoomArray2, TimeStep, FixedBoom2);
+            Vector3[] Omega2Contract = VelocityContracting(Omega2);
+            Vector3[] V2 = VelocityCalculation(Omega2, FixedBoom2, EndBoom2);
+            Vector3[] V2Contract = VelocityContracting(V2);
 
-        //  //Boom2 Translated Arrays - Vector3[Position Through Boom 1 Movement, Position Through Boom 2 Movement]
-        //     Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
-        //     Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
-        //     Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
+         //Boom2 Translated Arrays - Vector3[Position Through Boom 1 Movement, Position Through Boom 2 Movement]
+            Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
+            Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
+            Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
 
-        //  //Max Reach of Both Booms
-        //     Vector3[] MaxReachPositionsBoom2 = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
-        //  //Velocity at Combined
-        //     float[,] EndVelocityBoom1ExtendBoom2Extend = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2, BoomArray2Array); //Boom1 Extend Boom2 Extending
-        //     float[,] EndVelocityBoom1ExtendBoom2Contract = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Extend Boom2 Contract
-        //     float[,] EndVelocityBoom1ContractBoom2Extend = TwoMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, V2, BoomArray2Array); //Boom1 Contract Boom2 Extending
-        //     float[,] EndVelocityBoom1ContractBoom2Contract = TwoMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Contract Boom2 Contract
+         //Max Reach of Both Booms
+            Vector3[] MaxReachPositionsBoom2 = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
+         //Velocity at Combined
+            float[,] EndVelocityBoom1ExtendBoom2Extend = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2, BoomArray2Array); //Boom1 Extend Boom2 Extending
+            float[,] EndVelocityBoom1ExtendBoom2Contract = TwoMovingBoomsVelocity(Omega1, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Extend Boom2 Contract
+            float[,] EndVelocityBoom1ContractBoom2Extend = TwoMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, V2, BoomArray2Array); //Boom1 Contract Boom2 Extending
+            float[,] EndVelocityBoom1ContractBoom2Contract = TwoMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, V2Contract, BoomArray2Array); //Boom1 Contract Boom2 Contract
 
-        //  //Boom 2 Array Length
-        //     int ArrayLength2 = BoomArray2Array.GetLength(0);
-        //     BoomCurve[1].positionCount = ArrayLength2;
+         //Boom 2 Array Length
+            int ArrayLength2 = BoomArray2Array.GetLength(0);
+            BoomCurve[1].positionCount = ArrayLength2;
         // //}
 
         //Boom3
@@ -1517,9 +1517,9 @@ public async void Update()
             //transform
             AnimateTable[0].transform.position = new Vector3(500,-32,0); //text
             AnimateTable[1].transform.position = new Vector3(640,7,0); //number
-            AnimateTable[2].transform.position = new Vector3(555,-15,0); //percentage 1
-            AnimateTable[3].transform.position = new Vector3(645,-15,0); //percentage 2
-            AnimateTable[4].transform.position = new Vector3(735,-15,0); //percentage 3
+            AnimateTable[2].transform.position = new Vector3(575,-15,0); //percentage 1
+            AnimateTable[3].transform.position = new Vector3(665,-15,0); //percentage 2
+            AnimateTable[4].transform.position = new Vector3(755,-15,0); //percentage 3
             AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
             AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
             AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
@@ -1543,14 +1543,14 @@ public async void Update()
                             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            AnimateTable[2].text = AnimationPosition1.ToString();
+                            AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
                             PositionStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
                         {
                             PositionStatus1 = true;
                             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
-                            AnimateTable[2].text = AnimationPosition1.ToString();
+                            AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }

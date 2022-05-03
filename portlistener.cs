@@ -83,6 +83,7 @@ public class portlistener : MonoBehaviour
         public bool PistonFractionStatus3 = true;
         public bool JointFractionStatus3 = true;
         public bool LinkOverShootStatus3 = true;
+        public bool PositionStatus1 = true;
         public bool running; //nothing
         public float PistonFraction1;  // if 10 set default to 0.7
         public float BoomOverShootFraction1; // if 20 set default to 0
@@ -92,6 +93,7 @@ public class portlistener : MonoBehaviour
         public float PistonFraction3;
         public float JointFraction3;
         public float BoomOverShootFraction3;
+        public float AnimationPosition1;
 
     public void Start() //private
         {
@@ -1306,8 +1308,7 @@ public async void Update()
             //IfExistPistonFixedLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
 
         //Boom 1 Calcs
-        //if(receivedPos5!=outofframe &&receivedPos6!=outofframe &&receivedPos7!=outofframe)
-        //{
+
 	        Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
             Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
             Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
@@ -1323,7 +1324,7 @@ public async void Update()
 
             BoomCurve[0].positionCount = BoomArray1.Length;
             OverShootCurve[0].positionCount = BoomArray1Start.Length;
-        //}
+
         //Game Mode Menu
             Vector3 GameModeAruco = receivedPos25;
             int xminGame = 775;
@@ -1346,6 +1347,7 @@ public async void Update()
             int xmaxObj = (int)ObjectToRetrievePos[0]+70;
             int yminObj = (int)ObjectToRetrievePos[1]-50;
             int ymaxObj = (int)ObjectToRetrievePos[1]+5;
+
             string InObjectPosBoomArray1 = InMenuRegion(xminObj,xmaxObj,yminObj,ymaxObj,BoomArray1[ArrayLength1-1]);
 
 
@@ -1528,7 +1530,32 @@ public async void Update()
             menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
             menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
 
-
+            if(EditSubMenuTwo == "in range") //if in adjust
+            {
+                SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue; //highlight blue
+                if(TypeSelectionOne == "in range") // if in link 1
+                {
+                    SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                    SelectorHighlighter.transform.position = new Vector3(890,-95,0); //highlighter line
+                    if(LockMenu == "in range" && PositionStatus1 == true)
+                        {
+                            AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            AnimateTable[2].text = AnimationPosition1.ToString();
+                            PositionStatus1 = false;
+                        }
+                        else if(UnlockMenu == "in range")
+                        {
+                            PositionStatus1 = true;
+                            AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
+                            AnimateTable[2].text = AnimationPosition1.ToString();
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        }
+                }
+            }
 
             // if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
             // {

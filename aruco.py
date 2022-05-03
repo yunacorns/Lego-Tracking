@@ -155,7 +155,8 @@ def main():
                         ids_formatted_p = []
                         for i in range(length_ids_p):
                             ids_formatted_p.append(ids_p[i][0])
-                        for i in range (5,12):
+                        jointPistonArucos = [5,6,7,10,11]
+                        for i in jointPistonArucos:
                             if [i] in ids_p:
                                 pos = ids_formatted_p.index(i)
                                 TL = bbox_p[pos][0][0]
@@ -177,7 +178,8 @@ def main():
                                 totalAnimatePos.append(-100)
                                 totalAnimatePos.append(0)
                                 totalAnimatePos.append(0)
-                        for i in range(25,29):
+                        menuAndSliderArucos = [8,9,25,26,27,28]
+                        for i in menuAndSliderArucos:
                             if [i] in ids_c:
                                 pos = ids_formatted_c.index(i)
                                 TL = bbox_c[pos][0][0]
@@ -209,7 +211,8 @@ def main():
                         ids_formatted_p = []
                         for i in range(length_ids_p):
                             ids_formatted_p.append(ids_p[i][0])
-                        for i in range (5,12):
+                        jointPistonArucos = [5,6,7,10,11]
+                        for i in jointPistonArucos:
                             if [i] in ids_p:
                                 pos = ids_formatted_p.index(i)
                                 TL = bbox_p[pos][0][0]
@@ -231,7 +234,8 @@ def main():
                                 totalAnimatePos.append(-100)
                                 totalAnimatePos.append(0)
                                 totalAnimatePos.append(0)
-                        for i in range(25,29):
+                        menuAndSliderArucos = [8,9,25,26,27,28]
+                        for i in menuAndSliderArucos:
                             if [i] in ids_c:
                                 pos = ids_formatted_c.index(i)
                                 TL = bbox_c[pos][0][0]

@@ -70,6 +70,7 @@ public class portlistener : MonoBehaviour
         public Vector3 receivedPos26 = new Vector3(-100,0,0);
         public Vector3 receivedPos27 = new Vector3(-100,0,0);
         public Vector3 receivedPos28 = new Vector3(-100,0,0);
+        public Vector3 receivedPos29 = new Vector3(-100,0,0);
         Vector3 size = Vector3.zero;
         Vector3 zeros = Vector3.zero;
         Vector3 outofframe = new Vector3(-100,0,0);
@@ -152,6 +153,7 @@ public class portlistener : MonoBehaviour
             receivedPos26 = StringToVector3(dataReceived,"26");
             receivedPos27 = StringToVector3(dataReceived,"27");
             receivedPos28 = StringToVector3(dataReceived,"28");
+            receivedPos29 = StringToVector3(dataReceived,"29");
 
 
             //---Sending Data to Host----
@@ -884,6 +886,7 @@ public async void Update()
             Vector3 EditSubMenuAruco = receivedPos26;
             Vector3 TypeSelectionAruco = receivedPos27;
             Vector3 LockMenuAruco = receivedPos28;
+            Vector3 AnimateMenuAruco = receivedPos29;
             string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
             string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
             string EditSubMenuThree = InMenuRegion(0, 100, -500, -450, EditSubMenuAruco);
@@ -894,6 +897,8 @@ public async void Update()
             string TypeSelectionWhole = InMenuRegion(850, 950, -270, -70, TypeSelectionAruco);
             string LockMenu = InMenuRegion(850,950,-400,-350,LockMenuAruco);
             string UnlockMenu = InMenuRegion(850,950,-450,-400,LockMenuAruco);
+            string AnimateMenuPlay = InMenuRegion(675, 725, -590, -530, AnimateMenuAruco);
+            string AnimateMenuAdjust = InMenuRegion(725, 775, -590, -530, AnimateMenuAruco);
 
         //Assigning Slider Values
             if(MenuData[0]==0)
@@ -921,10 +926,8 @@ public async void Update()
                     //disable animate bottom menu
                     AnimateMenuText[0].enabled = false;
                     AnimateMenuText[1].enabled = false;
-                    AnimateMenuText[2].enabled = false;
                     AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = false;
                     AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = false;
-                    AnimateMenuArray[2].GetComponent<SpriteRenderer>().enabled = false;
 
                     //disable animate table
                     AnimateTable[0].enabled = false;
@@ -1494,23 +1497,18 @@ public async void Update()
         if(MenuData[0]==1)
             {
             //Menu
-            SubMenuText[0].text = "Play";
-            SubMenuText[1].text = "Adjust Position";
-            SubMenuText[2].enabled = false;
-            SubMenuArray[2].GetComponent<Renderer>().enabled=false;
+            SubMenuText[0].text = "Extend";
+            SubMenuText[1].text = "Contract";
+            SubMenuText[2].text = "Stationary";
             AnimateMenuText[0].enabled = true;
             AnimateMenuText[1].enabled = true;
-            AnimateMenuText[2].enabled = true;
             AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
             AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = true;
-            AnimateMenuArray[2].GetComponent<SpriteRenderer>().enabled = true;
             AnimateMenuText[0].transform.position = new Vector3(700,-530,0);
             AnimateMenuText[1].transform.position = new Vector3(746,-530,0);
-            AnimateMenuText[2].transform.position = new Vector3(800,-530,0);
             AnimateMenuArray[0].transform.position = new Vector3(700,-565,0);
             AnimateMenuArray[1].transform.position = new Vector3(750,-565,0);
-            AnimateMenuArray[2].transform.position = new Vector3(800,-565,0);
-            SubMenuArray[2].transform.position = new Vector3(-100,0,0);
+
             //Animate Table
             //enable
             AnimateTable[0].enabled = true;
@@ -1537,10 +1535,10 @@ public async void Update()
             menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
             menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
 
-            if(EditSubMenuTwo == "in range") //if in adjust
+            if(AnimateMenuAdjust == "in range") //if in adjust
             {
-                SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-                SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue; //highlight blue
+                AnimateMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                AnimateMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue; //highlight blue
                 if(TypeSelectionOne == "in range") // if in link 1
                 {
                     SelectorHighlighter.GetComponent<Renderer>().enabled = true;

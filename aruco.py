@@ -205,7 +205,7 @@ def main():
                         menuPosition.append(1)
                         menuPosition.append("animate")
                     elif cX<=100 and 170<cY<220:
-                        status = True
+                        status = False
                         if ids_p is not None:
                             length_ids_p = len(ids_p)
                         ids_formatted_p = []

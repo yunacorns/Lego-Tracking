@@ -38,6 +38,7 @@ public class portlistener : MonoBehaviour
         public LineRenderer[] OverShootCurve;
         public LineRenderer[] Graphsplot;
         public LineRenderer PistonOneCurve;
+        public LineRenderer maxreachcurve;
         public TextMeshProUGUI[] EditTableText;
         public TextMeshProUGUI[] AnimateTable;
         public TextMeshProUGUI GameModeErrorMessage;
@@ -1787,6 +1788,25 @@ public async void Update()
             DataText[7].transform.position = new Vector3(1850,-30,0);
 
 
+            //plot max reach
+            void MaxReachCurve(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
+            {
+                if(StartPiston!=outofframe&&StartBoom!=outofframe&&EndBoom1!=outofframe)
+                {
+                    for(int i=0; i<ArrayLength; i++)
+                    {
+                        BoomCurve[whichCurve].GetComponent<Renderer>().enabled = true;
+                        BoomCurve[whichCurve].SetPosition(i,theArray[i]);
+                    }
+                }
+                else
+                {
+                    BoomCurve[whichCurve].GetComponent<Renderer>().enabled = false;
+                }
+            }
+
+            MaxReachCurve(StartPiston1,FixedBoom1,EndBoom1,BoomArray1,ArrayLength1,0);
+            MaxReachCurve(StartPiston2,EndBoom1,EndBoom2,MaxReachPositionsBoom2,MaxReachPositionsBoom2.Length,1);
 
 
 

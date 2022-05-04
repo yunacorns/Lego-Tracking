@@ -85,6 +85,7 @@ public class portlistener : MonoBehaviour
         public bool JointFractionStatus3 = true;
         public bool LinkOverShootStatus3 = true;
         public bool PositionStatus1 = true;
+        public bool PositionStatus2 = true;
         public bool running; //nothing
         public float PistonFraction1;  //set default values in portlistener in unity
         public float BoomOverShootFraction1;
@@ -95,7 +96,9 @@ public class portlistener : MonoBehaviour
         public float JointFraction3;
         public float BoomOverShootFraction3;
         public float AnimationPosition1;
+        public float AnimationPosition2;
         public int BoomArray1AnimatePosition;
+        public int BoomArray2AnimatePosition;
 
     public void Start() //private
         {
@@ -1560,29 +1563,29 @@ public async void Update()
                             BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
                         }
                 }
-                // if(TypeSelectionOne == "in range") // if in link 2
-                // {
-                //     SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-                //     SelectorHighlighter.transform.position = new Vector3(890,-145,0);; //highlighter line
-                //     if(LockMenu == "in range" && PositionStatus1 == true)
-                //         {
-                //             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
-                //             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
-                //             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                //             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
-                //             BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
-                //             PositionStatus1 = false;
-                //         }
-                //         else if(UnlockMenu == "in range")
-                //         {
-                //             PositionStatus1 = true;
-                //             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
-                //             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
-                //             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-                //             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-                //             BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
-                //         }
-                // }
+                if(TypeSelectionTwo == "in range") // if in link 2
+                {
+                    SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                    SelectorHighlighter.transform.position = new Vector3(890,-145,0);; //highlighter line
+                    if(LockMenu == "in range" && PositionStatus2 == true)
+                        {
+                            AnimationPosition2 = sliderValue(HandlePosition,SliderPosition);
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            AnimateTable[3].text = (AnimationPosition2*100).ToString()+"%";
+                            BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
+                            PositionStatus2 = false;
+                        }
+                        else if(UnlockMenu == "in range")
+                        {
+                            PositionStatus2= true;
+                            AnimationPosition2= sliderValue(HandlePosition,SliderPosition);
+                            AnimateTable[3].text = (AnimationPosition2*100).ToString()+"%";
+                            LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                            LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                            BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
+                        }
+                }
             }
 
 
@@ -1602,8 +1605,8 @@ public async void Update()
             }
             //plot link line one where the chosen slider position is
             IfExistBoomLineAnimate(BoomArray1Start[BoomArray1AnimatePosition],FixedBoom1,EndBoom1,BoomArray1[BoomArray1AnimatePosition],0);
-            //link two - change zero to j in a sec
-            IfExistBoomLineAnimate(BoomArray2StartArray[BoomArray1AnimatePosition,0],EndBoom1,EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,0],1);
+            //link two
+            IfExistBoomLineAnimate(BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition],EndBoom1,EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1);
 
 
             void IfExistPistonMovingLineAnimate(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
@@ -1621,6 +1624,8 @@ public async void Update()
             }
             //plot piston link line one where chosen slider position is
             IfExistPistonMovingLineAnimate(PistonArray1[BoomArray1AnimatePosition],StartPiston1,FixedBoom1,EndBoom1,0);
+            //piston two
+             IfExistPistonMovingLineAnimate(PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2,EndBoom1,EndBoom2,1);
 
 
 
@@ -1651,32 +1656,74 @@ public async void Update()
 
 
 
-            if(!StartPiston1.Equals(outofframe))
-            {
-            for(int i=0; i<ArrayLength1; i++)
-            {
-            BoomCurve[0].GetComponent<Renderer>().enabled = true;
-            BoomCurve[0].SetPosition(i,BoomArray1[i]);
-            }
-            }
-            else
-            {
-            BoomCurve[0].GetComponent<Renderer>().enabled = false;
-            }
-
-            // if(!StartPiston1.Equals(outofframe)&&!StartPiston2.Equals(outofframe))
+            // if(!StartPiston1.Equals(outofframe))
             // {
-            // for(int i=0; i<ArrayLength2; i++)
+            // for(int i=0; i<ArrayLength1; i++)
             // {
-            // BoomCurve[1].GetComponent<Renderer>().enabled = true;
-            // BoomCurve[1].SetPosition(i,BoomArray2Array[i,0]);
-
+            // BoomCurve[0].GetComponent<Renderer>().enabled = true;
+            // BoomCurve[0].SetPosition(i,BoomArray1[i]);
             // }
             // }
             // else
             // {
-            // BoomCurve[1].GetComponent<Renderer>().enabled = false;
+            // BoomCurve[0].GetComponent<Renderer>().enabled = false;
             // }
+
+            Vector3[] BoomArray2Array1D = new Vector3[ArrayLength2];
+            for (int j=0; j<ArrayLength2; j++)
+            {
+                Vector3 PositionInArray = BoomArray2Array[BoomArray1AnimatePosition,j];
+                float x = PositionInArray[0];
+                float y = PositionInArray[1];
+                BoomArray2Array1D[j] = new Vector3(x,y,0f);
+            }
+
+
+            //void BoomCurveWorkspace(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
+            //{
+                // if(StartPiston!=outofframe&&StartBoom!=outofframe&&EndBoom!=outofframe)
+                // {
+                //     for(int i=0; i<ArrayLength; i++)
+                //     {
+                //         BoomCurve[whichCurve].GetComponent<Renderer>().enabled = true;
+                //         BoomCurve[whichCurve].SetPosition(i,theArray[i]);
+                //     }
+                // }
+                // else
+                // {
+                //     BoomCurve[whichCurve].GetComponent<Renderer>().enabled = false;
+                // }
+            //}
+            //workspace one
+            //BoomCurveWorkspace(StartPiston1,FixedBoom1,EndBoom1,BoomArray1,ArrayLength1,0);
+            //two
+            //BoomCurveWorkspace(StartPiston2,EndBoom1,EndBoom2,BoomArray2Array1D,ArrayLength2,1);
+
+            if(StartPiston1!=outofframe&&FixedBoom1!=outofframe&&EndBoom1!=outofframe)
+                {
+                    for(int i=0; i<ArrayLength1; i++)
+                    {
+                        BoomCurve[0].GetComponent<Renderer>().enabled = true;
+                        BoomCurve[0].SetPosition(i,BoomArray1[i]);
+                    }
+                }
+            else
+            {
+                BoomCurve[0].GetComponent<Renderer>().enabled = false;
+            }
+            if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe)
+                {
+                    for(int i=0; i<ArrayLength2; i++)
+                    {
+                        BoomCurve[1].GetComponent<Renderer>().enabled = true;
+                        BoomCurve[1].SetPosition(i,BoomArray2Array1D[i]);
+                    }
+                }
+            else
+            {
+                BoomCurve[1].GetComponent<Renderer>().enabled = false;
+            }
+
 
             //In Game Mode if retrieves object
             // if(InObjectPosBoomArray1 == "in range")

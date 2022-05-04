@@ -99,7 +99,7 @@ def main():
                 totalPosition = []
                 totalAnimatePos = []
                 # central aruco markers
-                allArucos = [5,6,7,8,9,10,11,25,26,27,28]
+                allArucos = [5,6,7,8,9,10,11,25,26,27,28,29]
                 for i in allArucos:
                     if [i] in ids_c:
                         pos = ids_formatted_c.index(i)
@@ -178,7 +178,7 @@ def main():
                                 totalAnimatePos.append(-100)
                                 totalAnimatePos.append(0)
                                 totalAnimatePos.append(0)
-                        menuAndSliderArucos = [8,9,25,26,27,28]
+                        menuAndSliderArucos = [8,9,25,26,27,28,29]
                         for i in menuAndSliderArucos:
                             if [i] in ids_c:
                                 pos = ids_formatted_c.index(i)
@@ -234,7 +234,7 @@ def main():
                                 totalAnimatePos.append(-100)
                                 totalAnimatePos.append(0)
                                 totalAnimatePos.append(0)
-                        menuAndSliderArucos = [8,9,25,26,27,28]
+                        menuAndSliderArucos = [8,9,25,26,27,28,29]
                         for i in menuAndSliderArucos:
                             if [i] in ids_c:
                                 pos = ids_formatted_c.index(i)

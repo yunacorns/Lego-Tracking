@@ -25,6 +25,7 @@ public class portlistener : MonoBehaviour
         public GameObject[] SubMenuArray;
         public GameObject[] LockMenuArray;
         public GameObject[] AnimateMenuArray;
+        public GameObject[] AnimateObjects;
         public GameObject boomoneanimation;
         public GameObject ExcavatorBase;
         public GameObject ExcavatorBaseCircle;
@@ -1645,29 +1646,25 @@ public async void Update()
             // print(StoppedPosIndex);
             // }
 
+            //render purple circles
 
-            //SubMenu Text and Box
+            void IfExistFreeBoomAnimate(Vector3 theAruco, Vector3 FractionThroughBoomPos, int i){
+                if(theAruco != outofframe)
+                {
+                    AnimateObjects[i].SetActive(true);
+                    AnimateObjects[i].transform.position = FractionThroughBoomPos;
+                    BoomEnd[i].transform.position = FractionThroughBoomPos;
+                }
+                else
+                {
+                    AnimateObjects[i].SetActive(false);
+                }
+            }
+
+            IfExistFreeBoomAnimate(EndBoom1,BoomArray1[BoomArray1AnimatePosition],0); //circle one
+            IfExistFreeBoomAnimate(EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
 
 
-            //StopAnimationText[0].enabled = true;
-            //StopAnimation[0].GetComponent<Renderer>().enabled=true;
-
-
-
-
-
-            // if(!StartPiston1.Equals(outofframe))
-            // {
-            // for(int i=0; i<ArrayLength1; i++)
-            // {
-            // BoomCurve[0].GetComponent<Renderer>().enabled = true;
-            // BoomCurve[0].SetPosition(i,BoomArray1[i]);
-            // }
-            // }
-            // else
-            // {
-            // BoomCurve[0].GetComponent<Renderer>().enabled = false;
-            // }
 
             Vector3[] BoomArray2Array1D = new Vector3[ArrayLength2];
             for (int j=0; j<ArrayLength2; j++)

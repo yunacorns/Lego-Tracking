@@ -605,11 +605,11 @@ public class portlistener : MonoBehaviour
 
         if(StartAngle<0 && PointAngle>0 && Direction=="Clockwise")
             {
-            AngleChange[i] = PointAngle - StartAngle + 2*(float)Math.PI;
+            AngleChange[i] = PointAngle - StartAngle - 2*(float)Math.PI;
             }
         if(StartAngle>0 && PointAngle<0 && Direction=="Anticlockwise")
             {
-            AngleChange[i] = PointAngle - StartAngle - 2*(float)Math.PI;
+            AngleChange[i] = PointAngle - StartAngle + 2*(float)Math.PI;
             }
         else
         {
@@ -1546,7 +1546,7 @@ public async void Update()
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
-                            BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
+                            BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
                             PositionStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
@@ -1556,7 +1556,7 @@ public async void Update()
                             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-                            BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
+                            BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
                         }
                 }
                 // if(TypeSelectionOne == "in range") // if in link 2

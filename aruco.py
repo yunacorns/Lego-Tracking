@@ -20,8 +20,8 @@ def main():
 
     cap= cv2.VideoCapture(0)
     time.sleep(2)
-    cap.set(3,640)
-    cap.set(4,480)
+    cap.set(3,3840)
+    cap.set(4,2160)
     status = True
 
     while True:

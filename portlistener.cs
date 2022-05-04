@@ -1545,7 +1545,7 @@ public async void Update()
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
-                            BoomArray1AnimatePosition = ArrayLength1-(int)(ArrayLength1*AnimationPosition1);
+                            BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
                             PositionStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
@@ -1555,10 +1555,11 @@ public async void Update()
                             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-                            BoomArray1AnimatePosition = ArrayLength1-(int)(ArrayLength1*AnimationPosition1);
+                            BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
                         }
                 }
             }
+
 
             void IfExistBoomLineAnimate(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, Vector3 FractionThroughBoomPos, int i )
             {
@@ -1574,7 +1575,27 @@ public async void Update()
                 }
 
             }
-            IfExistBoomLineAnimate(StartBoom1,FixedBoom1,EndBoom1,BoomArray1[BoomArray1AnimatePosition],0);
+            //plot link line one where the chosen slider position is
+            IfExistBoomLineAnimate(BoomArray1Start[BoomArray1AnimatePosition],FixedBoom1,EndBoom1,BoomArray1[BoomArray1AnimatePosition],0);
+
+
+            void IfExistPistonMovingLineAnimate(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
+            {
+                if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                {
+                    PistonMovingLine[i].GetComponent<Renderer>().enabled = true;
+                    Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
+                    PistonMovingLine[i].SetPositions(LinePosition2);
+                }
+                else
+                {
+                    PistonMovingLine[i].GetComponent<Renderer>().enabled = false;
+                }
+            }
+            //plot piston link line one where chosen slider position is
+            IfExistPistonMovingLineAnimate(PistonArray1[BoomArray1AnimatePosition],StartPiston1,FixedBoom1,EndBoom1,0);
+
+
 
             // if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
             // {

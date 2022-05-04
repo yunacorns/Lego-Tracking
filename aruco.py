@@ -98,7 +98,7 @@ def main():
 
                 totalPosition = []
                 totalAnimatePos = []
-                # central aruco markersç
+                # central aruco markers
                 allArucos = [5,6,7,8,9,10,11,25,26,27,28,29]
                 for i in allArucos:
                     if [i] in ids_c:

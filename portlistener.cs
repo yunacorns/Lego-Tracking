@@ -88,6 +88,8 @@ public class portlistener : MonoBehaviour
         public bool LinkOverShootStatus3 = true;
         public bool PositionStatus1 = true;
         public bool PositionStatus2 = true;
+        public bool LineStatus1 = true;
+        public bool LineStatus2 = true;
         public bool running; //nothing
         public float PistonFraction1;  //set default values in portlistener in unity
         public float BoomOverShootFraction1;
@@ -904,6 +906,8 @@ public async void Update()
             if(MenuData[0]==0)
             {
                     //SubMenu Text
+                    LineStatus1 = true;
+                    LineStatus2 = true;
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -1270,9 +1274,9 @@ public async void Update()
 
 
 
-            void IfExistBoomLine(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, int i )
+            void IfExistBoomLine(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, int i, bool LineStatus)
             {
-                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe && LineStatus==true)
                 {
                     BoomLine[i].GetComponent<Renderer>().enabled = true;
                     Vector3[] LinePosition1 = {StartBoomPos,EndBoomPos};
@@ -1285,8 +1289,8 @@ public async void Update()
 
             }
 
-            IfExistBoomLine(StartBoom1,FixedBoom1,EndBoom1,0);
-            IfExistBoomLine(StartBoom2,EndBoom1,EndBoom2,1);
+            IfExistBoomLine(StartBoom1,FixedBoom1,EndBoom1,0,LineStatus1);
+            IfExistBoomLine(StartBoom2,EndBoom1,EndBoom2,1,LineStatus2);
 
             void IfExistPistonMovingLine(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
             {
@@ -1501,6 +1505,8 @@ public async void Update()
         if(MenuData[0]==1)
             {
             //Menu
+            LineStatus1 = false;
+            LineStatus2 = false;
             SubMenuText[0].text = "Extend";
             SubMenuText[1].text = "Contract";
             SubMenuText[2].text = "Stationary";
@@ -1590,9 +1596,10 @@ public async void Update()
                         }
                 }
             }
-            else if(AnimateMenuPlay == "in range" && AnimationOneStatus==false) // if in play
+
+            if(AnimateMenuPlay == "in range") // if in play
             {
-                AnimationOneStatus = true;
+                //AnimationOneStatus = true;
                 AnimateMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue; // blue
                 AnimateMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                 //put this in another if statement for playing one in menu
@@ -1641,7 +1648,7 @@ public async void Update()
             //plot piston link line one where chosen slider position is
             IfExistPistonMovingLineAnimate(PistonArray1[BoomArray1AnimatePosition],StartPiston1,FixedBoom1,EndBoom1,0);
             //piston two
-             IfExistPistonMovingLineAnimate(PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2,EndBoom1,EndBoom2,1);
+            IfExistPistonMovingLineAnimate(PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2,EndBoom1,EndBoom2,1);
 
 
 
@@ -1663,14 +1670,15 @@ public async void Update()
 
             //render purple circles
 
-            void IfExistFreeBoomAnimate(Vector3 theAruco, Vector3 FractionThroughEnd,Vector3 FractionThroughStart, int i){
+            void IfExistFreeBoomAnimate(Vector3 theAruco, Vector3 FractionThroughEnd,Vector3 FractionThroughStart, Vector3 FractionThroughPiston,int i){
+            //void IfExistFreeBoomAnimate(Vector3 theAruco, Vector3 FractionThroughEnd,int i){
                 if(theAruco != outofframe)
                 {
                     AnimateObjects[i].SetActive(true);
                     AnimateObjects[i].transform.position = FractionThroughEnd;
                     BoomEnd[i].transform.position = FractionThroughEnd;
                     Overshoot[i].transform.position = FractionThroughStart;
-
+                    PistonOneEnd[i].transform.position = FractionThroughPiston;
                 }
                 else
                 {
@@ -1678,8 +1686,12 @@ public async void Update()
                 }
             }
 
-            IfExistFreeBoomAnimate(EndBoom1,BoomArray1[BoomArray1AnimatePosition],BoomArray1Start[BoomArray1AnimatePosition],0); //circle one
-            IfExistFreeBoomAnimate(EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition], 1); //two
+            // IfExistFreeBoomAnimate(EndBoom1,BoomArray1[BoomArray1AnimatePosition],0); //circle one
+            // IfExistFreeBoomAnimate(EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
+            IfExistFreeBoomAnimate(EndBoom1,BoomArray1[BoomArray1AnimatePosition],BoomArray1Start[BoomArray1AnimatePosition],PistonArray1[BoomArray1AnimatePosition],0); //circle one
+            IfExistFreeBoomAnimate(EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition], PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
+
+
 
 
 
@@ -1785,7 +1797,6 @@ public async void Update()
             float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
             float ratioa = Ymaxori/lengthYori; //upper positive ratio
             float ratiob = 1f-ratioa; //lower negative ratio
-            Debug.Log("print"+ratiob);
 
             float zeroX = 1250f; //fixed
             Vector3 fixedYmax = new Vector3(zeroX, -130f, 0f); //with offset
@@ -1805,7 +1816,6 @@ public async void Update()
             float lengthYscaled = Math.Abs(Yminscaled)+Math.Abs(Ymaxscaled);
             // float zeroY = Yminscaled + (lengthYscaled*ratiob);
             float zeroY = -325f;
-            Debug.Log("print"+zeroY);
 
             Vector3 zerozero = new Vector3 (zeroX, zeroY, 0f);
 
@@ -1899,29 +1909,32 @@ public async void Update()
             //Boom 1 Calcs
 	            Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
                 Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
-                Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep, FixedBoom1); //x=time, y=omega
-                Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
-
-        //Animates if Boom1 and Piston1 Exist
-         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe)
+                // Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep, FixedBoom1); //x=time, y=omega
+                // Vector3[] Omega1Contract = VelocityContracting(Omega1); //Array position still correspond to position in BoomArray - therefore time is going from total time to 0 from i=0 to end
+                // Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
+                // Vector3[] V1Contract = VelocityContracting(V1);
+            //print(BoomArray1AnimatePosition);
+            //Animates if Boom1 and Piston1 Exist
+            if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe)
             {
-            //while(EditSubMenuTwo=="out of range" && EditSubMenuOne == "in range"){
-            for(int i=BoomArray1AnimatePosition; i<BoomArray1.Length;i++)
-            {
-            //if(EditSubMenuTwo=="out of range"){
-            Vector3 endpos = BoomArray1[i];
-            Vector3 begpos = BoomArray1Start[i];
-            float endspeed = 5f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
-            float begspeed = 5f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
-            // Velocity[0].enabled = true;
-            // Velocity[0].text = V1[i][1].ToString();
-            yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
-            //}
-            // else if(EditSubMenuTwo=="in range"){
-            // yield break;
+                //while(EditSubMenuTwo=="out of range" && EditSubMenuOne == "in range"){
+                for(int i=BoomArray1AnimatePosition; i<BoomArray1.Length;i++)
+                {
 
-            // }
-            }
+                //if(EditSubMenuTwo=="out of range"){
+                Vector3 endpos = BoomArray1[i];
+                Vector3 begpos = BoomArray1Start[i];
+                float endspeed = 10f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
+                float begspeed = 10f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
+                // Velocity[0].enabled = true;
+                // Velocity[0].text = V1[i][1].ToString();
+                yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
+                //}
+                // else if(EditSubMenuTwo=="in range"){
+                // yield break;
+
+                // }
+                }
             }
 
             AnimationOneStatus = false;
@@ -1935,13 +1948,14 @@ public async void Update()
         // string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
         // if(EditSubMenuTwo=="out of range")
         // {
-        while(BoomEnd[0].transform.position != posonlinkend ){
+            while(BoomEnd[0].transform.position != posonlinkend )
+            {
             BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
             Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
             Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
             BoomLine[0].SetPositions(LinePosition1);
             yield return null;
-        }
+            }
         //}
         // else if(EditSubMenuTwo =="in range")
         // {
@@ -1965,9 +1979,10 @@ public async void Update()
         Vector3[] PistonArray1 = PistonRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
 
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
-        for(int i=BoomArray1AnimatePosition; i<PistonArray1.Length;i++)
+        for(int i=0; i<PistonArray1.Length;i++)
         {
             //if(EditSubMenuTwo=="out of range"){
+            print(i);
             Vector3 pos = PistonArray1[i];
             float speed = 2f*DistanceBetweenPoints(PistonArray1[i], PistonArray1[i+1])/TimeStep;
             yield return StartCoroutine(DrawPistonOneLine(pos, speed));
@@ -1985,9 +2000,7 @@ public async void Update()
 
     public IEnumerator DrawPistonOneLine(Vector3 posonlink, float speed)
         {
-        Vector3 EditSubMenuAruco = receivedPos26;
-        string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
-        string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
+
         while(PistonOneEnd[0].transform.position != posonlink){
             // if(EditSubMenuTwo=="out of range"){
             PistonOneEnd[0].transform.position = Vector3.MoveTowards (PistonOneEnd[0].transform.position, posonlink, speed);

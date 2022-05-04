@@ -1192,7 +1192,7 @@ public async void Update()
 
 
             Vector3 StartBoom1 = BoomStartFinder(FixedBoom1, EndBoom1, BoomOverShootFraction1);
-            Vector3 EndPiston1 = PistonEnd(FixedBoom1, EndBoom1, PistonFraction1);
+            Vector3 EndPiston1 = PistonEnd(StartBoom1, EndBoom1, PistonFraction1);
 
         //Boom 2 Positions
 
@@ -1257,6 +1257,7 @@ public async void Update()
             IfExistPiston(StartPiston2,EndPiston2,4,1);
 
 
+
             void IfExistBoomLine(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, int i )
             {
                 if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe)
@@ -1273,7 +1274,7 @@ public async void Update()
             }
 
             IfExistBoomLine(StartBoom1,FixedBoom1,EndBoom1,0);
-            IfExistBoomLine(FixedBoom2,EndBoom1,EndBoom2,1);
+            IfExistBoomLine(StartBoom2,EndBoom1,EndBoom2,1);
 
             void IfExistPistonMovingLine(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i)
             {
@@ -1312,7 +1313,7 @@ public async void Update()
 
 	        Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
             Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
-            Vector3[] PistonArray1 = PistonRotationCalculation(StartBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+            Vector3[] PistonArray1 = PistonRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
             float[] AngleChangeBoom1 = RotationFromStartCalculation(BoomArray1, FixedBoom1);
             float TotalBoomRange1 = BoomRangeCalculation(AngleChangeBoom1);
             Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep, FixedBoom1); //x=time, y=omega
@@ -1368,7 +1369,7 @@ public async void Update()
          //Boom2 Calcs
             Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
             Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
-            Vector3[] PistonArray2 = PistonRotationCalculation(StartBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
+            Vector3[] PistonArray2 = PistonRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
             float[] AngleChangeBoom2 = RotationFromStartCalculation(BoomArray2, FixedBoom2);
             float TotalBoomRange2 = BoomRangeCalculation(AngleChangeBoom2);
             Vector3[] Omega2 = AngularVelocityCalculation(BoomArray2, TimeStep, FixedBoom2);
@@ -1406,7 +1407,7 @@ public async void Update()
         //  //Boom3 Calcs
         //     Vector3[] BoomArray3 = BoomRotationCalculation(FixedBoom3, EndBoom3, StartPiston3, BoomOverShootFraction3, PistonFraction3,TimeStep);
         //     Vector3[] BoomArray3Start = BoomStartArray(FixedBoom3, BoomArray3, BoomOverShootFraction3);
-        //     Vector3[] PistonArray3 = PistonRotationCalculation(StartBoom3, EndBoom3, StartPiston3, BoomOverShootFraction3, PistonFraction3,TimeStep);
+        //     Vector3[] PistonArray3 = PistonRotationCalculation(FixedBoom3, EndBoom3, StartPiston3, BoomOverShootFraction3, PistonFraction3,TimeStep);
         //     float[] AngleChangeBoom3 = RotationFromStartCalculation(BoomArray3, FixedBoom3);
         //     float TotalBoomRange3 = BoomRangeCalculation(AngleChangeBoom3);
         //     Vector3[] Omega3 = AngularVelocityCalculation(BoomArray3, TimeStep, FixedBoom3);
@@ -1558,6 +1559,29 @@ public async void Update()
                             BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
                         }
                 }
+                // if(TypeSelectionOne == "in range") // if in link 2
+                // {
+                //     SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                //     SelectorHighlighter.transform.position = new Vector3(890,-145,0);; //highlighter line
+                //     if(LockMenu == "in range" && PositionStatus1 == true)
+                //         {
+                //             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
+                //             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                //             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                //             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
+                //             BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
+                //             PositionStatus1 = false;
+                //         }
+                //         else if(UnlockMenu == "in range")
+                //         {
+                //             PositionStatus1 = true;
+                //             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
+                //             AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
+                //             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                //             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                //             BoomArray1AnimatePosition = (int)(ArrayLength1*AnimationPosition1);
+                //         }
+                // }
             }
 
 
@@ -1577,6 +1601,8 @@ public async void Update()
             }
             //plot link line one where the chosen slider position is
             IfExistBoomLineAnimate(BoomArray1Start[BoomArray1AnimatePosition],FixedBoom1,EndBoom1,BoomArray1[BoomArray1AnimatePosition],0);
+            //link two - change zero to j in a sec
+            IfExistBoomLineAnimate(BoomArray2StartArray[BoomArray1AnimatePosition,0],EndBoom1,EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,0],1);
 
 
             void IfExistPistonMovingLineAnimate(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i)

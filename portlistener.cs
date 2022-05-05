@@ -942,6 +942,9 @@ public async void Update()
                     AnimateTable[5].enabled = false;
                     AnimateTable[6].enabled = false;
                     AnimateTable[7].enabled = false;
+                    AnimateTable[8].enabled = false;
+                    AnimateTable[9].enabled = false;
+                    AnimateTable[10].enabled = false;
 
                     //disable purple circles
                     AnimateObjects[0].SetActive(false);
@@ -1529,6 +1532,9 @@ public async void Update()
             AnimateTable[5].enabled = true;
             AnimateTable[6].enabled = true;
             AnimateTable[7].enabled = true;
+            AnimateTable[8].enabled = true;
+            AnimateTable[9].enabled = true;
+            AnimateTable[10].enabled = true;
             //transform
             AnimateTable[0].transform.position = new Vector3(500,-32,0); //text
             AnimateTable[1].transform.position = new Vector3(640,7,0); //number
@@ -1538,6 +1544,9 @@ public async void Update()
             AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
             AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
             AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
+            AnimateTable[8].transform.position = new Vector3(580,-49,0); //velocity 1
+            AnimateTable[9].transform.position = new Vector3(670,-49,0); //velocity 2
+            AnimateTable[10].transform.position = new Vector3(760,-49,0); //velocity 3
 
 
             BoomCurve[0].GetComponent<Renderer>().enabled=true;
@@ -1597,6 +1606,7 @@ public async void Update()
                 }
             }
 
+
             if(AnimateMenuPlay == "in range") // if in play
             {
                 //AnimationOneStatus = true;
@@ -1608,6 +1618,7 @@ public async void Update()
 
                 StartCoroutine(FollowPistonOnePath());
                 StartCoroutine(FollowLinkOnePath());
+                StartCoroutine(FollowLinkTwoPath());
                 // }
             }
 
@@ -1910,10 +1921,10 @@ public async void Update()
             //Boom 1 Calcs
 	            Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
                 Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
-                // Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep, FixedBoom1); //x=time, y=omega
-                // Vector3[] Omega1Contract = VelocityContracting(Omega1); //Array position still correspond to position in BoomArray - therefore time is going from total time to 0 from i=0 to end
-                // Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
-                // Vector3[] V1Contract = VelocityContracting(V1);
+                Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep, FixedBoom1); //x=time, y=omega
+                Vector3[] Omega1Contract = VelocityContracting(Omega1); //Array position still correspond to position in BoomArray - therefore time is going from total time to 0 from i=0 to end
+                Vector3[] V1 = VelocityCalculation(Omega1, FixedBoom1, EndBoom1); //x=time, y=v
+                Vector3[] V1Contract = VelocityContracting(V1);
             //print(BoomArray1AnimatePosition);
             //Animates if Boom1 and Piston1 Exist
             if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe)
@@ -1926,8 +1937,7 @@ public async void Update()
                 Vector3 begpos = BoomArray1Start[i];
                 float endspeed = 10f*(DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep);
                 float begspeed = 10f*(DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep);
-                // Velocity[0].enabled = true;
-                // Velocity[0].text = V1[i][1].ToString();
+                AnimateTable[8].text = ((float)Math.Round(V1[i][1],2)).ToString();
                 yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
                 //}
                 // else if(EditSubMenuTwo=="in range"){
@@ -2018,45 +2028,37 @@ public async void Update()
         //Time Step Generic
         float TimeStep = TheTimeStep();
 
-        //Boom 1 Data
-        float BoomOverShootFraction1=0f;
-        //float PistonFraction1 = sliderValue(receivedPos9,receivedPos8);
-        float PistonFraction1 = 1f;
-
-        //Boom 2 Data
-        float BoomOverShootFraction2 = 0f;
-        float PistonFraction2 = 0.7f;
-        float JointFraction2 = 0f;
-
         //Boom 1 Positions
         Vector3 FixedBoom1 = receivedPos5;
         Vector3 EndBoom1 = receivedPos6;
         Vector3 StartPiston1 = receivedPos7;
         //Boom 1 Calcs
-	    Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+        Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+        float[] AngleChangeBoom1 = RotationFromStartCalculation(BoomArray1, FixedBoom1);
+
         //Boom 2 Positions
         Vector3 EndBoom2 = receivedPos10; //???
         Vector3 StartPiston2 = receivedPos11; //???
-        //Boom 2 Calcs
         Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
-        float[] AngleChangeBoom1 = RotationFromStartCalculation(BoomArray1, FixedBoom1);
+        //Boom 2 Calcs
         Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
-        //Boom2 Translated Arrays - Vector3[Position Through Boom 1 Movement, Position Through Boom 2 Movement]
+        Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
         Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
+        Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
 
-        //Stop Animation One Range
-        //Vector3 StopAnimationAruco = receivedPos25;
-        //int xminAnimOne = 143; int xmaxAnimOne = 243; int yminAnimOne = -500; int ymaxAnimOne = -590;
-        //string InStopAnimationOne = InMenuRegion(xminAnimOne,xmaxAnimOne,yminAnimOne,ymaxAnimOne,StopAnimationAruco);
-        //RenderComponents();
+
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe && EndBoom2!=outofframe && StartPiston2!=outofframe){
         //while(InStopAnimationOne == "in range"){
-        for(int i=0; i<BoomArray2Array.Length;i++)
+        for(int j=0; j<BoomArray2Array.Length;j++)
         {
-            //fix this length thing
-            Vector3 pos = BoomArray2Array[i,0];
-            float speed = 10f*DistanceBetweenPoints(BoomArray2Array[i,0], BoomArray2Array[i+1,0])/TimeStep;
-            yield return StartCoroutine(DrawLinkTwoLine(pos, speed));
+
+            Vector3 begpos = BoomArray1[j+BoomArray1AnimatePosition];
+            float begspeed = 10f*(DistanceBetweenPoints(BoomArray1[j+BoomArray1AnimatePosition], BoomArray1[j+BoomArray1AnimatePosition+1])/TimeStep);
+            Vector3 endpos = BoomArray2Array[BoomArray1AnimatePosition,j+BoomArray2AnimatePosition];
+            //Vector3 begpos = BoomArray2StartArray[BoomArray1AnimatePosition,j];
+            float endspeed = 10f*DistanceBetweenPoints(BoomArray2Array[BoomArray1AnimatePosition,j+BoomArray2AnimatePosition], BoomArray2Array[BoomArray1AnimatePosition,j+BoomArray2AnimatePosition+1])/TimeStep;
+            //float begspeed = 10f*DistanceBetweenPoints(BoomArray2StartArray[BoomArray1AnimatePosition,j], BoomArray2StartArray[BoomArray1AnimatePosition,j+1])/TimeStep;
+            yield return StartCoroutine(DrawLinkTwoLine(endpos,begpos,endspeed,begspeed));
         }
         //}
         }
@@ -2064,11 +2066,13 @@ public async void Update()
 
         }
 
-    public IEnumerator DrawLinkTwoLine(Vector3 posonlink, float speed)
+    public IEnumerator DrawLinkTwoLine(Vector3 posonlinkend, Vector3 posonlinkovershoot, float endspeed, float begspeed)
         {
-        while(BoomEnd[1].transform.position != posonlink){
-            BoomEnd[1].transform.position = Vector3.MoveTowards (BoomEnd[1].transform.position, posonlink, speed);
-            Vector3[] LinePosition1 = {squareArray[1].transform.position, posonlink};
+        while(BoomEnd[1].transform.position != posonlinkend){
+            BoomEnd[1].transform.position = Vector3.MoveTowards (BoomEnd[1].transform.position, posonlinkend, endspeed);
+            // Overshoot[1].transform.position = Vector3.MoveTowards(Overshoot[1].transform.position,posonlinkovershoot,begspeed);
+            BoomEnd[2].transform.position = Vector3.MoveTowards (BoomEnd[2].transform.position, posonlinkovershoot, begspeed);
+            Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
             BoomLine[1].SetPositions(LinePosition1);
             yield return null;
         }

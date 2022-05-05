@@ -1606,7 +1606,7 @@ public async void Update()
                 // if(AnimationOneStatus==false)
                 // {
 
-                //StartCoroutine(FollowPistonOnePath());
+                StartCoroutine(FollowPistonOnePath());
                 StartCoroutine(FollowLinkOnePath());
                 // }
             }
@@ -1867,6 +1867,7 @@ public async void Update()
                 {
                     for(int i=0; i<ArrayLength; i++)
                     {
+
                         BoomCurve[whichCurve].GetComponent<Renderer>().enabled = true;
                         BoomCurve[whichCurve].SetPosition(i,theArray[i]);
                     }
@@ -1920,12 +1921,11 @@ public async void Update()
                 //while(EditSubMenuTwo=="out of range" && EditSubMenuOne == "in range"){
                 for(int i=BoomArray1AnimatePosition; i<BoomArray1.Length;i++)
                 {
-
                 //if(EditSubMenuTwo=="out of range"){
                 Vector3 endpos = BoomArray1[i];
                 Vector3 begpos = BoomArray1Start[i];
-                float endspeed = 10f*DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep;
-                float begspeed = 10f*DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep;
+                float endspeed = 10f*(DistanceBetweenPoints(BoomArray1[i], BoomArray1[i+1])/TimeStep);
+                float begspeed = 10f*(DistanceBetweenPoints(BoomArray1Start[i], BoomArray1Start[i+1])/TimeStep);
                 // Velocity[0].enabled = true;
                 // Velocity[0].text = V1[i][1].ToString();
                 yield return StartCoroutine(DrawLinkOneLine(endpos,begpos,endspeed,begspeed));
@@ -1979,12 +1979,11 @@ public async void Update()
         Vector3[] PistonArray1 = PistonRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
 
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe){
-        for(int i=0; i<PistonArray1.Length;i++)
+        for(int i=BoomArray1AnimatePosition; i<PistonArray1.Length;i++)
         {
             //if(EditSubMenuTwo=="out of range"){
-            print(i);
             Vector3 pos = PistonArray1[i];
-            float speed = 2f*DistanceBetweenPoints(PistonArray1[i], PistonArray1[i+1])/TimeStep;
+            float speed = 100f*(DistanceBetweenPoints(PistonArray1[i], PistonArray1[i+1])/TimeStep);
             yield return StartCoroutine(DrawPistonOneLine(pos, speed));
             //} else if (EditSubMenuTwo == "in range"){
             //yield break;
@@ -2003,6 +2002,7 @@ public async void Update()
 
         while(PistonOneEnd[0].transform.position != posonlink){
             // if(EditSubMenuTwo=="out of range"){
+            //var step = speed*20;
             PistonOneEnd[0].transform.position = Vector3.MoveTowards (PistonOneEnd[0].transform.position, posonlink, speed);
             Vector3[] LinePosition1 = {squareArray[2].transform.position, posonlink};
             PistonMovingLine[0].SetPositions(LinePosition1);

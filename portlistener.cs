@@ -19,7 +19,7 @@ public class portlistener : MonoBehaviour
         public GameObject[] menuArray;
         public GameObject menuGameMode;
         public GameObject[] Select1Block;
-        public GameObject[] PistonOneEnd;
+        public GameObject[] PistonEndEmpty;
         public GameObject[] BoomEnd;
         public GameObject[] Overshoot;
         public GameObject[] SubMenuArray;
@@ -103,6 +103,8 @@ public class portlistener : MonoBehaviour
         public float AnimationPosition2;
         public int BoomArray1AnimatePosition;
         public int BoomArray2AnimatePosition;
+        public Vector3[] newBoomArray2Array;
+        public Vector3[] newBoomArray2StartArray;
 
     public void Start() //private
         {
@@ -949,6 +951,8 @@ public async void Update()
                     //disable purple circles
                     AnimateObjects[0].SetActive(false);
                     AnimateObjects[1].SetActive(false);
+                    //disable blue circle
+                    AnimateObjects[2].SetActive(false);
 
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
@@ -1261,7 +1265,7 @@ public async void Update()
                 {
                     squareArray[i].SetActive(true);
                     squareArray[i].transform.position = theAruco;
-                    PistonOneEnd[j].transform.position = PistonEndPos;
+                    PistonEndEmpty[j].transform.position = PistonEndPos;
                 }
                 else
                 {
@@ -1274,6 +1278,13 @@ public async void Update()
             IfExistPiston(StartPiston1,EndPiston1,2,0);
             IfExistFreeBoom(EndBoom2,3,1);
             IfExistPiston(StartPiston2,EndPiston2,4,1);
+
+            if(StartPiston2!=outofframe)
+            {
+                PistonEndEmpty[2].transform.position = StartPiston2; // render empty game object for piston end to follow
+                AnimateObjects[2].SetActive(true);
+                AnimateObjects[2].transform.position = StartPiston2; // render blue circle
+            }
 
 
 
@@ -1615,10 +1626,12 @@ public async void Update()
                 //put this in another if statement for playing one in menu
                 // if(AnimationOneStatus==false)
                 // {
-
+                StartCoroutine(FollowPistonTwoPath());
                 StartCoroutine(FollowPistonOnePath());
                 StartCoroutine(FollowLinkOnePath());
                 StartCoroutine(FollowLinkTwoPath());
+                LineStatus1 = true;
+                LineStatus2 = true;
                 // }
             }
 
@@ -1662,15 +1675,6 @@ public async void Update()
             IfExistPistonMovingLineAnimate(PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2,EndBoom1,EndBoom2,1);
 
 
-
-            // if(EditSubMenuOne == "in range" && AnimationOneStatus==false)
-            // {
-            // AnimationOneStatus = true;
-            // SubMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            // SubMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-            // StartCoroutine(FollowPistonOnePath());
-            // StartCoroutine(FollowLinkOnePath());
-
             // }
             // if(EditSubMenuTwo == "in range")
             // {
@@ -1689,7 +1693,7 @@ public async void Update()
                     AnimateObjects[i].transform.position = FractionThroughEnd;
                     BoomEnd[i].transform.position = FractionThroughEnd;
                     Overshoot[i].transform.position = FractionThroughStart;
-                    PistonOneEnd[i].transform.position = FractionThroughPiston;
+                    PistonEndEmpty[i].transform.position = FractionThroughPiston;
                 }
                 else
                 {
@@ -1961,6 +1965,7 @@ public async void Update()
             while(BoomEnd[0].transform.position != posonlinkend )
             {
             BoomEnd[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
+            AnimateObjects[0].transform.position = Vector3.MoveTowards (BoomEnd[0].transform.position, posonlinkend, endspeed);
             Overshoot[0].transform.position = Vector3.MoveTowards(Overshoot[0].transform.position,posonlinkovershoot,begspeed);
             Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
             BoomLine[0].SetPositions(LinePosition1);
@@ -2010,10 +2015,10 @@ public async void Update()
     public IEnumerator DrawPistonOneLine(Vector3 posonlink, float speed)
         {
 
-        while(PistonOneEnd[0].transform.position != posonlink){
+        while(PistonEndEmpty[0].transform.position != posonlink){
             // if(EditSubMenuTwo=="out of range"){
             //var step = speed*20;
-            PistonOneEnd[0].transform.position = Vector3.MoveTowards (PistonOneEnd[0].transform.position, posonlink, speed);
+            PistonEndEmpty[0].transform.position = Vector3.MoveTowards (PistonEndEmpty[0].transform.position, posonlink, speed);
             Vector3[] LinePosition1 = {squareArray[2].transform.position, posonlink};
             PistonMovingLine[0].SetPositions(LinePosition1);
             yield return null;
@@ -2040,12 +2045,88 @@ public async void Update()
         Vector3 EndBoom2 = receivedPos10; //???
         Vector3 StartPiston2 = receivedPos11; //???
         Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
+
         //Boom 2 Calcs
         Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
         Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
         Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
         Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
 
+        //Array Length
+        int ArrayLength2 = BoomArray2Array.GetLength(1);
+        int ArrayLength1 = BoomArray1.Length;
+
+        int remainingArrayLength1 = ArrayLength1-BoomArray1AnimatePosition;
+        int remainingArrayLength2 = ArrayLength2-BoomArray2AnimatePosition;
+
+        //finding the larger array and assigning
+        //not sure about this array length2
+        // if(remainingArrayLength1>remainingArrayLength2)
+        // {
+        //     Vector3[] newBoomArray2Array = new Vector3[remainingArrayLength1];
+        //     Vector3[] newBoomArray2StartArray = new Vector3[remainingArrayLength1];
+
+        //         for(int i=0;i<remainingArrayLength2;i++)
+        //             {
+        //             float x = BoomArray2Array[i+BoomArray1AnimatePosition,i+BoomArray2AnimatePosition][0];
+        //             float y = BoomArray2Array[i+BoomArray1AnimatePosition,i+BoomArray2AnimatePosition][1];
+        //             float xS = BoomArray2StartArray[i+BoomArray1AnimatePosition,i+BoomArray2AnimatePosition][0];
+        //             float yS = BoomArray2StartArray[i+BoomArray1AnimatePosition,i+BoomArray2AnimatePosition][1];
+        //             newBoomArray2Array[i] = new Vector3(x, y, 0f) ;
+        //             newBoomArray2StartArray[i] = new Vector3(xS, yS, 0f) ;
+        //             }
+        //         for(int j=remainingArrayLength2;j<remainingArrayLength1;j++)
+        //             {
+        //             float x = BoomArray2Array[BoomArray1AnimatePosition+remainingArrayLength2,BoomArray1AnimatePosition+remainingArrayLength2][0];
+        //             float y = BoomArray2Array[BoomArray1AnimatePosition+remainingArrayLength2,BoomArray1AnimatePosition+remainingArrayLength2][1];
+        //             float xS = BoomArray2StartArray[BoomArray1AnimatePosition+remainingArrayLength2,BoomArray1AnimatePosition+remainingArrayLength2][0];
+        //             float yS = BoomArray2StartArray[BoomArray1AnimatePosition+remainingArrayLength2,BoomArray1AnimatePosition+remainingArrayLength2][1];
+        //             newBoomArray2Array[j] = new Vector3(x, y, 0f) ;
+        //             newBoomArray2StartArray[j] = new Vector3(xS, yS, 0f) ;
+        //             }
+
+        // }
+
+        //  Vector3[] PistonArray = new Vector3[ArrayLength];
+		//     for ( int i = 0; i < ArrayLength; i++)
+		//     {
+        //         float x = BoomFixedToPistonLink*(float)Math.Cos(Theta[i]+Alpha) + BoomFixedX;
+        //         float y = BoomFixedToPistonLink*(float)Math.Sin(Theta[i]+Alpha) + BoomFixedY;
+		//     	PistonArray[i] = new Vector3(x, y, 0f) ;
+		//     }
+        // print(remainingArrayLength1);
+        // print(remainingArrayLength2);
+        // print(BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition]);
+        // print(BoomArray2Array[BoomArray1AnimatePosition+remainingArrayLength2-2,BoomArray2AnimatePosition+remainingArrayLength2-2]);
+        // if(remainingArrayLength1>remainingArrayLength2)
+        // {
+        //     Vector3[] newBoomArray2Array = new Vector3[remainingArrayLength2];
+        //     Vector3[] newBoomArray2StartArray = new Vector3[remainingArrayLength2];
+        //     for(int i=0; i<remainingArrayLength2; i++)
+        //     {
+        //         float x = BoomArray2Array[i+BoomArray1AnimatePosition-1,i+BoomArray2AnimatePosition-1][0];
+        //         float y = BoomArray2Array[i+BoomArray1AnimatePosition-1,i+BoomArray2AnimatePosition-1][1];
+        //         float xS = BoomArray2StartArray[i+BoomArray1AnimatePosition-1,i+BoomArray2AnimatePosition-1][0];
+        //         float yS = BoomArray2StartArray[i+BoomArray1AnimatePosition-1,i+BoomArray2AnimatePosition-1][1];
+        //         newBoomArray2Array[i] = new Vector3(x, y, 0f) ;
+        //         newBoomArray2StartArray[i] = new Vector3(xS, yS, 0f) ;
+        //     }
+        // }
+
+        // print(newBoomArray2Array.Length);
+
+
+        // if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe && EndBoom2!=outofframe && StartPiston2!=outofframe)
+        // {
+        //     for(int j=0; j<newBoomArray2Array.Length;j++)
+        //     {
+        //     Vector3 begpos = newBoomArray2StartArray[j];
+        //     float begspeed = 10f*(DistanceBetweenPoints(newBoomArray2StartArray[j], newBoomArray2StartArray[j+1])/TimeStep);
+        //     Vector3 endpos = newBoomArray2Array[j];
+        //     float endspeed = 10f*DistanceBetweenPoints(newBoomArray2Array[j], newBoomArray2Array[j+1])/TimeStep;
+        //     yield return StartCoroutine(DrawLinkTwoLine(endpos,begpos,endspeed,begspeed));
+        //     }
+        // }
 
         if(StartPiston1!=outofframe && FixedBoom1!=outofframe && EndBoom1!=outofframe && EndBoom2!=outofframe && StartPiston2!=outofframe){
         //while(InStopAnimationOne == "in range"){
@@ -2069,11 +2150,93 @@ public async void Update()
         {
         while(BoomEnd[1].transform.position != posonlinkend){
             BoomEnd[1].transform.position = Vector3.MoveTowards (BoomEnd[1].transform.position, posonlinkend, endspeed);
-            // Overshoot[1].transform.position = Vector3.MoveTowards(Overshoot[1].transform.position,posonlinkovershoot,begspeed);
+            AnimateObjects[1].transform.position = Vector3.MoveTowards (BoomEnd[1].transform.position, posonlinkend, endspeed);
             BoomEnd[2].transform.position = Vector3.MoveTowards (BoomEnd[2].transform.position, posonlinkovershoot, begspeed);
             Vector3[] LinePosition1 = {posonlinkovershoot, posonlinkend};
             BoomLine[1].SetPositions(LinePosition1);
             yield return null;
+        }
+        }
+
+    public IEnumerator FollowPistonTwoPath()
+        {
+        //Time Step Generic
+        float TimeStep = TheTimeStep();
+
+        //Boom 1 Positions
+        Vector3 FixedBoom1 = receivedPos5;
+        Vector3 EndBoom1 = receivedPos6;
+        Vector3 StartPiston1 = receivedPos7;
+        //Boom 1 Calcs
+        Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+        float[] AngleChangeBoom1 = RotationFromStartCalculation(BoomArray1, FixedBoom1);
+
+        //Boom 2 Positions
+        Vector3 EndBoom2 = receivedPos10; //???
+        Vector3 StartPiston2 = receivedPos11; //???
+        Vector3 FixedBoom2 = BoomFixedFinder(FixedBoom1, EndBoom1, JointFraction2);
+
+        //Boom 2 Calcs
+        Vector3[] BoomArray2 = BoomRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
+        Vector3[] BoomArray2Start = BoomStartArray(FixedBoom2, BoomArray2, BoomOverShootFraction2);
+        Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
+        Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
+
+
+        Vector3[] StartPiston2Array = RelativePosition(FixedBoom1, StartPiston2, AngleChangeBoom1);
+        Vector3[] PistonArray2 = PistonRotationCalculation(FixedBoom2, EndBoom2, StartPiston2, BoomOverShootFraction2, PistonFraction2,TimeStep);
+        Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
+
+        // for(int j=0; j<BoomArray2Array.Length;j++)
+        // {
+        //     int ii = j+BoomArray1AnimatePosition;
+        //     int jj = j+BoomArray2AnimatePosition;
+        //     Vector3 begpos = BoomArray2StartArray[ii,jj];
+        //     float begspeed = 10f*(DistanceBetweenPoints(BoomArray2StartArray[ii,jj], BoomArray2StartArray[ii+1,jj+1])/TimeStep);
+        //     Vector3 endpos = BoomArray2Array[ii,jj];
+        //     float endspeed = 10f*DistanceBetweenPoints(BoomArray2Array[ii,jj], BoomArray2Array[ii+1,jj+1])/TimeStep;
+        //     yield return StartCoroutine(DrawLinkTwoLine(endpos,begpos,endspeed,begspeed));
+        // }
+
+        if(StartPiston2!=outofframe && EndBoom1!=outofframe && EndBoom2!=outofframe){
+        for(int j=0; j<StartPiston2Array.Length;j++)
+        {
+            int ii = j+BoomArray1AnimatePosition;
+            int jj = j+BoomArray2AnimatePosition;
+            Vector3 begpos = StartPiston2Array[ii];
+            Vector3 endpos = PistonArray2Array[ii,jj];
+            float begspeed = 100f*(DistanceBetweenPoints(StartPiston2Array[j], StartPiston2Array[j+1])/TimeStep);
+            float endspeed = 100f*(DistanceBetweenPoints(PistonArray2Array[ii,jj], PistonArray2Array[ii+1,jj+1])/TimeStep);
+            yield return StartCoroutine(DrawPistonTwoLine(endpos,begpos,endspeed,begspeed));
+            //} else if (EditSubMenuTwo == "in range"){
+            //yield break;
+            //}
+            //Console.WriteLine(item)
+
+        }
+        }
+        //}
+
+        AnimationOneStatus = false;
+
+        }
+
+    public IEnumerator DrawPistonTwoLine(Vector3 posonlinkend, Vector3 posonlinkstart, float endspeed, float begspeed)
+        {
+
+        while(PistonEndEmpty[1].transform.position != posonlinkend){
+            // if(EditSubMenuTwo=="out of range"){
+            //var step = speed*20;
+            PistonEndEmpty[1].transform.position = Vector3.MoveTowards (PistonEndEmpty[1].transform.position, posonlinkend, endspeed);
+            PistonEndEmpty[2].transform.position = Vector3.MoveTowards (PistonEndEmpty[2].transform.position, posonlinkstart, begspeed);
+            AnimateObjects[2].transform.position = Vector3.MoveTowards (PistonEndEmpty[2].transform.position, posonlinkstart, begspeed);
+            Vector3[] LinePosition1 = {posonlinkstart, posonlinkend};
+            PistonMovingLine[1].SetPositions(LinePosition1);
+            yield return null;
+
+            // } else if(EditSubMenuTwo == "in range"){
+            // yield return new WaitUntil(() => EditSubMenuOne == "in range");
+            // }
         }
         }
 

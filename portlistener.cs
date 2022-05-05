@@ -1795,10 +1795,26 @@ public async void Update()
 
         if (MenuData[0]==2)
             {
+            LineStatus1 = true;
+            LineStatus2 = true;
             menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
             menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
             menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
 
+            DataText[0].text = "Velocity";
+            DataText[0].transform.position = new Vector3(1250,-50,0);
+            DataText[1].text = "Time";
+            DataText[1].transform.position = new Vector3(2010,-325,0);
+            DataText[2].text = "Velocity Graph";
+            DataText[2].transform.position = new Vector3(1400,-30,0);
+            DataText[3].text = "Range of movement:";
+            DataText[3].transform.position = new Vector3(1600,-30,0);
+
+            if(TypeSelectionOne=="in range")
+            {
+            //Highlights Link One Selection
+            SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+            SelectorHighlighter.transform.position = new Vector3(890,-95,0);
             //drawing graph
             float XmaxV1 = FindMaxX(V1);
             Vector3[] NewV1Contract = NewContract(XmaxV1, V1Contract);
@@ -1857,14 +1873,7 @@ public async void Update()
                 Graphsplot[2].SetPosition(i,finalV1[i]);
             }
             //text
-            DataText[0].text = "Velocity";
-            DataText[0].transform.position = new Vector3(1250,-50,0);
-            DataText[1].text = "Time";
-            DataText[1].transform.position = new Vector3(2010,-325,0);
-            DataText[2].text = "Velocity Graph";
-            DataText[2].transform.position = new Vector3(1400,-30,0);
-            DataText[3].text = "Range of movement:";
-            DataText[3].transform.position = new Vector3(1600,-30,0);
+
             DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
             DataText[4].transform.position = new Vector3(1970,-355,0);
             DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
@@ -1874,7 +1883,80 @@ public async void Update()
             DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
             DataText[7].transform.position = new Vector3(1850,-30,0);
 
+            }
+            if(TypeSelectionTwo=="in range")
+            {
+            SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+            SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Link Two
+            //drawing graph
+            float XmaxV2 = FindMaxX(V2);
+            Vector3[] NewV2Contract = NewContract(XmaxV2, V2Contract);
 
+            Vector3[] V2Total = CombineVector3Arrays(V2,NewV2Contract); //combining V and VContract
+            float Xminori = FindMinX(V2Total); //original data
+            float Xmaxori = FindMaxX(V2Total);
+            float Yminori = FindMinY(V2Total);
+            float Ymaxori = FindMaxY(V2Total);
+
+            float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
+            float ratioa = Ymaxori/lengthYori; //upper positive ratio
+            float ratiob = 1f-ratioa; //lower negative ratio
+
+            float zeroX = 1250f; //fixed
+            Vector3 fixedYmax = new Vector3(zeroX, -130f, 0f); //with offset
+            Vector3 fixedYmin = new Vector3(zeroX, -550f, 0f);
+
+            float Xtotal = 720f; //without offset - fixed
+            float Xscale = Xtotal/Xmaxori; //scaling factor
+            float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
+            float Yscale = Ytotal/lengthYori;
+
+            Vector3[] scaledV2 = ScaleData(V2Total, Xscale, Yscale); //times everything in data to scaling factor
+            float Xminscaled = FindMinX(scaledV2); //scaled
+            float Xmaxscaled = FindMaxX(scaledV2);
+            float Yminscaled = FindMinY(scaledV2);
+            float Ymaxscaled = FindMaxY(scaledV2);
+
+            float lengthYscaled = Math.Abs(Yminscaled)+Math.Abs(Ymaxscaled);
+            // float zeroY = Yminscaled + (lengthYscaled*ratiob);
+            float zeroY = -325f;
+
+            Vector3 zerozero = new Vector3 (zeroX, zeroY, 0f);
+
+            Vector3[] finalV2 = MoveData(scaledV2, zerozero);
+            float Xminfinal = FindMinX(finalV2); //moved and scaled
+            float Xmaxfinal = FindMaxX(finalV2);
+            float Yminfinal = FindMinY(finalV2);
+            float Ymaxfinal = FindMaxY(finalV2);
+
+            //Drawing axis
+            Vector3 axisXmax = Xfloattov3(Xmaxfinal, zerozero, 20);
+
+            Vector3[] xaxis = {zerozero, axisXmax};
+            Graphsplot[0].SetPositions(xaxis);
+
+            Vector3[] yaxis = {fixedYmin, fixedYmax};
+            Graphsplot[1].SetPositions(yaxis);
+
+            //plot graph
+            int finalV2length = finalV2.Count();
+            Graphsplot[2].positionCount = finalV2length;
+            for(int i=0; i<finalV2length; i++)
+            {
+                Graphsplot[2].SetPosition(i,finalV2[i]);
+            }
+            //text
+
+            DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
+            DataText[4].transform.position = new Vector3(1970,-355,0);
+            DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
+            DataText[5].transform.position = new Vector3(1220,-110,0);
+            DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
+            DataText[6].transform.position = new Vector3(1220,-530,0);
+            DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
+            DataText[7].transform.position = new Vector3(1850,-30,0);
+
+            }
             //plot max reach
             void MaxReachCurve(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
             {

@@ -1287,7 +1287,7 @@ public async void Update()
             IfExistFreeBoom(EndBoom2,3,1);
             IfExistPiston(StartPiston2,EndPiston2,4,1);
 
-            if(StartPiston2!=outofframe)
+            if(StartPiston2!=outofframe && AnimatePistonLineStatus==true)
             {
                 PistonEndEmpty[2].transform.position = StartPiston2; // render empty game object for piston end to follow
                 AnimateObjects[2].SetActive(true);
@@ -1825,6 +1825,13 @@ public async void Update()
             AnimateLineStatus = false;
             EditPistonLineStatus = true;
             AnimatePistonLineStatus = false;
+
+            //disable purple circles
+            AnimateObjects[0].SetActive(false);
+            AnimateObjects[1].SetActive(false);
+            //disable blue circle
+            AnimateObjects[2].SetActive(false);
+
 
             if(TypeSelectionOne=="in range")
             {

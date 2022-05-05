@@ -2051,13 +2051,12 @@ public async void Update()
         //while(InStopAnimationOne == "in range"){
         for(int j=0; j<BoomArray2Array.Length;j++)
         {
-
-            Vector3 begpos = BoomArray1[j+BoomArray1AnimatePosition];
-            float begspeed = 10f*(DistanceBetweenPoints(BoomArray1[j+BoomArray1AnimatePosition], BoomArray1[j+BoomArray1AnimatePosition+1])/TimeStep);
-            Vector3 endpos = BoomArray2Array[BoomArray1AnimatePosition,j+BoomArray2AnimatePosition];
-            //Vector3 begpos = BoomArray2StartArray[BoomArray1AnimatePosition,j];
-            float endspeed = 10f*DistanceBetweenPoints(BoomArray2Array[BoomArray1AnimatePosition,j+BoomArray2AnimatePosition], BoomArray2Array[BoomArray1AnimatePosition,j+BoomArray2AnimatePosition+1])/TimeStep;
-            //float begspeed = 10f*DistanceBetweenPoints(BoomArray2StartArray[BoomArray1AnimatePosition,j], BoomArray2StartArray[BoomArray1AnimatePosition,j+1])/TimeStep;
+            int ii = j+BoomArray1AnimatePosition;
+            int jj = j+BoomArray2AnimatePosition;
+            Vector3 begpos = BoomArray2StartArray[ii,jj];
+            float begspeed = 10f*(DistanceBetweenPoints(BoomArray2StartArray[ii,jj], BoomArray2StartArray[ii+1,jj+1])/TimeStep);
+            Vector3 endpos = BoomArray2Array[ii,jj];
+            float endspeed = 10f*DistanceBetweenPoints(BoomArray2Array[ii,jj], BoomArray2Array[ii+1,jj+1])/TimeStep;
             yield return StartCoroutine(DrawLinkTwoLine(endpos,begpos,endspeed,begspeed));
         }
         //}

@@ -1298,15 +1298,15 @@ public async void Update()
 
             void IfExistBoomLine(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, int i, bool EditLineStatus)
             {
-                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe&&EditPistonLineStatus==true)
                 {
-                    BoomLine[i].GetComponent<Renderer>().enabled = EditLineStatus;
+                    BoomLine[i].GetComponent<Renderer>().enabled = true;
                     Vector3[] LinePosition1 = {StartBoomPos,EndBoomPos};
                     BoomLine[i].SetPositions(LinePosition1);
                 }
                 else
                 {
-                    BoomLine[i].GetComponent<Renderer>().enabled = EditLineStatus;
+                    BoomLine[i].GetComponent<Renderer>().enabled = false;
                 }
 
             }
@@ -1316,15 +1316,15 @@ public async void Update()
 
             void IfExistPistonMovingLine(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i, bool EditPistonLineStatus)
             {
-                if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe&&EditPistonLineStatus==true )
                 {
-                    PistonMovingLine[i].GetComponent<Renderer>().enabled = EditPistonLineStatus;
+                    PistonMovingLine[i].GetComponent<Renderer>().enabled = true;
                     Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
                     PistonMovingLine[i].SetPositions(LinePosition2);
                 }
                 else
                 {
-                    PistonMovingLine[i].GetComponent<Renderer>().enabled = EditPistonLineStatus;
+                    PistonMovingLine[i].GetComponent<Renderer>().enabled = false;
                 }
             }
             IfExistPistonMovingLine(EndPiston1,StartPiston1,FixedBoom1,EndBoom1,0,EditPistonLineStatus);
@@ -1767,15 +1767,15 @@ public async void Update()
             }
         void IfExistBoomLineAnimate(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, Vector3 FractionThroughBoomPos, int i, bool AnimateLineStatus)
             {
-                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe&& AnimateLineStatus==true)
                 {
-                    BoomAnimateLine[i].GetComponent<Renderer>().enabled = AnimateLineStatus;
+                    BoomAnimateLine[i].GetComponent<Renderer>().enabled = true;
                     Vector3[] LinePosition1 = {StartBoomPos,FractionThroughBoomPos};
                     BoomAnimateLine[i].SetPositions(LinePosition1);
                 }
                 else
                 {
-                    BoomAnimateLine[i].GetComponent<Renderer>().enabled = AnimateLineStatus;
+                    BoomAnimateLine[i].GetComponent<Renderer>().enabled = false;
                 }
 
             }
@@ -1786,15 +1786,15 @@ public async void Update()
 
             void IfExistPistonMovingLineAnimate(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i, bool AnimatePistonLineStatus)
             {
-                if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe&& AnimateLineStatus==true)
                 {
-                    PistonAnimateMovingLine[i].GetComponent<Renderer>().enabled = AnimatePistonLineStatus;
+                    PistonAnimateMovingLine[i].GetComponent<Renderer>().enabled = true;
                     Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
                     PistonAnimateMovingLine[i].SetPositions(LinePosition2);
                 }
                 else
                 {
-                    PistonAnimateMovingLine[i].GetComponent<Renderer>().enabled = AnimatePistonLineStatus;
+                    PistonAnimateMovingLine[i].GetComponent<Renderer>().enabled = false;
                 }
             }
             //plot piston link line one where chosen slider position is

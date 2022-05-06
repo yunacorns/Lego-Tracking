@@ -106,8 +106,13 @@ public class portlistener : MonoBehaviour
         public int BoomArray1AnimatePosition;
         public int BoomArray2AnimatePosition;
         public int BoomArray2Array1DdiagonalLength;
+        public int BoomArray2Array1DstraightLength;
         public Vector3[] newBoomArray2Array;
         public Vector3[] newBoomArray2StartArray;
+        public Vector3[] BoomArray2Array1Ddiagonal;
+        public Vector3[] BoomArray2Array1Dstraight;
+        public Vector3[] BoomArray2Array1DTotal;
+
 
     public void Start() //private
         {
@@ -969,6 +974,7 @@ public async void Update()
 
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
+                    BoomCurve[2].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                     menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                     menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
@@ -1634,20 +1640,6 @@ public async void Update()
             }
 
 
-            if(AnimateMenuPlay == "in range") // if in play
-            {
-                //AnimationOneStatus = true;
-                AnimateMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue; // blue
-                AnimateMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                //put this in another if statement for playing one in menu
-                // if(AnimationOneStatus==false)
-                // {
-                StartCoroutine(FollowPistonOnePath());
-                StartCoroutine(FollowLinkOnePath());
-                StartCoroutine(FollowLinkTwoPath());
-                StartCoroutine(FollowPistonTwoPath());
-                // }
-            }
 
 
 
@@ -1693,28 +1685,32 @@ public async void Update()
 
 
 
-            // Vector3[] BoomArray2Array1D = new Vector3[ArrayLength2];
-            // for (int j=0; j<ArrayLength2; j++)
-            // {
-            //     Vector3 PositionInArray = BoomArray2Array[BoomArray1AnimatePosition,j];
-            //     float x = PositionInArray[0];
-            //     float y = PositionInArray[1];
-            //     BoomArray2Array1D[j] = new Vector3(x,y,0f);
-            // }
+            Vector3[] BoomArray2Array1D = new Vector3[ArrayLength2];
+            for (int j=0; j<ArrayLength2; j++)
+            {
+                Vector3 PositionInArray = BoomArray2Array[BoomArray1AnimatePosition,j];
+                float x = PositionInArray[0];
+                float y = PositionInArray[1];
+                BoomArray2Array1D[j] = new Vector3(x,y,0f);
+            }
 
             int BoomArray2ArrayLengthX = BoomArray2Array.GetLength(0);
             int BoomArray2ArrayLengthY = BoomArray2Array.GetLength(1);
+
             print(BoomArray2ArrayLengthX);
             print(BoomArray2ArrayLengthY);
+
             if(BoomArray2ArrayLengthX<BoomArray2ArrayLengthY)
             {
                 BoomArray2Array1DdiagonalLength = BoomArray2ArrayLengthX;
+                BoomArray2Array1DstraightLength = BoomArray2ArrayLengthY-BoomArray2ArrayLengthX;
             }
             else if (BoomArray2ArrayLengthX>BoomArray2ArrayLengthY)
             {
                 BoomArray2Array1DdiagonalLength = BoomArray2ArrayLengthY;
+                BoomArray2Array1DstraightLength = BoomArray2ArrayLengthX-BoomArray2ArrayLengthY;
             }
-            print(BoomArray2Array1DdiagonalLength);
+
 
             Vector3[] BoomArray2Array1Ddiagonal = new Vector3[BoomArray2Array1DdiagonalLength];
             for (int j=0; j<BoomArray2Array1DdiagonalLength; j++)
@@ -1724,6 +1720,50 @@ public async void Update()
                 float y = PositionInArray[1];
                 BoomArray2Array1Ddiagonal[j] = new Vector3(x,y,0f);
             }
+            Vector3[] BoomArray2Array1Dstraight = new Vector3[BoomArray2Array1DstraightLength];
+            for (int j=0; j<BoomArray2Array1DstraightLength; j++)
+            {
+                Vector3 PositionInArray = BoomArray2Array[BoomArray2ArrayLengthX-1,j+BoomArray2ArrayLengthX];
+                float x = PositionInArray[0];
+                float y = PositionInArray[1];
+                BoomArray2Array1Dstraight[j] = new Vector3(x,y,0f);
+            }
+            BoomArray2Array1DTotal = CombineVector3Arrays(BoomArray2Array1Ddiagonal,BoomArray2Array1Dstraight);
+            print(BoomArray2Array1DTotal.Length);
+
+
+            if(AnimateMenuPlay == "in range") // if in play
+            {
+                BoomCurve[1].GetComponent<Renderer>().enabled = false;
+                AnimateMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue; // blue
+                AnimateMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                //put this in another if statement for playing one in menu
+                // if(AnimationOneStatus==false)
+                // {
+
+                BoomCurve[2].positionCount = BoomArray2Array1DTotal.Length;
+                if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe)
+                {
+                    for(int i=0; i<BoomArray2Array1DTotal.Length; i++)
+                    {
+                        BoomCurve[2].GetComponent<Renderer>().enabled = true;
+                        BoomCurve[2].SetPosition(i,BoomArray2Array1DTotal[i]);
+                    }
+                }
+                else
+                {
+                    BoomCurve[2].GetComponent<Renderer>().enabled = false;
+                }
+
+                StartCoroutine(FollowPistonOnePath());
+                StartCoroutine(FollowLinkOnePath());
+                StartCoroutine(FollowLinkTwoPath());
+                StartCoroutine(FollowPistonTwoPath());
+
+
+                // }
+            }
+
 
 
 
@@ -1764,7 +1804,7 @@ public async void Update()
                     for(int i=0; i<BoomArray2Array1Ddiagonal.Length; i++)
                     {
                         BoomCurve[1].GetComponent<Renderer>().enabled = true;
-                        BoomCurve[1].SetPosition(i,BoomArray2Array1Ddiagonal[i]);
+                        BoomCurve[1].SetPosition(i,BoomArray2Array1D[i]);
                     }
                 }
             else

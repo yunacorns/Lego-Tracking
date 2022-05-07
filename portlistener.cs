@@ -26,6 +26,7 @@ public class portlistener : MonoBehaviour
         public GameObject[] LockMenuArray;
         public GameObject[] AnimateMenuArray;
         public GameObject[] AnimateObjects;
+        public GameObject[] AnimateTableLine;
         public GameObject boomoneanimation;
         public GameObject ExcavatorBase;
         public GameObject ExcavatorBaseCircle;
@@ -898,20 +899,6 @@ public async void Update()
         //Time Step Generic
             float TimeStep = TheTimeStep();
         //Top data
-            //Edit Table
-            EditTableText[0].transform.position = new Vector3(200,-30,0); //text
-            EditTableText[10].transform.position = new Vector3(332,-17,0); //number
-            EditTableText[1].transform.position = new Vector3(285,-13,0); //p1
-            EditTableText[4].transform.position = new Vector3(285,-30,0); //p2
-            EditTableText[7].transform.position = new Vector3(285,-47,0); //p3
-            EditTableText[2].transform.position = new Vector3(330,-13,0); //l1
-            EditTableText[5].transform.position = new Vector3(330,-30,0); //l2
-            EditTableText[8].transform.position = new Vector3(330,-47,0); //l3
-            EditTableText[3].transform.position = new Vector3(380,-13,0); //j1
-            EditTableText[6].transform.position = new Vector3(380,-30,0); //j2
-            EditTableText[9].transform.position = new Vector3(380,-47,0); //j3
-
-
 
         //Slider Positions
             Vector3 SliderPosition = receivedPos8; //Moving
@@ -972,8 +959,6 @@ public async void Update()
                     AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = false;
                     AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = false;
 
-
-
                     //disable animate table
                     AnimateTable[0].enabled = false;
                     AnimateTable[1].enabled = false;
@@ -983,17 +968,14 @@ public async void Update()
                     AnimateTable[5].enabled = false;
                     AnimateTable[6].enabled = false;
                     AnimateTable[7].enabled = false;
-                    AnimateTable[8].enabled = false;
-                    AnimateTable[9].enabled = false;
-                    AnimateTable[10].enabled = false;
-
-
-
+                    AnimateTableLine[0].GetComponent<Renderer>().enabled = false;
+                    AnimateTableLine[1].GetComponent<Renderer>().enabled = false;
+                    AnimateTableLine[2].GetComponent<Renderer>().enabled = false;
+                    AnimateTableLine[3].GetComponent<Renderer>().enabled = false;
 
                     //disable animate line
                     EditStatus = true;
                     AnimateStatus = false;
-
 
                     //disable purple circles
                     AnimateObjects[0].SetActive(false);
@@ -1589,22 +1571,13 @@ public async void Update()
             AnimateTable[4].enabled = true;
             AnimateTable[5].enabled = true;
             AnimateTable[6].enabled = true;
+            AnimateTable[6].enabled = true;
             AnimateTable[7].enabled = true;
-            AnimateTable[8].enabled = true;
-            AnimateTable[9].enabled = true;
-            AnimateTable[10].enabled = true;
-            //transform
-            AnimateTable[0].transform.position = new Vector3(500,-32,0); //text
-            AnimateTable[1].transform.position = new Vector3(640,7,0); //number
-            AnimateTable[2].transform.position = new Vector3(575,-15,0); //percentage 1
-            AnimateTable[3].transform.position = new Vector3(665,-15,0); //percentage 2
-            AnimateTable[4].transform.position = new Vector3(755,-15,0); //percentage 3
-            AnimateTable[5].transform.position = new Vector3(580,-32,0); //animation type 1
-            AnimateTable[6].transform.position = new Vector3(670,-32,0); //animation type 2
-            AnimateTable[7].transform.position = new Vector3(760,-32,0); //animation type 3
-            AnimateTable[8].transform.position = new Vector3(580,-49,0); //velocity 1
-            AnimateTable[9].transform.position = new Vector3(670,-49,0); //velocity 2
-            AnimateTable[10].transform.position = new Vector3(760,-49,0); //velocity 3
+            AnimateTableLine[0].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateTableLine[1].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateTableLine[2].GetComponent<SpriteRenderer>().enabled = true;
+            AnimateTableLine[3].GetComponent<SpriteRenderer>().enabled = true;
+
 
             //disable edit line
             EditStatus = false;
@@ -1639,18 +1612,20 @@ public async void Update()
                             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
+                            AnimateTable[0].text = (AnimationPosition1*100).ToString()+"%";
                             BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
+                            AnimateTable[3].text = "±"+V1[BoomArray1AnimatePosition][1].ToString();
                             PositionStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
                         {
                             PositionStatus1 = true;
                             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
-                            AnimateTable[2].text = (AnimationPosition1*100).ToString()+"%";
+                            AnimateTable[0].text = (AnimationPosition1*100).ToString()+"%";
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
+                            AnimateTable[3].text = "±"+V1[BoomArray1AnimatePosition][1];
                         }
                 }
                 if(TypeSelectionTwo == "in range") // if in link 2
@@ -1662,7 +1637,7 @@ public async void Update()
                             AnimationPosition2 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                            AnimateTable[3].text = (AnimationPosition2*100).ToString()+"%";
+                            AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
                             BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
                             PositionStatus2 = false;
                         }
@@ -1670,7 +1645,7 @@ public async void Update()
                         {
                             PositionStatus2= true;
                             AnimationPosition2= sliderValue(HandlePosition,SliderPosition);
-                            AnimateTable[3].text = (AnimationPosition2*100).ToString()+"%";
+                            AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);

@@ -105,14 +105,8 @@ public class portlistener : MonoBehaviour
         public float AnimationPosition2;
         public int BoomArray1AnimatePosition;
         public int BoomArray2AnimatePosition;
-        public int BoomArray2Array1DdiagonalLength;
-        public int BoomArray2Array1DstraightLength;
         public Vector3[] newBoomArray2Array;
         public Vector3[] newBoomArray2StartArray;
-        public Vector3[] BoomArray2Array1Ddiagonal;
-        public Vector3[] BoomArray2Array1Dstraight;
-        public Vector3[] BoomArray2Array1DTotal;
-
 
     public void Start() //private
         {
@@ -921,8 +915,7 @@ public async void Update()
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                     menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                    menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
-                    GameModeObjectRetrieveMessage.enabled=false;
+                    //GameModeObjectRetrieveMessage.enabled=false;
                     SubMenuText[0].text = "Piston";
                     SubMenuText[1].text = "Link";
                     SubMenuText[2].text = "Joint";
@@ -941,8 +934,7 @@ public async void Update()
                     AnimateMenuText[1].enabled = false;
                     AnimateMenuArray[0].GetComponent<SpriteRenderer>().enabled = false;
                     AnimateMenuArray[1].GetComponent<SpriteRenderer>().enabled = false;
-                    BoomArray1AnimatePosition = 0;
-                    BoomArray2AnimatePosition = 0;
+
 
 
                     //disable animate table
@@ -974,10 +966,8 @@ public async void Update()
 
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
-                    BoomCurve[2].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                     menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                    menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
 
             if(EditSubMenuOne == "in range")//Piston Selected
                 {
@@ -1581,16 +1571,26 @@ public async void Update()
             EditStatus = false;
             AnimateStatus = true;
 
+            //enable data text
+            DataText[0].text = "Velocity";
+            DataText[0].transform.position = new Vector3(1250,-50,0);
+            DataText[1].text = "Time";
+            DataText[1].transform.position = new Vector3(2010,-325,0);
+            DataText[2].text = "Velocity Graph";
+            DataText[2].transform.position = new Vector3(1400,-30,0);
+            DataText[3].text = "Range of movement:";
+            DataText[3].transform.position = new Vector3(1600,-30,0);
+            DataText[4].transform.position = new Vector3(1970,-355,0);
+            DataText[5].transform.position = new Vector3(1220,-110,0);
+            DataText[6].transform.position = new Vector3(1220,-530,0);
+            DataText[7].transform.position = new Vector3(1850,-30,0);
+
 
             BoomCurve[0].GetComponent<Renderer>().enabled=true;
             menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
             menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
 
-            if(AnimateMenuAdjust == "in range") //if in adjust
-            {
-                AnimateMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-                AnimateMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue; //highlight blue
+
                 if(TypeSelectionOne == "in range") // if in link 1
                 {
                     SelectorHighlighter.GetComponent<Renderer>().enabled = true;
@@ -1637,30 +1637,145 @@ public async void Update()
                             BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
                         }
                 }
+
+                //Graph Drawing
+            if(TypeSelectionOne=="in range")
+            {
+                float XmaxV1 = FindMaxX(V1);
+                Vector3[] NewV1Contract = NewContract(XmaxV1, V1Contract);
+
+                Vector3[] V1Total = CombineVector3Arrays(V1,NewV1Contract); //combining V and VContract
+                float Xminori = FindMinX(V1Total); //original data
+                float Xmaxori = FindMaxX(V1Total);
+                float Yminori = FindMinY(V1Total);
+                float Ymaxori = FindMaxY(V1Total);
+
+                float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
+                float ratioa = Ymaxori/lengthYori; //upper positive ratio
+                float ratiob = 1f-ratioa; //lower negative ratio
+
+                float zeroX = 1250f; //fixed
+                Vector3 fixedYmax = new Vector3(zeroX, -130f, 0f); //with offset
+                Vector3 fixedYmin = new Vector3(zeroX, -550f, 0f);
+
+                float Xtotal = 720f; //without offset - fixed
+                float Xscale = Xtotal/Xmaxori; //scaling factor
+                float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
+                float Yscale = Ytotal/lengthYori;
+
+                Vector3[] scaledV1 = ScaleData(V1Total, Xscale, Yscale); //times everything in data to scaling factor
+                float Xminscaled = FindMinX(scaledV1); //scaled
+                float Xmaxscaled = FindMaxX(scaledV1);
+                float Yminscaled = FindMinY(scaledV1);
+                float Ymaxscaled = FindMaxY(scaledV1);
+
+                float lengthYscaled = Math.Abs(Yminscaled)+Math.Abs(Ymaxscaled);
+                // float zeroY = Yminscaled + (lengthYscaled*ratiob);
+                float zeroY = -325f;
+
+                Vector3 zerozero = new Vector3 (zeroX, zeroY, 0f);
+
+                Vector3[] finalV1 = MoveData(scaledV1, zerozero);
+                float Xminfinal = FindMinX(finalV1); //moved and scaled
+                float Xmaxfinal = FindMaxX(finalV1);
+                float Yminfinal = FindMinY(finalV1);
+                float Ymaxfinal = FindMaxY(finalV1);
+
+                //Drawing axis
+                Vector3 axisXmax = Xfloattov3(Xmaxfinal, zerozero, 20);
+
+                Vector3[] xaxis = {zerozero, axisXmax};
+                Graphsplot[0].SetPositions(xaxis);
+
+                Vector3[] yaxis = {fixedYmin, fixedYmax};
+                Graphsplot[1].SetPositions(yaxis);
+
+                //plot graph
+                int finalV1length = finalV1.Count();
+                Graphsplot[2].positionCount = finalV1length;
+                for(int i=0; i<finalV1length; i++)
+                {
+                    Graphsplot[2].SetPosition(i,finalV1[i]);
+                }
+                //text
+
+                DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
+                DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
+                DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
+                DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
+
+
             }
+            if(TypeSelectionTwo=="in range")
+            {
+                float XmaxV2 = FindMaxX(V2);
+                Vector3[] NewV2Contract = NewContract(XmaxV2, V2Contract);
 
+                Vector3[] V2Total = CombineVector3Arrays(V2,NewV2Contract); //combining V and VContract
+                float Xminori = FindMinX(V2Total); //original data
+                float Xmaxori = FindMaxX(V2Total);
+                float Yminori = FindMinY(V2Total);
+                float Ymaxori = FindMaxY(V2Total);
 
+                float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
+                float ratioa = Ymaxori/lengthYori; //upper positive ratio
+                float ratiob = 1f-ratioa; //lower negative ratio
 
+                float zeroX = 1250f; //fixed
+                Vector3 fixedYmax = new Vector3(zeroX, -130f, 0f); //with offset
+                Vector3 fixedYmin = new Vector3(zeroX, -550f, 0f);
 
+                float Xtotal = 720f; //without offset - fixed
+                float Xscale = Xtotal/Xmaxori; //scaling factor
+                float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
+                float Yscale = Ytotal/lengthYori;
 
+                Vector3[] scaledV2 = ScaleData(V2Total, Xscale, Yscale); //times everything in data to scaling factor
+                float Xminscaled = FindMinX(scaledV2); //scaled
+                float Xmaxscaled = FindMaxX(scaledV2);
+                float Yminscaled = FindMinY(scaledV2);
+                float Ymaxscaled = FindMaxY(scaledV2);
 
+                float lengthYscaled = Math.Abs(Yminscaled)+Math.Abs(Ymaxscaled);
+                // float zeroY = Yminscaled + (lengthYscaled*ratiob);
+                float zeroY = -325f;
 
+                Vector3 zerozero = new Vector3 (zeroX, zeroY, 0f);
 
+                Vector3[] finalV2 = MoveData(scaledV2, zerozero);
+                float Xminfinal = FindMinX(finalV2); //moved and scaled
+                float Xmaxfinal = FindMaxX(finalV2);
+                float Yminfinal = FindMinY(finalV2);
+                float Ymaxfinal = FindMaxY(finalV2);
 
+                //Drawing axis
+                Vector3 axisXmax = Xfloattov3(Xmaxfinal, zerozero, 20);
 
+                Vector3[] xaxis = {zerozero, axisXmax};
+                Graphsplot[0].SetPositions(xaxis);
 
-            // }
-            // if(EditSubMenuTwo == "in range")
-            // {
-            // Vector3 StoppedPos = BoomEnd[0].transform.position;
-            // int StoppedPosIndex = System.Array.IndexOf(BoomArray1,StoppedPos);
-            // print(StoppedPosIndex);
-            // }
+                Vector3[] yaxis = {fixedYmin, fixedYmax};
+                Graphsplot[1].SetPositions(yaxis);
+
+                //plot graph
+                int finalV2length = finalV2.Count();
+                Graphsplot[2].positionCount = finalV2length;
+                for(int i=0; i<finalV2length; i++)
+                {
+                Graphsplot[2].SetPosition(i,finalV2[i]);
+                }
+                //text
+
+                DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
+                DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
+                DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
+                DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
+
+            }
 
             //render purple circles
 
             void IfExistFreeBoomAnimate(Vector3 theAruco, Vector3 FractionThroughEnd,Vector3 FractionThroughStart, Vector3 FractionThroughPiston,int i){
-            //void IfExistFreeBoomAnimate(Vector3 theAruco, Vector3 FractionThroughEnd,int i){
                 if(theAruco != outofframe)
                 {
                     AnimateObjects[i].SetActive(true);
@@ -1675,14 +1790,8 @@ public async void Update()
                 }
             }
 
-            // IfExistFreeBoomAnimate(EndBoom1,BoomArray1[BoomArray1AnimatePosition],0); //circle one
-            // IfExistFreeBoomAnimate(EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
             IfExistFreeBoomAnimate(EndBoom1,BoomArray1[BoomArray1AnimatePosition],BoomArray1Start[BoomArray1AnimatePosition],PistonArray1[BoomArray1AnimatePosition],0); //circle one
             IfExistFreeBoomAnimate(EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition], PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
-
-
-
-
 
 
             Vector3[] BoomArray2Array1D = new Vector3[ArrayLength2];
@@ -1693,78 +1802,6 @@ public async void Update()
                 float y = PositionInArray[1];
                 BoomArray2Array1D[j] = new Vector3(x,y,0f);
             }
-
-            int BoomArray2ArrayLengthX = BoomArray2Array.GetLength(0);
-            int BoomArray2ArrayLengthY = BoomArray2Array.GetLength(1);
-
-            print(BoomArray2ArrayLengthX);
-            print(BoomArray2ArrayLengthY);
-
-            if(BoomArray2ArrayLengthX<BoomArray2ArrayLengthY)
-            {
-                BoomArray2Array1DdiagonalLength = BoomArray2ArrayLengthX;
-                BoomArray2Array1DstraightLength = BoomArray2ArrayLengthY-BoomArray2ArrayLengthX;
-            }
-            else if (BoomArray2ArrayLengthX>BoomArray2ArrayLengthY)
-            {
-                BoomArray2Array1DdiagonalLength = BoomArray2ArrayLengthY;
-                BoomArray2Array1DstraightLength = BoomArray2ArrayLengthX-BoomArray2ArrayLengthY;
-            }
-
-
-            Vector3[] BoomArray2Array1Ddiagonal = new Vector3[BoomArray2Array1DdiagonalLength];
-            for (int j=0; j<BoomArray2Array1DdiagonalLength; j++)
-            {
-                Vector3 PositionInArray = BoomArray2Array[j,j];
-                float x = PositionInArray[0];
-                float y = PositionInArray[1];
-                BoomArray2Array1Ddiagonal[j] = new Vector3(x,y,0f);
-            }
-            Vector3[] BoomArray2Array1Dstraight = new Vector3[BoomArray2Array1DstraightLength];
-            for (int j=0; j<BoomArray2Array1DstraightLength; j++)
-            {
-                Vector3 PositionInArray = BoomArray2Array[BoomArray2ArrayLengthX-1,j+BoomArray2ArrayLengthX];
-                float x = PositionInArray[0];
-                float y = PositionInArray[1];
-                BoomArray2Array1Dstraight[j] = new Vector3(x,y,0f);
-            }
-            BoomArray2Array1DTotal = CombineVector3Arrays(BoomArray2Array1Ddiagonal,BoomArray2Array1Dstraight);
-            print(BoomArray2Array1DTotal.Length);
-
-
-            if(AnimateMenuPlay == "in range") // if in play
-            {
-                BoomCurve[1].GetComponent<Renderer>().enabled = false;
-                AnimateMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue; // blue
-                AnimateMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-                //put this in another if statement for playing one in menu
-                // if(AnimationOneStatus==false)
-                // {
-
-                BoomCurve[2].positionCount = BoomArray2Array1DTotal.Length;
-                if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe)
-                {
-                    for(int i=0; i<BoomArray2Array1DTotal.Length; i++)
-                    {
-                        BoomCurve[2].GetComponent<Renderer>().enabled = true;
-                        BoomCurve[2].SetPosition(i,BoomArray2Array1DTotal[i]);
-                    }
-                }
-                else
-                {
-                    BoomCurve[2].GetComponent<Renderer>().enabled = false;
-                }
-
-                StartCoroutine(FollowPistonOnePath());
-                StartCoroutine(FollowLinkOnePath());
-                StartCoroutine(FollowLinkTwoPath());
-                StartCoroutine(FollowPistonTwoPath());
-
-
-                // }
-            }
-
-
 
 
             //void BoomCurveWorkspace(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
@@ -1801,7 +1838,7 @@ public async void Update()
             }
             if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe)
                 {
-                    for(int i=0; i<BoomArray2Array1Ddiagonal.Length; i++)
+                    for(int i=0; i<ArrayLength2; i++)
                     {
                         BoomCurve[1].GetComponent<Renderer>().enabled = true;
                         BoomCurve[1].SetPosition(i,BoomArray2Array1D[i]);
@@ -1877,199 +1914,28 @@ public async void Update()
 
 
 
-        if (MenuData[0]==2)
-            {
-            menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
-            menuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
-            menuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
-
-            DataText[0].text = "Velocity";
-            DataText[0].transform.position = new Vector3(1250,-50,0);
-            DataText[1].text = "Time";
-            DataText[1].transform.position = new Vector3(2010,-325,0);
-            DataText[2].text = "Velocity Graph";
-            DataText[2].transform.position = new Vector3(1400,-30,0);
-            DataText[3].text = "Range of movement:";
-            DataText[3].transform.position = new Vector3(1600,-30,0);
-
-            //disable edit line
-            EditStatus = true;
-            AnimateStatus = false;
-
-            //disable purple circles
-            AnimateObjects[0].SetActive(false);
-            AnimateObjects[1].SetActive(false);
-            //disable blue circle
-            AnimateObjects[2].SetActive(false);
 
 
-            if(TypeSelectionOne=="in range")
-            {
-            //Highlights Link One Selection
-            SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-            SelectorHighlighter.transform.position = new Vector3(890,-95,0);
-            //drawing graph
-            float XmaxV1 = FindMaxX(V1);
-            Vector3[] NewV1Contract = NewContract(XmaxV1, V1Contract);
-
-            Vector3[] V1Total = CombineVector3Arrays(V1,NewV1Contract); //combining V and VContract
-            float Xminori = FindMinX(V1Total); //original data
-            float Xmaxori = FindMaxX(V1Total);
-            float Yminori = FindMinY(V1Total);
-            float Ymaxori = FindMaxY(V1Total);
-
-            float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
-            float ratioa = Ymaxori/lengthYori; //upper positive ratio
-            float ratiob = 1f-ratioa; //lower negative ratio
-
-            float zeroX = 1250f; //fixed
-            Vector3 fixedYmax = new Vector3(zeroX, -130f, 0f); //with offset
-            Vector3 fixedYmin = new Vector3(zeroX, -550f, 0f);
-
-            float Xtotal = 720f; //without offset - fixed
-            float Xscale = Xtotal/Xmaxori; //scaling factor
-            float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
-            float Yscale = Ytotal/lengthYori;
-
-            Vector3[] scaledV1 = ScaleData(V1Total, Xscale, Yscale); //times everything in data to scaling factor
-            float Xminscaled = FindMinX(scaledV1); //scaled
-            float Xmaxscaled = FindMaxX(scaledV1);
-            float Yminscaled = FindMinY(scaledV1);
-            float Ymaxscaled = FindMaxY(scaledV1);
-
-            float lengthYscaled = Math.Abs(Yminscaled)+Math.Abs(Ymaxscaled);
-            // float zeroY = Yminscaled + (lengthYscaled*ratiob);
-            float zeroY = -325f;
-
-            Vector3 zerozero = new Vector3 (zeroX, zeroY, 0f);
-
-            Vector3[] finalV1 = MoveData(scaledV1, zerozero);
-            float Xminfinal = FindMinX(finalV1); //moved and scaled
-            float Xmaxfinal = FindMaxX(finalV1);
-            float Yminfinal = FindMinY(finalV1);
-            float Ymaxfinal = FindMaxY(finalV1);
-
-            //Drawing axis
-            Vector3 axisXmax = Xfloattov3(Xmaxfinal, zerozero, 20);
-
-            Vector3[] xaxis = {zerozero, axisXmax};
-            Graphsplot[0].SetPositions(xaxis);
-
-            Vector3[] yaxis = {fixedYmin, fixedYmax};
-            Graphsplot[1].SetPositions(yaxis);
-
-            //plot graph
-            int finalV1length = finalV1.Count();
-            Graphsplot[2].positionCount = finalV1length;
-            for(int i=0; i<finalV1length; i++)
-            {
-                Graphsplot[2].SetPosition(i,finalV1[i]);
-            }
-            //text
-
-            DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
-            DataText[4].transform.position = new Vector3(1970,-355,0);
-            DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
-            DataText[5].transform.position = new Vector3(1220,-110,0);
-            DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
-            DataText[6].transform.position = new Vector3(1220,-530,0);
-            DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
-            DataText[7].transform.position = new Vector3(1850,-30,0);
-
-            }
-            if(TypeSelectionTwo=="in range")
-            {
-            SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-            SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Link Two
-            //drawing graph
-            float XmaxV2 = FindMaxX(V2);
-            Vector3[] NewV2Contract = NewContract(XmaxV2, V2Contract);
-
-            Vector3[] V2Total = CombineVector3Arrays(V2,NewV2Contract); //combining V and VContract
-            float Xminori = FindMinX(V2Total); //original data
-            float Xmaxori = FindMaxX(V2Total);
-            float Yminori = FindMinY(V2Total);
-            float Ymaxori = FindMaxY(V2Total);
-
-            float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
-            float ratioa = Ymaxori/lengthYori; //upper positive ratio
-            float ratiob = 1f-ratioa; //lower negative ratio
-
-            float zeroX = 1250f; //fixed
-            Vector3 fixedYmax = new Vector3(zeroX, -130f, 0f); //with offset
-            Vector3 fixedYmin = new Vector3(zeroX, -550f, 0f);
-
-            float Xtotal = 720f; //without offset - fixed
-            float Xscale = Xtotal/Xmaxori; //scaling factor
-            float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
-            float Yscale = Ytotal/lengthYori;
-
-            Vector3[] scaledV2 = ScaleData(V2Total, Xscale, Yscale); //times everything in data to scaling factor
-            float Xminscaled = FindMinX(scaledV2); //scaled
-            float Xmaxscaled = FindMaxX(scaledV2);
-            float Yminscaled = FindMinY(scaledV2);
-            float Ymaxscaled = FindMaxY(scaledV2);
-
-            float lengthYscaled = Math.Abs(Yminscaled)+Math.Abs(Ymaxscaled);
-            // float zeroY = Yminscaled + (lengthYscaled*ratiob);
-            float zeroY = -325f;
-
-            Vector3 zerozero = new Vector3 (zeroX, zeroY, 0f);
-
-            Vector3[] finalV2 = MoveData(scaledV2, zerozero);
-            float Xminfinal = FindMinX(finalV2); //moved and scaled
-            float Xmaxfinal = FindMaxX(finalV2);
-            float Yminfinal = FindMinY(finalV2);
-            float Ymaxfinal = FindMaxY(finalV2);
-
-            //Drawing axis
-            Vector3 axisXmax = Xfloattov3(Xmaxfinal, zerozero, 20);
-
-            Vector3[] xaxis = {zerozero, axisXmax};
-            Graphsplot[0].SetPositions(xaxis);
-
-            Vector3[] yaxis = {fixedYmin, fixedYmax};
-            Graphsplot[1].SetPositions(yaxis);
-
-            //plot graph
-            int finalV2length = finalV2.Count();
-            Graphsplot[2].positionCount = finalV2length;
-            for(int i=0; i<finalV2length; i++)
-            {
-                Graphsplot[2].SetPosition(i,finalV2[i]);
-            }
-            //text
-
-            DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
-            DataText[4].transform.position = new Vector3(1970,-355,0);
-            DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
-            DataText[5].transform.position = new Vector3(1220,-110,0);
-            DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
-            DataText[6].transform.position = new Vector3(1220,-530,0);
-            DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
-            DataText[7].transform.position = new Vector3(1850,-30,0);
-
-            }
             //plot max reach
-            void MaxReachCurve(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
-            {
-                if(StartPiston!=outofframe&&StartBoom!=outofframe&&EndBoom1!=outofframe)
-                {
-                    for(int i=0; i<ArrayLength; i++)
-                    {
+            // void MaxReachCurve(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
+            // {
+            //     if(StartPiston!=outofframe&&StartBoom!=outofframe&&EndBoom1!=outofframe)
+            //     {
+            //         for(int i=0; i<ArrayLength; i++)
+            //         {
 
-                        BoomCurve[whichCurve].GetComponent<Renderer>().enabled = true;
-                        BoomCurve[whichCurve].SetPosition(i,theArray[i]);
-                    }
-                }
-                else
-                {
-                    BoomCurve[whichCurve].GetComponent<Renderer>().enabled = false;
-                }
-            }
+            //             BoomCurve[whichCurve].GetComponent<Renderer>().enabled = true;
+            //             BoomCurve[whichCurve].SetPosition(i,theArray[i]);
+            //         }
+            //     }
+            //     else
+            //     {
+            //         BoomCurve[whichCurve].GetComponent<Renderer>().enabled = false;
+            //     }
+            // }
 
-            MaxReachCurve(StartPiston1,FixedBoom1,EndBoom1,BoomArray1,ArrayLength1,0);
-            MaxReachCurve(StartPiston2,EndBoom1,EndBoom2,MaxReachPositionsBoom2,MaxReachPositionsBoom2.Length,1);
+            // MaxReachCurve(StartPiston1,FixedBoom1,EndBoom1,BoomArray1,ArrayLength1,0);
+            // MaxReachCurve(StartPiston2,EndBoom1,EndBoom2,MaxReachPositionsBoom2,MaxReachPositionsBoom2.Length,1);
 
 
 
@@ -2086,7 +1952,7 @@ public async void Update()
 
 
 
-    }
+
 
     public IEnumerator FollowLinkOnePath()
         {

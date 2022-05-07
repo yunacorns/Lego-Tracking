@@ -107,6 +107,7 @@ public class portlistener : MonoBehaviour
         public int BoomArray2AnimatePosition;
         public Vector3[] newBoomArray2Array;
         public Vector3[] newBoomArray2StartArray;
+        public Vector3[] BoomArray2Array1D;
 
     public void Start() //private
         {
@@ -979,6 +980,7 @@ public async void Update()
                     Graphsplot[3].GetComponent<Renderer>().enabled = false;
                     Graphsplot[4].GetComponent<Renderer>().enabled = false;
                     Graphsplot[5].GetComponent<Renderer>().enabled = false;
+                    graphmovingline.GetComponent<Renderer>().enabled = false;
 
                     //disable animate line
                     EditStatus = true;
@@ -1625,7 +1627,7 @@ public async void Update()
                     SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
                     SelectorHighlighter.transform.position = new Vector3(1803,-16,0);
                     DataText[2].enabled = true;
-
+                    DataText[8].enabled = false;
                     if(LockMenu == "in range" && PositionStatus1 == true)
                         {
                             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
@@ -1654,7 +1656,7 @@ public async void Update()
                     SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
                     SelectorHighlighter.transform.position = new Vector3(1895,-16,0);
                     DataText[8].enabled = true;
-
+                    DataText[2].enabled = false;
                     if(LockMenu == "in range" && PositionStatus2 == true)
                         {
                             AnimationPosition2 = sliderValue(HandlePosition,SliderPosition);
@@ -1662,7 +1664,7 @@ public async void Update()
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
                             AnimateTable[4].text = "±"+((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
-                            BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
+                            BoomArray2AnimatePosition = (int)((BoomArray2Array.GetLength(1)-1)*AnimationPosition2);
                             PositionStatus2 = false;
                         }
                         else if(UnlockMenu == "in range")
@@ -1670,10 +1672,10 @@ public async void Update()
                             PositionStatus2= true;
                             AnimationPosition2= sliderValue(HandlePosition,SliderPosition);
                             AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
-                            AnimateTable[4].text = "±"+((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
+                            //AnimateTable[4].text = "±"+((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
-                            BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
+                            BoomArray2AnimatePosition = (int)((BoomArray2Array.GetLength(1)-1)*AnimationPosition2);
                         }
                 }
 
@@ -1809,8 +1811,8 @@ public async void Update()
 
             //render purple circles
 
-            void IfExistFreeBoomAnimate(Vector3 theAruco, Vector3 FractionThroughEnd,Vector3 FractionThroughStart, Vector3 FractionThroughPiston,int i){
-                if(theAruco != outofframe)
+            void IfExistFreeBoomAnimate(Vector3 FixedBoom, Vector3 EndBoom, Vector3 StartPiston, Vector3 FractionThroughEnd,Vector3 FractionThroughStart, Vector3 FractionThroughPiston,int i){
+                if(FixedBoom!=outofframe&&EndBoom!=outofframe&&StartPiston!=outofframe)
                 {
                     AnimateObjects[i].SetActive(true);
                     AnimateObjects[i].transform.position = FractionThroughEnd;
@@ -1824,19 +1826,20 @@ public async void Update()
                 }
             }
 
-            IfExistFreeBoomAnimate(EndBoom1,BoomArray1[BoomArray1AnimatePosition],BoomArray1Start[BoomArray1AnimatePosition],PistonArray1[BoomArray1AnimatePosition],0); //circle one
-            IfExistFreeBoomAnimate(EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition], PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
+            IfExistFreeBoomAnimate(FixedBoom1,EndBoom1,StartPiston1,BoomArray1[BoomArray1AnimatePosition],BoomArray1Start[BoomArray1AnimatePosition],PistonArray1[BoomArray1AnimatePosition],0); //circle one
+            IfExistFreeBoomAnimate(EndBoom1,EndBoom2,StartPiston2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition], PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
 
-
-            Vector3[] BoomArray2Array1D = new Vector3[ArrayLength2];
-            for (int j=0; j<ArrayLength2; j++)
+            if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe&&StartPiston1!=outofframe&&FixedBoom1!=outofframe)
+            {
+            Vector3[] BoomArray2Array1D = new Vector3[BoomArray2Array.GetLength(1)];
+            for (int j=0; j<BoomArray2Array1D.Length; j++)
             {
                 Vector3 PositionInArray = BoomArray2Array[BoomArray1AnimatePosition,j];
                 float x = PositionInArray[0];
                 float y = PositionInArray[1];
                 BoomArray2Array1D[j] = new Vector3(x,y,0f);
             }
-
+            }
 
             //void BoomCurveWorkspace(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
             //{
@@ -1870,9 +1873,9 @@ public async void Update()
             {
                 BoomCurve[0].GetComponent<Renderer>().enabled = false;
             }
-            if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe)
+            if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe&&StartPiston1!=outofframe&&FixedBoom1!=outofframe)
                 {
-                    for(int i=0; i<ArrayLength2; i++)
+                    for(int i=0; i<BoomArray2Array1D.Length; i++)
                     {
                         BoomCurve[1].GetComponent<Renderer>().enabled = true;
                         BoomCurve[1].SetPosition(i,BoomArray2Array1D[i]);
@@ -1906,27 +1909,36 @@ public async void Update()
             // }
 
         }
-        void IfExistBoomLineAnimate(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos, Vector3 FractionThroughBoomPos, int i, bool AnimateStatus)
+        void IfExistBoomLineAnimate(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos,Vector3 PistonPos, Vector3 FractionThroughBoomPos, int i, bool AnimateStatus)
             {
-                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe&& AnimateStatus==true)
+                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe&&PistonPos!=outofframe&&AnimateStatus==true)
                 {
                     BoomAnimateLine[i].GetComponent<Renderer>().enabled = true;
                     Vector3[] LinePosition1 = {StartBoomPos,FractionThroughBoomPos};
                     BoomAnimateLine[i].SetPositions(LinePosition1);
                 }
-                else
-                {
-                    BoomAnimateLine[i].GetComponent<Renderer>().enabled = false;
-                }
 
             }
 
             //plot link line one where the chosen slider position is
-            IfExistBoomLineAnimate(BoomArray1Start[BoomArray1AnimatePosition],FixedBoom1,EndBoom1,BoomArray1[BoomArray1AnimatePosition],0,AnimateStatus);
+            IfExistBoomLineAnimate(BoomArray1Start[BoomArray1AnimatePosition],FixedBoom1,EndBoom1,StartPiston1,BoomArray1[BoomArray1AnimatePosition],0,AnimateStatus);
             //link two
-            IfExistBoomLineAnimate(BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition],EndBoom1,EndBoom2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1,AnimateStatus);
+            IfExistBoomLineAnimate(BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition],EndBoom1,EndBoom2,StartPiston2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1,AnimateStatus);
 
-            void IfExistPistonMovingLineAnimate(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i, bool AnimateStatus)
+        void IfExistBoomLineAnimateNoPiston(Vector3 FixedBoomPos, Vector3 EndBoomPos,Vector3 PistonPos, int i, bool AnimateStatus)
+            {
+                if(FixedBoomPos!=outofframe&&EndBoomPos!=outofframe&&PistonPos==outofframe&&AnimateStatus==true)
+                {
+                    BoomAnimateLine[i].GetComponent<Renderer>().enabled = true;
+                    Vector3[] LinePosition1 = {FixedBoomPos,EndBoomPos};
+                    BoomAnimateLine[i].SetPositions(LinePosition1);
+                }
+
+            }
+            //plot fixedboom1 to endboom1 if no piston1
+            IfExistBoomLineAnimateNoPiston(FixedBoom1,EndBoom1,StartPiston1,0,AnimateStatus);
+
+        void IfExistPistonMovingLineAnimate(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i, bool AnimateStatus)
             {
                 if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe&& AnimateStatus==true)
                 {

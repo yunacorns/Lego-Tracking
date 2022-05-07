@@ -855,6 +855,23 @@ public class portlistener : MonoBehaviour
         }
         return TranslatedArrays;
         }
+    public Vector3[] PistonBaseRotation1D(Vector3 PistonStart, Vector3[] PistonArray)
+    {
+        float UnextendedLength = DistanceBetweenPoints(PistonStart, PistonArray[0]);
+        int ArrayLength = PistonArray.Length;
+        Vector3[] PistonBaseEnd = new Vector3[ArrayLength];
+        for(int i=0; i<ArrayLength; i++)
+        {
+            float ExtentionLength = DistanceBetweenPoints(PistonStart, PistonArray[i]);
+            float BaseFraction = UnextendedLength/ExtentionLength;
+            Vector3 StartToEnd = PistonArray[i] - PistonStart;
+            float x = PistonStart[0] + BaseFraction*StartToEnd[0];
+            float y = PistonStart[1] + BaseFraction*StartToEnd[1];
+            PistonBaseEnd[i] = new Vector3(x, y, 0f);
+        }
+        return PistonBaseEnd;
+    }
+
 
 public async void Update()
     {
@@ -1354,6 +1371,7 @@ public async void Update()
 	        Vector3[] BoomArray1 = BoomRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
             Vector3[] BoomArray1Start = BoomStartArray(FixedBoom1, BoomArray1, BoomOverShootFraction1);
             Vector3[] PistonArray1 = PistonRotationCalculation(FixedBoom1, EndBoom1, StartPiston1, BoomOverShootFraction1, PistonFraction1,TimeStep);
+            Vector3[] ThickPiston1 = PistonBaseRotation1D(StartPiston1, PistonArray1); //Plot StartPiston1 to ThickPiston1[i]
             float[] AngleChangeBoom1 = RotationFromStartCalculation(BoomArray1, FixedBoom1);
             float TotalBoomRange1 = BoomRangeCalculation(AngleChangeBoom1);
             Vector3[] Omega1 = AngularVelocityCalculation(BoomArray1, TimeStep, FixedBoom1); //x=time, y=omega
@@ -1911,6 +1929,22 @@ public async void Update()
             //piston two
             IfExistPistonMovingLineAnimate(PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2,EndBoom1,EndBoom2,1,AnimateStatus);
 
+            void IfExistPistonFixedLine(Vector3 EndPistonPos,Vector3 StartPistonPos,  Vector3 StartBoomPos, Vector3 EndBoomPos, int i,bool AnimateStatus)
+            {
+                if(StartPistonPos!=outofframe&&StartBoomPos!=outofframe&&EndBoomPos!=outofframe)
+                {
+                    PistonFixedLine[i].GetComponent<Renderer>().enabled = true;
+                    Vector3[] LinePosition2 = {StartPistonPos,EndPistonPos};
+                    PistonFixedLine[i].SetPositions(LinePosition2);
+                }
+                else
+                {
+                    PistonFixedLine[i].GetComponent<Renderer>().enabled = false;
+                }
+            }
+            IfExistPistonFixedLine(ThickPiston1[BoomArray1AnimatePosition],StartPiston1,FixedBoom1,EndBoom1,0,AnimateStatus);
+           // IfExistPistonFixedLine(StartPiston2,EndPiston2,EndBoom1,EndBoom2,1);
+
 
 
 
@@ -2356,7 +2390,7 @@ public async void Update()
 
         return arrayout;
     }
-//hiii
+
 
 
 }

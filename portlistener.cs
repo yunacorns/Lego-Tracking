@@ -871,26 +871,26 @@ public class portlistener : MonoBehaviour
         }
         return PistonBaseEnd;
     }
-    // public Vector3[,] PistonBaseRotation2D(Vector3[] PistonStart, Vector3[,] PistonArray)
-    // {
-    //     float UnextendedLength = DistanceBetweenPoints(PistonStart[0], PistonArray[0,0]);
-    //     int ArrayLength1 = PistonArray.GetLength(0);
-    //     int ArrayLength2 = PistonArray.GetLength(1);
-    //     Vector3[,] PistonBaseEnd = new Vector3[ArrayLength1, ArrayLength2];
-    //     for(int i=0; i<ArrayLength1; i++)
-    //     {
-    //         for(int j=0; j<ArrayLength2; j++)
-    //         {
-    //             float ExtentionLength = DistanceBetweenPoints(PistonStart[i], PistonArray[i,j]);
-    //             float BaseFraction = UnextendedLength/ExtentionLength;
-    //             Vector3 StartToEnd = PistonArray[i,j] - PistonStart[i];
-    //             float x = PistonStart[0] + BaseFraction*StartToEnd[0];
-    //             float y = PistonStart[1] + BaseFraction*StartToEnd[1];
-    //             PistonBaseEnd[i,j] = new Vector3(x, y, 0f);
-    //         }
-    //     }
-    //     return PistonBaseEnd;
-    // }
+    public Vector3[,] PistonBaseRotation2D(Vector3[] PistonStart, Vector3[,] PistonArray)
+    {
+        float UnextendedLength = DistanceBetweenPoints(PistonStart[0], PistonArray[0,0]);
+        int ArrayLength1 = PistonArray.GetLength(0);
+        int ArrayLength2 = PistonArray.GetLength(1);
+        Vector3[,] PistonBaseEnd = new Vector3[ArrayLength1, ArrayLength2];
+        for(int i=0; i<ArrayLength1; i++)
+        {
+            for(int j=0; j<ArrayLength2; j++)
+            {
+                float ExtentionLength = DistanceBetweenPoints(PistonStart[i], PistonArray[i,j]);
+                float BaseFraction = UnextendedLength/ExtentionLength;
+                Vector3 StartToEnd = PistonArray[i,j] - PistonStart[i];
+                float x = PistonStart[i][0] + BaseFraction*StartToEnd[0];
+                float y = PistonStart[i][1] + BaseFraction*StartToEnd[1];
+                PistonBaseEnd[i,j] = new Vector3(x, y, 0f);
+            }
+        }
+        return PistonBaseEnd;
+    }
 
 
 public async void Update()
@@ -1456,7 +1456,7 @@ public async void Update()
             Vector3[,] BoomArray2Array = ArrayRelativePosition(FixedBoom1, BoomArray2, AngleChangeBoom1);
             Vector3[,] BoomArray2StartArray = ArrayRelativePosition(FixedBoom1, BoomArray2Start, AngleChangeBoom1);
             Vector3[,] PistonArray2Array = ArrayRelativePosition(FixedBoom1, PistonArray2, AngleChangeBoom1);
-            //Vector3[,] ThickPiston2 = PistonBaseRotation2D(StartPiston2Array, PistonArray2Array); //Plot StartPiston2Array[i] to ThinkPiston2[i,j]
+            Vector3[,] ThickPiston2 = PistonBaseRotation2D(StartPiston2Array, PistonArray2Array); //Plot StartPiston2Array[i] to ThinkPiston2[i,j]
 
          //Max Reach of Both Booms
             Vector3[] MaxReachPositionsBoom2 = MaxRangePosition(FixedBoom1, BoomArray1, BoomArray2Array);
@@ -1976,7 +1976,7 @@ public async void Update()
                 }
             }
             IfExistPistonFixedLine(ThickPiston1[BoomArray1AnimatePosition],StartPiston1,FixedBoom1,EndBoom1,0,AnimateStatus);
-            //IfExistPistonFixedLine(ThickPiston2[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2Array[BoomArray1AnimatePosition],EndBoom1,EndBoom2,1);
+            IfExistPistonFixedLine(ThickPiston2[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2Array[BoomArray1AnimatePosition],EndBoom1,EndBoom2,1,AnimateStatus);
 
 
 

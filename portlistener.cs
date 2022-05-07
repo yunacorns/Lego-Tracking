@@ -18,13 +18,13 @@ public class portlistener : MonoBehaviour
         public GameObject[] squareArray;
         public GameObject[] menuArray;
         public GameObject menuGameMode;
-        public GameObject[] Select1Block;
         public GameObject[] PistonEndEmpty;
         public GameObject[] BoomEnd;
         public GameObject[] Overshoot;
         public GameObject[] SubMenuArray;
         public GameObject[] LockMenuArray;
         public GameObject[] AnimateMenuArray;
+        public GameObject[] SelectionMenuArray;
         public GameObject[] AnimateObjects;
         public GameObject[] AnimateTableLine;
         public GameObject boomoneanimation;
@@ -920,11 +920,9 @@ public async void Update()
             string EditSubMenuOne = InMenuRegion(0, 100, -400, -350, EditSubMenuAruco);
             string EditSubMenuTwo = InMenuRegion(0, 100, -450, -400, EditSubMenuAruco);
             string EditSubMenuThree = InMenuRegion(0, 100, -500, -450, EditSubMenuAruco);
-            string TypeSelectionOne = InMenuRegion(850, 950, -120, -70, TypeSelectionAruco);
-            string TypeSelectionTwo = InMenuRegion(850, 950, -170, -120, TypeSelectionAruco);
-            string TypeSelectionThree = InMenuRegion(850, 950, -220, -170, TypeSelectionAruco);
-            string TypeSelectionFour = InMenuRegion(850, 950, -270, -220, TypeSelectionAruco);
-            string TypeSelectionWhole = InMenuRegion(850, 950, -270, -70, TypeSelectionAruco);
+            string TypeSelectionOne = InMenuRegion(850, 950, -225, -175, TypeSelectionAruco);
+            string TypeSelectionTwo = InMenuRegion(850, 950, -275, -225, TypeSelectionAruco);
+            string TypeSelectionThree = InMenuRegion(850, 950, -325, -275, TypeSelectionAruco);
             string LockMenu = InMenuRegion(850,950,-400,-350,LockMenuAruco);
             string UnlockMenu = InMenuRegion(850,950,-450,-400,LockMenuAruco);
             string AnimateMenuPlay = InMenuRegion(675, 725, -590, -530, AnimateMenuAruco);
@@ -972,6 +970,22 @@ public async void Update()
                     AnimateTableLine[1].GetComponent<Renderer>().enabled = false;
                     AnimateTableLine[2].GetComponent<Renderer>().enabled = false;
                     AnimateTableLine[3].GetComponent<Renderer>().enabled = false;
+                    DataText[0].enabled = false;
+                    DataText[1].enabled = false;
+                    DataText[2].enabled = false;
+                    DataText[3].enabled = false;
+                    DataText[4].enabled = false;
+                    DataText[5].enabled = false;
+                    DataText[6].enabled = false;
+                    DataText[7].enabled = false;
+                    DataText[8].enabled = false;
+                    DataText[9].enabled = false;
+                    Graphsplot[0].GetComponent<Renderer>().enabled = false;
+                    Graphsplot[1].GetComponent<Renderer>().enabled = false;
+                    Graphsplot[2].GetComponent<Renderer>().enabled = false;
+                    Graphsplot[3].GetComponent<Renderer>().enabled = false;
+                    Graphsplot[4].GetComponent<Renderer>().enabled = false;
+                    Graphsplot[5].GetComponent<Renderer>().enabled = false;
 
                     //disable animate line
                     EditStatus = true;
@@ -997,15 +1011,18 @@ public async void Update()
                     SliderPositionText[0].enabled = true;
                     SliderPositionText[1].enabled = false;
                     SliderPositionText[2].enabled = false;
-                    Select1Block[0].GetComponent<Renderer>().enabled = false;
                     SliderPositionText[0].transform.position = new Vector3(475,-530,0);
                     MenuText[0].text = "Piston Selection";
+                    SelectionMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
+                    MenuText[1].enabled = true;
                     //Piston Fraction or Boom Overshoot
                     if(TypeSelectionOne == "in range") //Piston One
                     {
+                        SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
                         //Highlights Piston One Selection
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-                        SelectorHighlighter.transform.position = new Vector3(890,-95,0);
+                        SelectorHighlighter.transform.position = new Vector3(1296,-15,0);
                         //if slider present
                         if(SliderPosition!=outofframe && HandlePosition!=outofframe)
                         {
@@ -1030,8 +1047,10 @@ public async void Update()
                     }
                     if(TypeSelectionTwo == "in range")//Piston Two
                     {
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-                        SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection
+                        SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectorHighlighter.transform.position = new Vector3(1377,-15,0);
                         if(SliderPosition!=outofframe && HandlePosition!=outofframe)
                         {
                             if(LockMenu == "in range" && PistonFractionStatus2 == true)
@@ -1055,8 +1074,10 @@ public async void Update()
                     }
                     if(TypeSelectionThree == "in range")//PistonThree
                     {
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-                        SelectorHighlighter.transform.position = new Vector3(890,-195,0); //Highlights Piston Three
+                        SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectorHighlighter.transform.position = new Vector3(1465,-15,0);
                         if(SliderPosition!=outofframe && HandlePosition!=outofframe)
                         {
                             if(LockMenu == "in range" && PistonFractionStatus2 == true)
@@ -1078,10 +1099,7 @@ public async void Update()
 
                         }
                     }
-                    if(TypeSelectionWhole == "out of range")
-                    {
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = false;
-                    }
+
 
                 }
                 else if(EditSubMenuTwo == "in range") //Link Selected
@@ -1094,12 +1112,14 @@ public async void Update()
                     SliderPositionText[0].enabled = false;
                     SliderPositionText[1].enabled = true;
                     SliderPositionText[2].enabled = false;
-                    Select1Block[0].GetComponent<Renderer>().enabled = false;
                     SliderPositionText[1].transform.position = new Vector3(475,-530,0);
+                    SelectionMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
                     if(TypeSelectionOne == "in range")//Link One
                     {
-                        SelectorHighlighter.transform.position = new Vector3(890,-95,0);
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                        SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectorHighlighter.transform.position = new Vector3(1296,-48,0);
                         if(LockMenu == "in range" && LinkOverShootStatus1 == true)
                         {
                             BoomOverShootFraction1 = sliderValue(HandlePosition,SliderPosition);
@@ -1119,8 +1139,11 @@ public async void Update()
                     }
                     if(TypeSelectionTwo == "in range")//Link Two
                     {
-                        SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                        SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectorHighlighter.transform.position = new Vector3(1377,-48,0);
+                        MenuText[1].enabled = true;
                         if(LockMenu == "in range" && LinkOverShootStatus2 == true)
                         {
                             BoomOverShootFraction2 = sliderValue(HandlePosition,SliderPosition);
@@ -1140,8 +1163,10 @@ public async void Update()
                     }
                     if(TypeSelectionThree == "in range")//Link Three
                     {
-                        SelectorHighlighter.transform.position = new Vector3(890,-195,0); //Highlights Piston Three
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                        SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectorHighlighter.transform.position = new Vector3(1465,-48,0);
                         if(LockMenu == "in range" && LinkOverShootStatus2 == true)
                         {
                             BoomOverShootFraction3 = sliderValue(HandlePosition,SliderPosition);
@@ -1159,10 +1184,7 @@ public async void Update()
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
                     }
-                    if(TypeSelectionWhole == "out of range")
-                    {
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = false;
-                    }
+
                 }
                 else if(EditSubMenuThree == "in range") ///Joint Selected
                 {
@@ -1174,12 +1196,13 @@ public async void Update()
                     SliderPositionText[1].enabled = false;
                     SliderPositionText[2].enabled = true;
                     SliderPositionText[2].transform.position = new Vector3(475,-530,0);
-                    Select1Block[0].GetComponent<Renderer>().enabled = true;
-                    Select1Block[0].transform.position = new Vector3(925, -95, 0);
-                    if(TypeSelectionTwo == "in range")//Link Two
+                    SelectionMenuArray[0].GetComponent<SpriteRenderer>().enabled = false;
+                    MenuText[1].enabled = false;
+                    if(TypeSelectionTwo == "in range")//Joint Two
                     {
-                        SelectorHighlighter.transform.position = new Vector3(890,-145,0); //Highlights Piston Two Selection
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectorHighlighter.transform.position = new Vector3(1377,-77,0);
                         if(LockMenu == "in range" && JointFractionStatus2 == true)
                         {
                             JointFraction2 = sliderValue(HandlePosition,SliderPosition);
@@ -1197,10 +1220,12 @@ public async void Update()
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
                     }
-                    if(TypeSelectionThree == "in range")//Link Three
+                    if(TypeSelectionThree == "in range")//Joint Three
                     {
-                        SelectorHighlighter.transform.position = new Vector3(890,-195,0); //Highlights Piston Three
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = true;
+                        SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                        SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                        SelectorHighlighter.transform.position = new Vector3(1465,-77,0);
                         if(LockMenu == "in range" && JointFractionStatus3 == true)
                         {
                             JointFraction3 = sliderValue(HandlePosition,SliderPosition);
@@ -1218,10 +1243,7 @@ public async void Update()
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                         }
                     }
-                    if(TypeSelectionWhole == "out of range")
-                    {
-                        SelectorHighlighter.GetComponent<Renderer>().enabled = false;
-                    }
+
                 }
                 else
                 {
@@ -1577,26 +1599,34 @@ public async void Update()
             AnimateTableLine[1].GetComponent<SpriteRenderer>().enabled = true;
             AnimateTableLine[2].GetComponent<SpriteRenderer>().enabled = true;
             AnimateTableLine[3].GetComponent<SpriteRenderer>().enabled = true;
+            Graphsplot[0].GetComponent<Renderer>().enabled = true;
+            Graphsplot[1].GetComponent<Renderer>().enabled = true;
+            Graphsplot[2].GetComponent<Renderer>().enabled = true;
+            Graphsplot[3].GetComponent<Renderer>().enabled = true;
+            Graphsplot[4].GetComponent<Renderer>().enabled = true;
+            Graphsplot[5].GetComponent<Renderer>().enabled = true;
 
+            //disabling sub menu in explore
+            SubMenuArray[0].GetComponent<SpriteRenderer>().enabled = false;
+            SubMenuArray[1].GetComponent<SpriteRenderer>().enabled = false;
+            SubMenuArray[2].GetComponent<SpriteRenderer>().enabled = false;
+            SubMenuText[0].enabled = false;
+            SubMenuText[1].enabled = false;
+            SubMenuText[2].enabled = false;
 
             //disable edit line
             EditStatus = false;
             AnimateStatus = true;
 
             //enable data text
-            DataText[0].text = "Velocity";
-            DataText[0].transform.position = new Vector3(1250,-50,0);
-            DataText[1].text = "Time";
-            DataText[1].transform.position = new Vector3(2010,-325,0);
-            DataText[2].text = "Velocity Graph";
-            DataText[2].transform.position = new Vector3(1400,-30,0);
-            DataText[3].text = "Range of movement:";
-            DataText[3].transform.position = new Vector3(1600,-30,0);
-            DataText[4].transform.position = new Vector3(1970,-355,0);
-            DataText[5].transform.position = new Vector3(1220,-110,0);
-            DataText[6].transform.position = new Vector3(1220,-530,0);
-            DataText[7].transform.position = new Vector3(1850,-30,0);
-
+            DataText[0].enabled = true;
+            DataText[1].enabled = true;
+            DataText[3].enabled = true;
+            DataText[4].enabled = true;
+            DataText[5].enabled = true;
+            DataText[6].enabled = true;
+            DataText[7].enabled = true;
+            DataText[9].enabled = true;
 
             BoomCurve[0].GetComponent<Renderer>().enabled=true;
             menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
@@ -1605,8 +1635,12 @@ public async void Update()
 
                 if(TypeSelectionOne == "in range") // if in link 1
                 {
-                    SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-                    SelectorHighlighter.transform.position = new Vector3(890,-95,0); //highlighter line
+                    SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                    SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                    SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+                    SelectorHighlighter.transform.position = new Vector3(1803,-16,0);
+                    DataText[2].enabled = true;
+
                     if(LockMenu == "in range" && PositionStatus1 == true)
                         {
                             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
@@ -1614,7 +1648,7 @@ public async void Update()
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[0].text = (AnimationPosition1*100).ToString()+"%";
                             BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
-                            AnimateTable[3].text = "±"+V1[BoomArray1AnimatePosition][1].ToString();
+                            AnimateTable[3].text = "±"+((float)Math.Round(V1[BoomArray1AnimatePosition][1],2)).ToString();
                             PositionStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
@@ -1625,19 +1659,24 @@ public async void Update()
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
-                            AnimateTable[3].text = "±"+V1[BoomArray1AnimatePosition][1];
+                            AnimateTable[3].text = "±"+((float)Math.Round(V1[BoomArray1AnimatePosition][1],2)).ToString();
                         }
                 }
                 if(TypeSelectionTwo == "in range") // if in link 2
                 {
-                    SelectorHighlighter.GetComponent<Renderer>().enabled = true;
-                    SelectorHighlighter.transform.position = new Vector3(890,-145,0);; //highlighter line
+                    SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                    SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
+                    SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+                    SelectorHighlighter.transform.position = new Vector3(1895,-16,0);
+                    DataText[8].enabled = true;
+
                     if(LockMenu == "in range" && PositionStatus2 == true)
                         {
                             AnimationPosition2 = sliderValue(HandlePosition,SliderPosition);
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
+                            AnimateTable[4].text = "±"+((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
                             BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
                             PositionStatus2 = false;
                         }
@@ -1646,6 +1685,7 @@ public async void Update()
                             PositionStatus2= true;
                             AnimationPosition2= sliderValue(HandlePosition,SliderPosition);
                             AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
+                            AnimateTable[4].text = "±"+((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             BoomArray2AnimatePosition = (int)((ArrayLength2-1)*AnimationPosition2);
@@ -1716,7 +1756,7 @@ public async void Update()
                 DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
                 DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
                 DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
-                DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
+                DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString()+"°";
 
 
             }
@@ -1783,7 +1823,7 @@ public async void Update()
                 DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
                 DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
                 DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
-                DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString();
+                DataText[7].text = ((float)Math.Round(TotalBoomRange2,1)).ToString()+"°";
 
             }
 

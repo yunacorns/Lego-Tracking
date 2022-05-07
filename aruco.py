@@ -143,11 +143,11 @@ def main():
                     # if in first box send "17,edit". if in second box send"17,animate". if third send "17,data"
                     menuPosition.append(17)
                     # print(cX,cY,0)
-                    if cX<=100 and 70<cY<120:
+                    if cX<=100 and 200<cY<250:
                         status = True
                         menuPosition.append(0)
                         menuPosition.append("edit")
-                    elif cX<=100 and 120<cY<170:
+                    elif cX<=100 and 250<cY<300:
                         status = False
                         # paused frame
                         if ids_p is not None:
@@ -201,64 +201,8 @@ def main():
                                 totalAnimatePos.append(-100)
                                 totalAnimatePos.append(0)
                                 totalAnimatePos.append(0)
-
                         menuPosition.append(1)
                         menuPosition.append("animate")
-                    elif cX<=100 and 170<cY<220:
-                        status = False
-                        if ids_p is not None:
-                            length_ids_p = len(ids_p)
-                        ids_formatted_p = []
-                        for i in range(length_ids_p):
-                            ids_formatted_p.append(ids_p[i][0])
-                        jointPistonArucos = [5,6,7,10,11]
-                        for i in jointPistonArucos:
-                            if [i] in ids_p:
-                                pos = ids_formatted_p.index(i)
-                                TL = bbox_p[pos][0][0]
-                                TR = bbox_p[pos][0][1]
-                                BR = bbox_p[pos][0][2]
-                                BL = bbox_p[pos][0][3]
-                                c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
-                                # find centre of aruco marker
-                                M = cv2.moments(c)
-                                cX = int(M["m10"] / M["m00"])
-                                cY= int(M["m01"] / M["m00"])
-                                # send coordinates to unity
-                                totalAnimatePos.append(i)
-                                totalAnimatePos.append(cX)
-                                totalAnimatePos.append(-cY)
-                                totalAnimatePos.append(0)
-                            else:
-                                totalAnimatePos.append(i)
-                                totalAnimatePos.append(-100)
-                                totalAnimatePos.append(0)
-                                totalAnimatePos.append(0)
-                        menuAndSliderArucos = [8,9,25,26,27,28,29]
-                        for i in menuAndSliderArucos:
-                            if [i] in ids_c:
-                                pos = ids_formatted_c.index(i)
-                                TL = bbox_c[pos][0][0]
-                                TR = bbox_c[pos][0][1]
-                                BR = bbox_c[pos][0][2]
-                                BL = bbox_c[pos][0][3]
-                                c = np.array([(TL[0],TL[1]),(TR[0],TR[1]),(BR[0],BR[1]),(BL[0],BL[1])])
-                                # find centre of aruco marker
-                                M = cv2.moments(c)
-                                cX = int(M["m10"] / M["m00"])
-                                cY= int(M["m01"] / M["m00"])
-                                # send coordinates to unity
-                                totalAnimatePos.append(i)
-                                totalAnimatePos.append(cX)
-                                totalAnimatePos.append(-cY)
-                                totalAnimatePos.append(0)
-                            else:
-                                totalAnimatePos.append(i)
-                                totalAnimatePos.append(-100)
-                                totalAnimatePos.append(0)
-                                totalAnimatePos.append(0)
-                        menuPosition.append(2)
-                        menuPosition.append("data")
                     else:
                         menuPosition.append(10)
                         menuPosition.append("none")

@@ -1511,7 +1511,7 @@ public async void Update()
             string InGameMode = InMenuRegion(xminGame,xmaxGame,yminGame,ymaxGame,GameModeAruco);
 
         //Excavator Fixed Pos Range
-            Vector3 ExcavatorPos = new Vector3(265,-369,0);
+            Vector3 ExcavatorPos = new Vector3(200,-460,0);
             int xminExc = (int)ExcavatorPos[0]-10;
             int xmaxExc = (int)ExcavatorPos[0]+10;
             int yminExc = (int)ExcavatorPos[1]-10;
@@ -1519,13 +1519,13 @@ public async void Update()
             string InExcavatorCircle = InMenuRegion(xminExc,xmaxExc,yminExc,ymaxExc,FixedBoom1);
 
         //Object To Retrieve (sand) Fixed Pos Range
-            Vector3 ObjectToRetrievePos = new Vector3(673,-391,0);
-            int xminObj = (int)ObjectToRetrievePos[0]-70;
-            int xmaxObj = (int)ObjectToRetrievePos[0]+70;
-            int yminObj = (int)ObjectToRetrievePos[1]-50;
-            int ymaxObj = (int)ObjectToRetrievePos[1]+5;
+         Vector3 ObjectToRetrievePos = new Vector3(673,-391,0);
+        int xminObj = (int)ObjectToRetrievePos[0]-100;
+        int xmaxObj = (int)ObjectToRetrievePos[0]+100;
+        int yminObj = (int)ObjectToRetrievePos[1]-40;
+        int ymaxObj = (int)ObjectToRetrievePos[1]+5;
 
-            string InObjectPosBoomArray1 = InMenuRegion(xminObj,xmaxObj,yminObj,ymaxObj,BoomArray1[ArrayLength1-1]);
+
 
 
 
@@ -1624,12 +1624,14 @@ public async void Update()
         if(MenuData[0]==0)
             {
             //Game Mode - show excavator
+
             if(InGameMode == "in range")
             {
             ExcavatorBase.GetComponent<Renderer>().enabled=true;
             ObjectToRetrieve.GetComponent<Renderer>().enabled=true;
             ExcavatorBase.transform.position = ExcavatorPos;
             ObjectToRetrieve.transform.position = ObjectToRetrievePos;
+            GameModeObjectRetrieveMessage.enabled = false;
             ExcavatorBaseCircle.GetComponent<Renderer>().enabled=true;
             ExcavatorBaseCircle.transform.position = ExcavatorPos;
             menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -1850,6 +1852,8 @@ public async void Update()
                 DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
                 DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString()+"°";
 
+                print(finalV1.Length);
+                print(BoomArray1AnimatePosition);
                 graphmovingline.transform.position = new Vector3(finalV1[BoomArray1AnimatePosition][0],-360,0);
 
             }
@@ -1914,8 +1918,7 @@ public async void Update()
                 DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
                 DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString()+"°";
 
-                print(finalV1);
-                print(BoomArray1AnimatePosition);
+
                 graphmovingline.transform.position = new Vector3(finalV1[BoomArray1AnimatePosition][0],-360,0);
 
             }
@@ -1993,24 +1996,6 @@ public async void Update()
             }
 
 
-            //In Game Mode if retrieves object
-            // if(InObjectPosBoomArray1 == "in range")
-            // {
-            // GameModeObjectRetrieveMessage.text = "Success!";
-            // }
-            // else if(InObjectPosBoomArray1 == "out of range")
-            // {
-            // GameModeObjectRetrieveMessage.text = "u suck shit try again";
-            //}
-            //If in Stop Animation One Box
-            // if(InStopAnimationOne == "in range")
-            // {
-            //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.blue;
-            // }
-            // else if(InStopAnimationOne == "out of range")
-            // {
-            //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.white;
-            // }
 
         }
         void IfExistBoomLineAnimate(Vector3 StartBoomPos, Vector3 FixedBoomPos, Vector3 EndBoomPos,Vector3 PistonPos, Vector3 FractionThroughBoomPos, int i, bool AnimateStatus)
@@ -2094,7 +2079,64 @@ public async void Update()
             IfExistPistonFixedLine(ThickPiston1[BoomArray1AnimatePosition],StartPiston1,FixedBoom1,EndBoom1,0,AnimateStatus);
             IfExistPistonFixedLine(ThickPiston2[BoomArray1AnimatePosition,BoomArray2AnimatePosition],StartPiston2Array[BoomArray1AnimatePosition],EndBoom1,EndBoom2,1,AnimateStatus);
 
+            //In Game Mode if retrieves object
 
+            string InObjectPosOnePiston = InMenuRegion(xminObj,xmaxObj,yminObj,ymaxObj,AnimateObjects[0].transform.position);
+            string InObjectPosTwoPiston = InMenuRegion(xminObj,xmaxObj,yminObj,ymaxObj,AnimateObjects[1].transform.position);
+
+            if(MenuData[0]==1)
+            {
+            if(InGameMode=="in range")
+            {
+                if(FixedBoom1!=outofframe&&EndBoom1!=outofframe&&StartPiston1!=outofframe&&EndBoom2==outofframe&&StartPiston2==outofframe)
+                {
+                    if(InObjectPosOnePiston=="in range")
+                    {
+                        GameModeObjectRetrieveMessage.enabled = true;
+                        GameModeObjectRetrieveMessage.text = "Success!";
+                        GameModeObjectRetrieveMessage.GetComponent<TextMeshProUGUI>().color = Color.green;
+                    }
+                    else if (InObjectPosOnePiston=="out of range")
+                    {
+                        GameModeObjectRetrieveMessage.enabled = true;
+                        GameModeObjectRetrieveMessage.text = "Excavator End Point has not reached the sand!";
+                        GameModeObjectRetrieveMessage.GetComponent<TextMeshProUGUI>().color = Color.red;
+                    }
+                }
+                else if(FixedBoom1!=outofframe&&EndBoom1!=outofframe&&StartPiston1!=outofframe&&EndBoom2!=outofframe&&StartPiston2!=outofframe)
+                {
+                    if(InObjectPosTwoPiston=="in range")
+                    {
+                        GameModeObjectRetrieveMessage.enabled = true;
+                        GameModeObjectRetrieveMessage.text = "Success!";
+                        GameModeObjectRetrieveMessage.GetComponent<TextMeshProUGUI>().color = Color.green;
+                    }
+                    else if (InObjectPosTwoPiston=="out of range")
+                    {
+                        GameModeObjectRetrieveMessage.enabled = true;
+                        GameModeObjectRetrieveMessage.text = "Excavator End Point has not reached the sand!";
+                        GameModeObjectRetrieveMessage.GetComponent<TextMeshProUGUI>().color = Color.red;
+                    }
+                }
+            }
+            }
+            // if(InObjectPosBoomArray1 == "in range")
+            // {
+            // GameModeObjectRetrieveMessage.text = "Success!";
+            // }
+            // else if(InObjectPosBoomArray1 == "out of range")
+            // {
+            // GameModeObjectRetrieveMessage.text = "u suck shit try again";
+            //}
+            //If in Stop Animation One Box
+            // if(InStopAnimationOne == "in range")
+            // {
+            //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.blue;
+            // }
+            // else if(InStopAnimationOne == "out of range")
+            // {
+            //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.white;
+            // }
 
 
 
@@ -2543,4 +2585,3 @@ public async void Update()
 
 
 }
-//game

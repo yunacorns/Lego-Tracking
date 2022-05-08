@@ -1569,6 +1569,7 @@ public async void Update()
          //Boom 2 Array Length
             int ArrayLength2 = BoomArray2Array.GetLength(0);
             BoomCurve[1].positionCount = BoomArray2Array.GetLength(1);
+
         // //}
 
         //Boom3
@@ -2131,23 +2132,7 @@ public async void Update()
                 }
             }
             }
-            // if(InObjectPosBoomArray1 == "in range")
-            // {
-            // GameModeObjectRetrieveMessage.text = "Success!";
-            // }
-            // else if(InObjectPosBoomArray1 == "out of range")
-            // {
-            // GameModeObjectRetrieveMessage.text = "u suck shit try again";
-            //}
-            //If in Stop Animation One Box
-            // if(InStopAnimationOne == "in range")
-            // {
-            //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.blue;
-            // }
-            // else if(InStopAnimationOne == "out of range")
-            // {
-            //     StopAnimation[0].GetComponent<Renderer>().material.color = Color.white;
-            // }
+
 
 
 

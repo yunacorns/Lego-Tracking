@@ -992,6 +992,8 @@ public async void Update()
                     //disable blue circle
                     AnimateObjects[2].SetActive(false);
 
+                    BoomAnimateLine[0].GetComponent<Renderer>().enabled = false;
+                    BoomAnimateLine[1].GetComponent<Renderer>().enabled = false;
                     BoomCurve[0].GetComponent<Renderer>().enabled=false;
                     BoomCurve[1].GetComponent<Renderer>().enabled=false;
                     menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
@@ -1614,6 +1616,7 @@ public async void Update()
             DataText[6].enabled = true;
             DataText[7].enabled = true;
             DataText[9].enabled = true;
+            graphmovingline.GetComponent<Renderer>().enabled = true;
 
             BoomCurve[0].GetComponent<Renderer>().enabled=true;
             menuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
@@ -1886,7 +1889,16 @@ public async void Update()
                 BoomCurve[1].GetComponent<Renderer>().enabled = false;
             }
 
-
+            //if piston 1 doesnt exist the position will always be zero
+            if(StartPiston1==outofframe)
+            {
+                BoomArray1AnimatePosition = 0;
+            }
+            //piston 2
+            if(StartPiston2==outofframe)
+            {
+                BoomArray2AnimatePosition = 0;
+            }
 
 
             //In Game Mode if retrieves object
@@ -1921,6 +1933,9 @@ public async void Update()
             }
 
             //plot link line one where the chosen slider position is
+            print(BoomArray1Start.Length);
+            print(BoomArray1.Length);
+            print(BoomArray1AnimatePosition);
             IfExistBoomLineAnimate(BoomArray1Start[BoomArray1AnimatePosition],FixedBoom1,EndBoom1,StartPiston1,BoomArray1[BoomArray1AnimatePosition],0,AnimateStatus);
             //link two
             IfExistBoomLineAnimate(BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition],EndBoom1,EndBoom2,StartPiston2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1,AnimateStatus);

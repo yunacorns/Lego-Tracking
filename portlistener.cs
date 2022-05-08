@@ -1016,6 +1016,21 @@ public async void Update()
             string AnimateMenuPlay = InMenuRegion(675, 725, -590, -530, AnimateMenuAruco);
             string AnimateMenuAdjust = InMenuRegion(725, 775, -590, -530, AnimateMenuAruco);
 
+
+
+
+            if(TypeSelectionOne=="out of range"&&TypeSelectionTwo=="out of range"&&TypeSelectionThree=="out of range")
+            {
+                SelectionMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+                SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
+            }
+            if(LockMenu=="out of range"&&UnlockMenu=="out of range")
+            {
+                LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
+                LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
+            }
+
         //Assigning Slider Values
             if(MenuData[0]==0)
             {
@@ -1522,8 +1537,8 @@ public async void Update()
          Vector3 ObjectToRetrievePos = new Vector3(673,-391,0);
         int xminObj = (int)ObjectToRetrievePos[0]-100;
         int xmaxObj = (int)ObjectToRetrievePos[0]+100;
-        int yminObj = (int)ObjectToRetrievePos[1]-40;
-        int ymaxObj = (int)ObjectToRetrievePos[1]+5;
+        int yminObj = (int)ObjectToRetrievePos[1]-50;
+        int ymaxObj = (int)ObjectToRetrievePos[1]+10;
 
 
 
@@ -1628,6 +1643,7 @@ public async void Update()
 
             if(InGameMode == "in range")
             {
+            menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.blue;
             ExcavatorBase.GetComponent<Renderer>().enabled=true;
             ObjectToRetrieve.GetComponent<Renderer>().enabled=true;
             ExcavatorBase.transform.position = ExcavatorPos;
@@ -1635,7 +1651,6 @@ public async void Update()
             GameModeObjectRetrieveMessage.enabled = false;
             ExcavatorBaseCircle.GetComponent<Renderer>().enabled=true;
             ExcavatorBaseCircle.transform.position = ExcavatorPos;
-            menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.blue;
             //Fixed Joint in Excavator Circle Error Message
             if(InExcavatorCircle == "out of range")
             {
@@ -1698,6 +1713,8 @@ public async void Update()
             SubMenuText[0].enabled = false;
             SubMenuText[1].enabled = false;
             SubMenuText[2].enabled = false;
+            SelectionMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
+            MenuText[1].enabled = true;
 
             //disable edit line
             EditStatus = false;

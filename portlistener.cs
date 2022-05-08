@@ -92,6 +92,7 @@ public class portlistener : MonoBehaviour
         public bool PositionStatus2 = true;
         public bool EditStatus;
         public bool AnimateStatus;
+        public bool GameStatus=true;
         public bool running; //nothing
         public float PistonFraction1;  //set default values in portlistener in unity
         public float BoomOverShootFraction1;
@@ -893,6 +894,93 @@ public class portlistener : MonoBehaviour
         return PistonBaseEnd;
     }
 
+// public Vector3[] VelocityToPlot(float[,] VelocityArray, int I, int J, float TimeStep)
+// {
+//         //Array Length
+//         int iLength = VelocityArray.GetLength(0);
+//         int jLength = VelocityArray.GetLength(1);
+
+//         int NoStartDown = 0f;
+//         int NoEndDown = 0f;
+//         if(J>I)
+//         {
+//             NoStartDown = J-I-1;
+//         }
+//         if((jLength-J)>(iLength-I))
+//         {
+//             NoEndDown = J-I-1;
+//         }
+//         int ArrayLength = iLength + NoStartDown + NoEndDown;
+//         float[] Array = new float[ArrayLength];
+//         int K = 0;
+
+//         if(J>I)
+//         {
+//             for(int i=0; i<(J-I); i++)
+//             {
+//                 Array[K] = VelocityArray[0,i];
+//                 K = K+1;
+//             }
+
+//         }
+//         if(I>J)
+//         {
+//             for(int i=0; i<(I-J); i++)
+//             {
+//                 Array[K] = VelocityArray[i,0];
+//                 K = K+1;
+//             }
+//         }
+
+//         float ItoJ = I-J;
+
+//         float DiagonalStart = 0f;
+//         float DiagonalEnd = iLength-1;
+//         if(J<I)
+//         {
+//             DiagonalStart = I-J;
+//         }
+//         if((iLength-I)>(jLength-J))
+//         {
+//             DiagonalEnd = iLength-(I-J);
+//         }
+//         for(int i=DiagonalStart; i<DiagonalEnd; i++)
+//         {
+//             int j = i - ItoJ;
+//             Array[K] = VelocityArray[i,j];
+//             K = K+1;
+//         }
+
+//         if((jLength-J)>(iLength-I))
+//         {
+//             for(int i=DiagonalEnd; i<(DiagonalEnd + ((jLength-J)-(iLength-I))); i++)
+//             {
+//                 j = i - ItoJ;
+//                 Array[K] = VelocityArray[(iLength-1),j];
+//                 K = K + 1;
+//             }
+//         }
+//         if((iLength-I)>(jLength-1))
+//         {
+//             for(int i=DiagonalEnd; i<iLength; i++)
+//             {
+//                 Array[K] = VelocityArray[i,(jLength-1)];
+//                 K = K+1;
+//             }
+//         }
+
+//         Vector3 VectorArray = new Vector3[Array.Length];
+//         for(int i=0; i<VectorArray.Length; i++)
+//         {
+//             float x = i*TimeStep;
+//             float y = Array[i];
+//             VectorArray[i] = new Vector3(x, y, 0f);
+//         }
+//         return VectorArray;
+// }
+
+
+
 
 public async void Update()
     {
@@ -981,6 +1069,14 @@ public async void Update()
                     Graphsplot[4].GetComponent<Renderer>().enabled = false;
                     Graphsplot[5].GetComponent<Renderer>().enabled = false;
                     graphmovingline.GetComponent<Renderer>().enabled = false;
+
+                    //enable sub menu in explore
+                    SubMenuArray[0].GetComponent<SpriteRenderer>().enabled = true;
+                    SubMenuArray[1].GetComponent<SpriteRenderer>().enabled = true;
+                    SubMenuArray[2].GetComponent<SpriteRenderer>().enabled = true;
+                    SubMenuText[0].enabled = true;
+                    SubMenuText[1].enabled = true;
+                    SubMenuText[2].enabled = true;
 
                     //disable animate line
                     EditStatus = true;
@@ -1408,8 +1504,8 @@ public async void Update()
 
         //Game Mode Menu
             Vector3 GameModeAruco = receivedPos25;
-            int xminGame = 775;
-            int xmaxGame = 825;
+            int xminGame = 750;
+            int xmaxGame = 800;
             int yminGame = -100;
             int ymaxGame = 0;
             string InGameMode = InMenuRegion(xminGame,xmaxGame,yminGame,ymaxGame,GameModeAruco);
@@ -1525,48 +1621,45 @@ public async void Update()
         //     float[,,] EndVelocity3BoomCCE = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Extend,BoomArray3Array3D);
         //     float[,,] EndVelocity3BoomCCC = ThreeMovingBoomsVelocity(Omega1Contract, FixedBoom1, FixedBoom2Array, EndVelocityBoom2ContractBoom3Contract,BoomArray3Array3D);
         //    }
-        // if(MenuData[0]==0)
-        //     {
+        if(MenuData[0]==0)
+            {
+            //Game Mode - show excavator
+            if(InGameMode == "in range")
+            {
+            ExcavatorBase.GetComponent<Renderer>().enabled=true;
+            ObjectToRetrieve.GetComponent<Renderer>().enabled=true;
+            ExcavatorBase.transform.position = ExcavatorPos;
+            ObjectToRetrieve.transform.position = ObjectToRetrievePos;
+            ExcavatorBaseCircle.GetComponent<Renderer>().enabled=true;
+            ExcavatorBaseCircle.transform.position = ExcavatorPos;
+            menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.blue;
+            //Fixed Joint in Excavator Circle Error Message
+            if(InExcavatorCircle == "out of range")
+            {
+                GameModeErrorMessage.enabled = true;
+                GameModeErrorMessage.text = "Place Fixed Joint on Excavator";
+                GameStatus = false;
+            }
+            else
+            {
+                GameModeErrorMessage.enabled = false;
+                GameStatus = true;
+            }
+            }
+            else if (InGameMode == "out of range")
+            {
+            GameStatus = true;
+            GameModeErrorMessage.enabled = false;
+            ExcavatorBase.GetComponent<Renderer>().enabled=false;
+            ExcavatorBaseCircle.GetComponent<Renderer>().enabled=false;
+            ObjectToRetrieve.GetComponent<Renderer>().enabled=false;
+            menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.white;
+            }
 
 
 
-        //     //Game Mode - show excavator
-        //     if(InGameMode == "in range")
-        //     {
-        //     ExcavatorBase.GetComponent<Renderer>().enabled=true;
-        //     ObjectToRetrieve.GetComponent<Renderer>().enabled=true;
-        //     ExcavatorBase.transform.position = ExcavatorPos;
-        //     ObjectToRetrieve.transform.position = ObjectToRetrievePos;
-        //     ExcavatorBaseCircle.GetComponent<Renderer>().enabled=true;
-        //     ExcavatorBaseCircle.transform.position = ExcavatorPos;
-        //     menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.blue;
-        //     //Fixed Joint in Excavator Circle Error Message
-        //     if(InExcavatorCircle == "out of range")
-        //     {
-        //         GameModeErrorMessage.enabled = true;
-        //         GameModeErrorMessage.text = "Place Fixed Joint on Excavator";
-        //         GameStatus = false;
-        //     }
-        //     else
-        //     {
-        //         GameModeErrorMessage.enabled = false;
-        //         GameStatus = true;
-        //     }
-        //     }
-        //     else if (InGameMode == "out of range")
-        //     {
-        //     GameStatus = true;
-        //     GameModeErrorMessage.enabled = false;
-        //     ExcavatorBase.GetComponent<Renderer>().enabled=false;
-        //     ExcavatorBaseCircle.GetComponent<Renderer>().enabled=false;
-        //     ObjectToRetrieve.GetComponent<Renderer>().enabled=false;
-        //     menuGameMode.GetComponent<SpriteRenderer>().material.color = Color.white;
-        //     }
-
-
-
-         //   }
-        if(MenuData[0]==1)
+        }
+        if(MenuData[0]==1&&GameStatus==true)
             {
             //Menu
             SubMenuText[0].text = "Extend";
@@ -1696,7 +1789,7 @@ public async void Update()
 
 
                 //Graph Drawing
-            if(TypeSelectionOne=="in range")
+            if(FixedBoom1!=outofframe&&EndBoom1!=outofframe&&StartPiston1!=outofframe&&EndBoom2==outofframe&&StartPiston2==outofframe)
             {
                 float Xminori = FindMinX(V1); //original data
                 float Xmaxori = FindMaxX(V1);
@@ -1760,7 +1853,7 @@ public async void Update()
                 graphmovingline.transform.position = new Vector3(finalV1[BoomArray1AnimatePosition][0],-360,0);
 
             }
-            if(TypeSelectionTwo=="in range")
+            if(FixedBoom1!=outofframe&&EndBoom1!=outofframe&&StartPiston1!=outofframe&&EndBoom2!=outofframe&&StartPiston2!=outofframe)
             {
                 float Xminori = FindMinX(V1); //original data
                 float Xmaxori = FindMaxX(V1);
@@ -1821,6 +1914,8 @@ public async void Update()
                 DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
                 DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString()+"°";
 
+                print(finalV1);
+                print(BoomArray1AnimatePosition);
                 graphmovingline.transform.position = new Vector3(finalV1[BoomArray1AnimatePosition][0],-360,0);
 
             }

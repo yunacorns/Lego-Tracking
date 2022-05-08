@@ -1682,6 +1682,19 @@ public async void Update()
                         }
                 }
 
+
+            //if piston 1 doesnt exist the position will always be zero
+            if(StartPiston1==outofframe)
+            {
+                BoomArray1AnimatePosition = 0;
+            }
+            //piston 2
+            if(StartPiston2==outofframe)
+            {
+                BoomArray2AnimatePosition = 0;
+            }
+
+
                 //Graph Drawing
             if(TypeSelectionOne=="in range")
             {
@@ -1865,39 +1878,20 @@ public async void Update()
             //BoomCurveWorkspace(StartPiston2,EndBoom1,EndBoom2,BoomArray2Array1D,ArrayLength2,1);
 
             if(StartPiston1!=outofframe&&FixedBoom1!=outofframe&&EndBoom1!=outofframe)
+            {
+                for(int i=0; i<ArrayLength1; i++)
                 {
-                    for(int i=0; i<ArrayLength1; i++)
-                    {
-                        BoomCurve[0].GetComponent<Renderer>().enabled = true;
-                        BoomCurve[0].SetPosition(i,BoomArray1[i]);
-                    }
+                    BoomCurve[0].GetComponent<Renderer>().enabled = true;
+                    BoomCurve[0].SetPosition(i,BoomArray1[i]);
                 }
-            else
-            {
-                BoomCurve[0].GetComponent<Renderer>().enabled = false;
             }
-            if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe&&StartPiston1!=outofframe&&FixedBoom1!=outofframe)
+            if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe)
+            {
+                for(int i=0; i<BoomArray2Array1D.Length; i++)
                 {
-                    for(int i=0; i<BoomArray2Array1D.Length; i++)
-                    {
-                        BoomCurve[1].GetComponent<Renderer>().enabled = true;
-                        BoomCurve[1].SetPosition(i,BoomArray2Array1D[i]);
-                    }
+                    BoomCurve[1].GetComponent<Renderer>().enabled = true;
+                    BoomCurve[1].SetPosition(i,BoomArray2Array1D[i]);
                 }
-            else
-            {
-                BoomCurve[1].GetComponent<Renderer>().enabled = false;
-            }
-
-            //if piston 1 doesnt exist the position will always be zero
-            if(StartPiston1==outofframe)
-            {
-                BoomArray1AnimatePosition = 0;
-            }
-            //piston 2
-            if(StartPiston2==outofframe)
-            {
-                BoomArray2AnimatePosition = 0;
             }
 
 

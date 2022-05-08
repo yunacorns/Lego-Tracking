@@ -1472,7 +1472,7 @@ public async void Update()
 
          //Boom 2 Array Length
             int ArrayLength2 = BoomArray2Array.GetLength(0);
-            BoomCurve[1].positionCount = ArrayLength2;
+            BoomCurve[1].positionCount = BoomArray2Array.GetLength(1);
         // //}
 
         //Boom3
@@ -1683,16 +1683,16 @@ public async void Update()
                 }
 
 
-            //if piston 1 doesnt exist the position will always be zero
-            if(StartPiston1==outofframe)
-            {
-                BoomArray1AnimatePosition = 0;
-            }
-            //piston 2
-            if(StartPiston2==outofframe)
-            {
-                BoomArray2AnimatePosition = 0;
-            }
+            // //if piston 1 doesnt exist the position will always be zero
+            // if(StartPiston1==outofframe)
+            // {
+            //     BoomArray1AnimatePosition = 0;
+            // }
+            // //piston 2
+            // if(StartPiston2==outofframe)
+            // {
+            //     BoomArray2AnimatePosition = 0;
+            // }
 
 
                 //Graph Drawing
@@ -1845,8 +1845,7 @@ public async void Update()
             IfExistFreeBoomAnimate(FixedBoom1,EndBoom1,StartPiston1,BoomArray1[BoomArray1AnimatePosition],BoomArray1Start[BoomArray1AnimatePosition],PistonArray1[BoomArray1AnimatePosition],0); //circle one
             IfExistFreeBoomAnimate(EndBoom1,EndBoom2,StartPiston2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition], PistonArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1); //two
 
-            if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe&&StartPiston1!=outofframe&&FixedBoom1!=outofframe)
-            {
+
             Vector3[] BoomArray2Array1D = new Vector3[BoomArray2Array.GetLength(1)];
             for (int j=0; j<BoomArray2Array1D.Length; j++)
             {
@@ -1855,7 +1854,9 @@ public async void Update()
                 float y = PositionInArray[1];
                 BoomArray2Array1D[j] = new Vector3(x,y,0f);
             }
-            }
+
+
+
 
             //void BoomCurveWorkspace(Vector3 StartPiston,Vector3 StartBoom,Vector3 EndBoom, Vector3[] theArray,int ArrayLength,int whichCurve)
             //{
@@ -1885,6 +1886,8 @@ public async void Update()
                     BoomCurve[0].SetPosition(i,BoomArray1[i]);
                 }
             }
+            print(BoomArray2Array1D.Length);
+            print(BoomArray2Array1D[3]);
             if(StartPiston2!=outofframe&&EndBoom1!=outofframe&&EndBoom2!=outofframe)
             {
                 for(int i=0; i<BoomArray2Array1D.Length; i++)
@@ -1927,9 +1930,6 @@ public async void Update()
             }
 
             //plot link line one where the chosen slider position is
-            print(BoomArray1Start.Length);
-            print(BoomArray1.Length);
-            print(BoomArray1AnimatePosition);
             IfExistBoomLineAnimate(BoomArray1Start[BoomArray1AnimatePosition],FixedBoom1,EndBoom1,StartPiston1,BoomArray1[BoomArray1AnimatePosition],0,AnimateStatus);
             //link two
             IfExistBoomLineAnimate(BoomArray2StartArray[BoomArray1AnimatePosition,BoomArray2AnimatePosition],EndBoom1,EndBoom2,StartPiston2,BoomArray2Array[BoomArray1AnimatePosition,BoomArray2AnimatePosition],1,AnimateStatus);

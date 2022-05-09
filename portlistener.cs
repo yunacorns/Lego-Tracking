@@ -981,6 +981,20 @@ public Vector3[] VelocityToPlot(float[,] VelocityArray, int I, int J, float Time
 }
 
 
+    public float GraphTime(float[,] VelocityArray2D, Vector3[] PlottingVelocity, int I, int J)
+        {
+            float Velocity = VelocityArray2D[I,J];
+            float[] FloatVelocity = new float[PlottingVelocity.Length];
+            for(int i=0; i<FloatVelocity.Length; i++)
+            {
+                FloatVelocity[i]=PlottingVelocity[i][0];
+            }
+            int Arraynumber = System.Array.IndexOf(FloatVelocity, Velocity);
+            float T = PlottingVelocity[Arraynumber][0];
+            return T;
+        }
+
+
 
 
 
@@ -1885,16 +1899,10 @@ public async void Update()
                 // float Xmaxori = FindMaxX(V1);
                 // float Yminori = FindMinY(V1);
                 // float Ymaxori = FindMaxY(V1);
-                print(EndVelocityBoom1ExtendBoom2Extend.GetLength(0));
-                print(EndVelocityBoom1ExtendBoom2Extend.GetLength(1));
-                print(BoomArray1AnimatePosition);
-                print(BoomArray2AnimatePosition);
-                print(EndVelocityBoom1ExtendBoom2Extend[100,100]);
                 print(EndVelocityBoom1ExtendBoom2Extend[EndVelocityBoom1ExtendBoom2Extend.GetLength(0)-1,EndVelocityBoom1ExtendBoom2Extend.GetLength(1)-1]);
+
                 Vector3[] V21D = VelocityToPlot(EndVelocityBoom1ExtendBoom2Extend,BoomArray1AnimatePosition,BoomArray2AnimatePosition,TimeStep);
-                print(V21D[3]);
-                print(V21D.Length);
-                print(V21D[V21D.Length-1]);
+                //float graphtime = GraphTime(EndVelocityBoom1ExtendBoom2Extend,V21D,BoomArray1AnimatePosition,BoomArray2AnimatePosition);
                 float Xminori = FindMinX(V21D); //original data
                 float Xmaxori = FindMaxX(V21D);
                 float Yminori = FindMinY(V21D);
@@ -1913,7 +1921,7 @@ public async void Update()
                 float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
                 float Yscale = Ytotal/lengthYori;
 
-                 Vector3[] scaledV1 = ScaleData(V21D, Xscale, Yscale); //times everything in data to scaling factor
+                Vector3[] scaledV1 = ScaleData(V21D, Xscale, Yscale); //times everything in data to scaling factor
                 //Vector3[] scaledV1 = ScaleData(V1, Xscale, Yscale);
                 float Xminscaled = FindMinX(scaledV1); //scaled
                 float Xmaxscaled = FindMaxX(scaledV1);

@@ -894,21 +894,23 @@ public class portlistener : MonoBehaviour
         return PistonBaseEnd;
     }
 
+
 public Vector3[] VelocityToPlot(float[,] VelocityArray, int I, int J, float TimeStep)
 {
-        //Array Length
-        int iLength = VelocityArray.GetLength(0);
+       int iLength = VelocityArray.GetLength(0);
         int jLength = VelocityArray.GetLength(1);
 
         int NoStartDown = 0;
         int NoEndDown = 0;
+        int II = iLength-I-1;
+        int JJ = jLength-J-1;
         if(J>I)
         {
-            NoStartDown = J-I-1;
+            NoStartDown = J-I;
         }
-        if((jLength-J)>(iLength-I))
+        if((JJ)>(II))
         {
-            NoEndDown = J-I-1;
+            NoEndDown = JJ-II;
         }
         int ArrayLength = iLength + NoStartDown + NoEndDown;
         float[] Array = new float[ArrayLength];
@@ -940,37 +942,36 @@ public Vector3[] VelocityToPlot(float[,] VelocityArray, int I, int J, float Time
         {
             DiagonalStart = I-J;
         }
-        if((iLength-I)>(jLength-J))
+        if((II)>(JJ))
         {
-            DiagonalEnd = iLength-(I-J);
+            DiagonalEnd = (iLength-1) - (II-JJ) ;
         }
-        for(int i=DiagonalStart; i<DiagonalEnd; i++)
+        for(int i=DiagonalStart; i<(DiagonalEnd+1); i++)
         {
             int j = i - ItoJ;
             Array[K] = VelocityArray[i,j];
             K = K+1;
         }
 
-        if((jLength-J)>(iLength-I))
+        if((JJ)>(II))
         {
-            for(int i=DiagonalEnd; i<(DiagonalEnd + ((jLength-J)-(iLength-I))); i++)
+            for(int j=(DiagonalEnd-ItoJ+1); j<jLength; j++)
             {
-                int j = i - ItoJ;
                 Array[K] = VelocityArray[(iLength-1),j];
                 K = K + 1;
             }
         }
-        if((iLength-I)>(jLength-1))
+        if((II)>(JJ))
         {
-            for(int i=DiagonalEnd; i<iLength; i++)
+            for(int i=(DiagonalEnd+1); i<iLength; i++)
             {
                 Array[K] = VelocityArray[i,(jLength-1)];
                 K = K+1;
             }
         }
-        int ArrayLength2 = Array.Length;
-        Vector3[] VectorArray = new Vector3[ArrayLength2];
-        for(int i=0; i<ArrayLength2; i++)
+
+        Vector3[] VectorArray = new Vector3[Array.Length];
+        for(int i=0; i<VectorArray.Length; i++)
         {
             float x = i*TimeStep;
             float y = Array[i];
@@ -978,6 +979,8 @@ public Vector3[] VelocityToPlot(float[,] VelocityArray, int I, int J, float Time
         }
         return VectorArray;
 }
+
+
 
 
 
@@ -1878,19 +1881,24 @@ public async void Update()
             if(FixedBoom1!=outofframe&&EndBoom1!=outofframe&&StartPiston1!=outofframe&&EndBoom2!=outofframe&&StartPiston2!=outofframe)
             {
 
-                float Xminori = FindMinX(V1); //original data
-                float Xmaxori = FindMaxX(V1);
-                float Yminori = FindMinY(V1);
-                float Ymaxori = FindMaxY(V1);
+                // float Xminori = FindMinX(V1); //original data
+                // float Xmaxori = FindMaxX(V1);
+                // float Yminori = FindMinY(V1);
+                // float Ymaxori = FindMaxY(V1);
                 print(EndVelocityBoom1ExtendBoom2Extend.GetLength(0));
                 print(EndVelocityBoom1ExtendBoom2Extend.GetLength(1));
                 print(BoomArray1AnimatePosition);
                 print(BoomArray2AnimatePosition);
-                //Vector3[] V21D = VelocityToPlot(EndVelocityBoom1ExtendBoom2Extend,BoomArray1AnimatePosition,BoomArray2AnimatePosition,TimeStep);
-                // float Xminori = FindMinX(V21D); //original data
-                // float Xmaxori = FindMaxX(V21D);
-                // float Yminori = FindMinY(V21D);
-                // float Ymaxori = FindMaxY(V21D);
+                print(EndVelocityBoom1ExtendBoom2Extend[100,100]);
+                print(EndVelocityBoom1ExtendBoom2Extend[EndVelocityBoom1ExtendBoom2Extend.GetLength(0)-1,EndVelocityBoom1ExtendBoom2Extend.GetLength(1)-1]);
+                Vector3[] V21D = VelocityToPlot(EndVelocityBoom1ExtendBoom2Extend,BoomArray1AnimatePosition,BoomArray2AnimatePosition,TimeStep);
+                print(V21D[3]);
+                print(V21D.Length);
+                print(V21D[V21D.Length-1]);
+                float Xminori = FindMinX(V21D); //original data
+                float Xmaxori = FindMaxX(V21D);
+                float Yminori = FindMinY(V21D);
+                float Ymaxori = FindMaxY(V21D);
 
                 float lengthYori = Math.Abs(Yminori)+Math.Abs(Ymaxori);
                 float ratioa = Ymaxori/lengthYori; //upper positive ratio
@@ -1905,8 +1913,8 @@ public async void Update()
                 float Ytotal = 420f; //without offset - fixed based on fixedymax and fixedymin
                 float Yscale = Ytotal/lengthYori;
 
-                // Vector3[] scaledV1 = ScaleData(V21D, Xscale, Yscale); //times everything in data to scaling factor
-                Vector3[] scaledV1 = ScaleData(V1, Xscale, Yscale);
+                 Vector3[] scaledV1 = ScaleData(V21D, Xscale, Yscale); //times everything in data to scaling factor
+                //Vector3[] scaledV1 = ScaleData(V1, Xscale, Yscale);
                 float Xminscaled = FindMinX(scaledV1); //scaled
                 float Xmaxscaled = FindMaxX(scaledV1);
                 float Yminscaled = FindMinY(scaledV1);

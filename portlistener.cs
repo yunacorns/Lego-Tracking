@@ -981,16 +981,13 @@ public Vector3[] VelocityToPlot(float[,] VelocityArray, int I, int J, float Time
 }
 
 
-    public float GraphTime(float[,] VelocityArray2D, Vector3[] PlottingVelocity, int I, int J)
+    public float GraphTime(int I, int J, float TimeStep)
         {
-            float Velocity = VelocityArray2D[I,J];
-            float[] FloatVelocity = new float[PlottingVelocity.Length];
-            for(int i=0; i<FloatVelocity.Length; i++)
+            float T=I*TimeStep;
+            if(I<J)
             {
-                FloatVelocity[i]=PlottingVelocity[i][0];
+                T = J*TimeStep;
             }
-            int Arraynumber = System.Array.IndexOf(FloatVelocity, Velocity);
-            float T = PlottingVelocity[Arraynumber][0];
             return T;
         }
 
@@ -1672,7 +1669,7 @@ public async void Update()
             if(InExcavatorCircle == "out of range")
             {
                 GameModeErrorMessage.enabled = true;
-                GameModeErrorMessage.text = "Place Fixed Joint on Excavator";
+                GameModeErrorMessage.text = "Place Ground Joint on Excavator";
                 GameStatus = false;
             }
             else
@@ -1768,7 +1765,7 @@ public async void Update()
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[0].text = (AnimationPosition1*100).ToString()+"%";
                             BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
-                            AnimateTable[3].text = "±"+((float)Math.Round(V1[BoomArray1AnimatePosition][1],2)).ToString();
+                            AnimateTable[3].text = ((float)Math.Round(V1[BoomArray1AnimatePosition][1],2)).ToString();
                             PositionStatus1 = false;
                         }
                         else if(UnlockMenu == "in range")
@@ -1779,7 +1776,7 @@ public async void Update()
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             BoomArray1AnimatePosition = (int)((ArrayLength1-1)*AnimationPosition1);
-                            AnimateTable[3].text = "±"+((float)Math.Round(V1[BoomArray1AnimatePosition][1],2)).ToString();
+                            AnimateTable[3].text = ((float)Math.Round(V1[BoomArray1AnimatePosition][1],2)).ToString();
                         }
                 }
                 if(TypeSelectionTwo == "in range") // if in link 2
@@ -1796,7 +1793,7 @@ public async void Update()
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                             AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
-                            AnimateTable[4].text = "±"+((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
+                            //AnimateTable[4].text = ((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
                             BoomArray2AnimatePosition = (int)((BoomArray2Array.GetLength(1)-1)*AnimationPosition2);
                             PositionStatus2 = false;
                         }
@@ -1805,7 +1802,7 @@ public async void Update()
                             PositionStatus2= true;
                             AnimationPosition2= sliderValue(HandlePosition,SliderPosition);
                             AnimateTable[1].text = (AnimationPosition2*100).ToString()+"%";
-                            //AnimateTable[4].text = "±"+((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
+                            //AnimateTable[4].text = ((float)Math.Round(V2[BoomArray2AnimatePosition][1],2)).ToString();
                             LockMenuArray[0].GetComponent<SpriteRenderer>().material.color = Color.white;
                             LockMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                             BoomArray2AnimatePosition = (int)((BoomArray2Array.GetLength(1)-1)*AnimationPosition2);
@@ -1902,7 +1899,7 @@ public async void Update()
                 print(EndVelocityBoom1ExtendBoom2Extend[EndVelocityBoom1ExtendBoom2Extend.GetLength(0)-1,EndVelocityBoom1ExtendBoom2Extend.GetLength(1)-1]);
 
                 Vector3[] V21D = VelocityToPlot(EndVelocityBoom1ExtendBoom2Extend,BoomArray1AnimatePosition,BoomArray2AnimatePosition,TimeStep);
-                //float graphtime = GraphTime(EndVelocityBoom1ExtendBoom2Extend,V21D,BoomArray1AnimatePosition,BoomArray2AnimatePosition);
+                float graphtime = GraphTime(BoomArray1AnimatePosition,BoomArray2AnimatePosition,TimeStep);
                 float Xminori = FindMinX(V21D); //original data
                 float Xmaxori = FindMaxX(V21D);
                 float Yminori = FindMinY(V21D);
@@ -1963,8 +1960,8 @@ public async void Update()
                 DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
                 DataText[7].text = ((float)Math.Round(TotalBoomRange1,1)).ToString()+"°";
 
-
-                graphmovingline.transform.position = new Vector3(finalV1[BoomArray2AnimatePosition][0],-360,0);
+                float graphtimenew = (graphtime*Xscale)+zerozero[0];
+                graphmovingline.transform.position = new Vector3(graphtimenew,-360,0);
 
             }
 

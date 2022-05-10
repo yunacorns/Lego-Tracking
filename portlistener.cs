@@ -1756,8 +1756,6 @@ public async void Update()
                     SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.white;
                     SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
                     SelectorHighlighter.transform.position = new Vector3(1803,-16,0);
-                    DataText[2].enabled = true;
-                    DataText[8].enabled = false;
                     if(LockMenu == "in range" && PositionStatus1 == true)
                         {
                             AnimationPosition1 = sliderValue(HandlePosition,SliderPosition);
@@ -1785,8 +1783,7 @@ public async void Update()
                     SelectionMenuArray[1].GetComponent<SpriteRenderer>().material.color = Color.blue;
                     SelectionMenuArray[2].GetComponent<SpriteRenderer>().material.color = Color.white;
                     SelectorHighlighter.transform.position = new Vector3(1895,-16,0);
-                    DataText[8].enabled = true;
-                    DataText[2].enabled = false;
+
                     if(LockMenu == "in range" && PositionStatus2 == true)
                         {
                             AnimationPosition2 = sliderValue(HandlePosition,SliderPosition);
@@ -1825,6 +1822,9 @@ public async void Update()
                 //Graph Drawing
             if(FixedBoom1!=outofframe&&EndBoom1!=outofframe&&StartPiston1!=outofframe&&EndBoom2==outofframe&&StartPiston2==outofframe)
             {
+                DataText[2].enabled = true;
+                DataText[8].enabled = false;
+
                 float Xminori = FindMinX(V1); //original data
                 float Xmaxori = FindMaxX(V1);
                 float Yminori = FindMinY(V1);
@@ -1879,6 +1879,10 @@ public async void Update()
                 }
                 //text
 
+                DataText[4].transform.position = new Vector3 (2010, zeroY, 0);
+                DataText[5].transform.position = new Vector3 (1225, -170, 0);
+                DataText[6].transform.position = new Vector3 (1225, -550, 0);
+
                 DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
                 DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
                 DataText[6].text = ((float)Math.Round(Yminori,1)).ToString();
@@ -1892,6 +1896,8 @@ public async void Update()
             if(FixedBoom1!=outofframe&&EndBoom1!=outofframe&&StartPiston1!=outofframe&&EndBoom2!=outofframe&&StartPiston2!=outofframe)
             {
 
+                DataText[8].enabled = true;
+                DataText[2].enabled = false;
                 // float Xminori = FindMinX(V1); //original data
                 // float Xmaxori = FindMaxX(V1);
                 // float Yminori = FindMinY(V1);
@@ -1954,6 +1960,9 @@ public async void Update()
                     Graphsplot[2].SetPosition(i,finalV1[i]);
                 }
                 //text
+                DataText[4].transform.position = new Vector3 (2010, zeroY, 0);
+                DataText[5].transform.position = new Vector3 (1225, -170, 0);
+                DataText[6].transform.position = new Vector3 (1225, -550, 0);
 
                 DataText[4].text = ((float)Math.Round(Xmaxori,1)).ToString();
                 DataText[5].text = ((float)Math.Round(Ymaxori,1)).ToString();
